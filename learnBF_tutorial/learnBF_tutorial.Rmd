@@ -1,0 +1,89 @@
+---
+title: "The Bayes factor"
+output: learnr::tutorial
+runtime: shiny_prerendered
+description: "Learn about the Bayes factor!"
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+Let's test your knowledge of the Bayes factor!
+
+We will use a common setting across all questions: 
+<br>
+Compare the null hypothesis $\mathcal{H}_0: \mu_1=\mu_2$ to the alternative hypothesis $\mathcal{H}_1: \mu_1\not=\mu_2$.
+
+```{r questions_database}
+questions <- quiz(
+  caption = "", 
+  
+  
+  question(
+    paste0("Suppose that, a prior, "),
+    answer("base"),
+    answer("tools"),
+    answer("utils", correct = TRUE),
+    answer("codetools"), 
+    incorrect = "Upsy daisy!", 
+    correct   = "Yes!", 
+    allow_retry = TRUE, 
+    try_again = "Please try again!", 
+    post_message = "This is what I will say to wrap this question up.", 
+    random_answer_order	= TRUE
+  ), 
+  
+  question(
+    "Which of the R packages listed below are used to create plots?",
+    answer("lattice", correct = TRUE),
+    answer("tools"),
+    answer("stats"),
+    answer("grid", correct = TRUE)
+  )
+)
+
+n.questions    <- 1:length(questions[[2]]) # sample(1:length(questions[[2]]), length(questions[[2]]), replace = FALSE)
+questions[[2]] <- questions[[2]][n.questions]
+questions
+```
+
+
+
+
+
+```{r, echo=FALSE}
+sliderInput("bins", "Number of bins:", min = 1, max = 50, value = 30)
+plotOutput("distPlot")
+```
+
+```{r, context="server"}
+output$distPlot <- renderPlot({
+  x <- faithful[, 2]  # Old Faithful Geyser data
+  bins <- seq(min(x), max(x), length.out = input$bins + 1)
+  hist(x, breaks = bins, col = 'darkgray', border = 'white')
+})
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
