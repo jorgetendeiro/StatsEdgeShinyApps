@@ -318,7 +318,7 @@ server <- function(input, output, session) {
   # LET'S PRACTICE tab:
   output$practice <- renderUI({
     tags$iframe(
-      src="https://jjallaire.shinyapps.io/learnr-tutorial-03a-data-manip-filter/", width="100%", height="100%", frameBorder=0, style="height: 100vh;", scrolling = 'yes'
+      src="http://133.41.116.75:3838/StatsEdgeShinyApps/learnBF_tutorial/", width="100%", height="100%", frameBorder=0, style="height: 100vh;", scrolling = 'yes'
     )
   })
   
