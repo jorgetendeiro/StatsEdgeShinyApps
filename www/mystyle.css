@@ -1,0 +1,31 @@
+.checkbox-primary input[type='checkbox']:checked + label::before {
+  background-color: #005E3C;
+  border-color:     #005E3C;
+}
+
+.well {
+  background-color:#005E3C1A;
+}
+
+.inline label{ 
+  display: table-cell; 
+  text-align: right; 
+  vertical-align: middle; 
+} 
+.inline .form-group{
+  display: table-row;
+}
+
+/* Left-align xtables: */
+div.MathJax_Display{
+   text-align: left !important;
+}
+
+/* Changing the color of prettyRadioButtons:  */
+.pretty input:checked~.state.p-success label:after, .pretty.p-toggle .state.p-success label:after {
+    background-color: #DCA559!important;
+}
+
+
+
+
