@@ -529,10 +529,10 @@ server <- function(input, output, session) {
       post.probs()[2],
       post.odds()
     )
-    colnames(tab) <- c("p(H_0)","p(H_1)",
-                       paste0("\\text{Prior odds}=\\frac{p(H_", substr(input$BF10.01, 3, 3), ")}{p(H_", substr(input$BF10.01, 4, 4), ")}"),
-                       "p(H_0|D)","p(H_1|D)",
-                       paste0("\\text{Posterior odds}=\\frac{p(H_", substr(input$BF10.01, 3, 3), "|D)}{p(H_", substr(input$BF10.01, 4, 4), "|D)}"))
+    colnames(tab) <- c("p(\\mathcal{H}_0)","p(\\mathcal{H}_1)",
+                       paste0("\\text{Prior odds}=\\frac{p(\\mathcal{H}_", substr(input$BF10.01, 3, 3), ")}{p(\\mathcal{H}_", substr(input$BF10.01, 4, 4), ")}"),
+                       "p(\\mathcal{H}_0|D)","p(\\mathcal{H}_1|D)",
+                       paste0("\\text{Posterior odds}=\\frac{p(\\mathcal{H}_", substr(input$BF10.01, 3, 3), "|D)}{p(\\mathcal{H}_", substr(input$BF10.01, 4, 4), "|D)}"))
     # addtorow         <- list()
     # addtorow$pos     <- list(-1)
     # addtorow$command <- "\\multicolumn\\{6\\}\\{l\\}\\{abc\\}\\\\"
@@ -565,9 +565,9 @@ server <- function(input, output, session) {
       paste0("$BF_{", substr(input$BF10.01, 3, 4), "}=$",
              " $", round(BF(), 2), "$: The observed data are $",
              round(BF(), 2),
-             " $ times more likely in case $H_{", substr(input$BF10.01, 3, 3), "}$", 
+             " $ times more likely in case $\\mathcal{H}_{", substr(input$BF10.01, 3, 3), "}$", 
              " is true than if ",
-             " $H_{", substr(input$BF10.01, 4, 4), "}$", 
+             " $\\mathcal{H}_{", substr(input$BF10.01, 4, 4), "}$", 
              " is true."
       )
     )
@@ -576,10 +576,10 @@ server <- function(input, output, session) {
     withMathJax(
       paste0("$BF_{", substr(input$BF10.01, 3, 4), "}=$",
              " $", round(BF(), 2), "$: The prior odds ",
-             " (", round(prior.odds(), 3), "-to-1 in favor of $H_{", substr(input$BF10.01, 3, 3), "}$", 
+             " (", round(prior.odds(), 3), "-to-1 in favor of $\\mathcal{H}_{", substr(input$BF10.01, 3, 3), "}$", 
              ") are updated by a factor of $BF_{", substr(input$BF10.01, 3, 4), "}=$",
              " $", round(BF(), 2), "$", 
-             " in favor of $H_{", substr(input$BF10.01, 3, 3), "}$."
+             " in favor of $\\mathcal{H}_{", substr(input$BF10.01, 3, 3), "}$."
       )
     )
   })
@@ -657,7 +657,7 @@ server <- function(input, output, session) {
   })
   
   output$BF.formula1 <- renderUI({
-    form <- if (input$BF10.01 == "BF10") "$\\boxed{\\Large{BF_{10}=\\frac{\\color{#005E3C}{p(D|H_1)}}{\\color{#DCA559}{p(D|H_0)}}}}$" else "$\\boxed{\\Large{BF_{01}=\\frac{\\color{#DCA559}{p(D|H_0)}}{\\color{#005E3C}{p(D|H_1)}}}}$"
+    form <- if (input$BF10.01 == "BF10") "$\\boxed{\\Large{BF_{10}=\\frac{\\color{#005E3C}{p(D|\\mathcal{H}_1)}}{\\color{#DCA559}{p(D|\\mathcal{H}_0)}}}}$" else "$\\boxed{\\Large{BF_{01}=\\frac{\\color{#DCA559}{p(D|\\mathcal{H}_0)}}{\\color{#005E3C}{p(D|\\mathcal{H}_1)}}}}$"
     tagList(
       #withMathJax(),
       HTML(form),
@@ -678,25 +678,25 @@ server <- function(input, output, session) {
   output$kim.out <- renderUI({
     switch(input$keepinmind, 
            topic1 = {
-             outtext <- paste0("$$\\Large\\underbrace{\\frac{p(H_", substr(input$BF10.01, 3, 3), ")}{p(H_", substr(input$BF10.01, 4, 4), ")}}_\\text{prior odds}\\times BF_{", substr(input$BF10.01, 3, 4), "}=\\underbrace{\\frac{p(H_", substr(input$BF10.01, 3, 3), "|D)}{p(H_", substr(input$BF10.01, 4, 4), "|D)}}_\\text{posterior odds}$$ The Bayes factor ",  em("updates"), " the prior odds to the posterior odds, in light of the observed data.", br(), "Only if the prior odds are equal to 1 (i.e., if $p(H_0) = p(H_1) = .50$) do the Bayes factor and the posterior odds coincide.", br(), br(), "See for yourself!", br(), " Try changing the prior probability of either $H_0$ or $H_1$ using the sliders on the left side menu and see how the Bayes factor and the posterior odds are affected.") 
+             outtext <- paste0("$$\\Large\\underbrace{\\frac{p(\\mathcal{H}_", substr(input$BF10.01, 3, 3), ")}{p(\\mathcal{H}_", substr(input$BF10.01, 4, 4), ")}}_\\text{prior odds}\\times BF_{", substr(input$BF10.01, 3, 4), "}=\\underbrace{\\frac{p(\\mathcal{H}_", substr(input$BF10.01, 3, 3), "|D)}{p(\\mathcal{H}_", substr(input$BF10.01, 4, 4), "|D)}}_\\text{posterior odds}$$ The Bayes factor ",  em("updates"), " the prior odds to the posterior odds, in light of the observed data.", br(), "Only if the prior odds are equal to 1 (i.e., if $p(\\mathcal{H}_0) = p(\\mathcal{H}_1) = .50$) do the Bayes factor and the posterior odds coincide.", br(), br(), "See for yourself!", br(), " Try changing the prior probability of either $\\mathcal{H}_0$ or $\\mathcal{H}_1$ using the sliders on the left side menu and see how the Bayes factor and the posterior odds are affected.") 
            }, 
            topic2 = {
              outtext <- paste0("In order to compute the Bayes factor, prior distributions (", em("priors"), " for short) are required for all parameters. A prior assigns probability to each possible value of the parameter at hand, ", em("before"), " looking at the data. Priors may be chosen with different goals in mind, for example: ", HTML(renderMarkdown(text = "- To reflect current knowledge.\n- To reflect differing scientific perspectives (e.g., skeptical, liberal, or mainstream).\n- To impose constraints (e.g., to preclude negative variances).\n")), "How one should go about priors is not consensual. ", em("Objective"), " Bayesians suggest that relying on ", em("default"), " priors selected on the basis of specific optimal criteria suffices. Other, ", em("subjective"), " Bayesians argue that priors should be more carefully selected depending on the problem at hand.",  br(), br(), "We suggest that using default priors is clearly helpful, but one should first explore those priors to make sure that they are minimally well calibrated. The true fact is that ", em(" The Bayes factor depends on the priors"), ". Thus, it is important to at least: ", HTML(renderMarkdown(text = "- Visualize the priors and judge whether we are comfortable with the prior allocation of probability to the various values of the parameter.\n- Report in full what priors were used while computing the Bayes factor.\n")), br(), "Below you can see the plot of the prior selected on the left side menu, together with some descriptives. You can use this information to have a better idea about how whether the prior is working as you intended. If not, try tweaking the prior's distribution, location, or scale and reassess.", br(), br())
            }, 
            topic3 = {
-             outtext <- paste0("From $BF_{", substr(input$BF10.01, 3, 4), "}=", round(BF(), 2), "$ we can conclude that the observed data favor $H_", substr(input$BF10.01, 3, 3), "$ over $H_", substr(input$BF10.01, 4, 4), "$ by a factor of ", round(BF(), 2), "-to-1 in favor of $H_", substr(input$BF10.01, 3, 3), "$. ", br(), "Here the main point is that the evidence provided by the Bayes factor is ", em("relative"), ".", br(), "That is, $H_", substr(input$BF10.01, 3, 3), "$ is being explicitly compared to $H_", substr(input$BF10.01, 4, 4), "$ and that must be acknowledged.", br(), br(), "Hence, we discourage simpliflied summaries of the type:", br(), "'", em("The results provide evidence "), if (BF() > 1) em("in favor of ") else em("against "), "$H_", substr(input$BF10.01, 3, 3), "$' ('against' because $BF_{", substr(input$BF10.01, 3, 4), "}", if (BF() > 1) "\\geq" else "\\leq", "1$).")
+             outtext <- paste0("From $BF_{", substr(input$BF10.01, 3, 4), "}=", round(BF(), 2), "$ we can conclude that the observed data favor $\\mathcal{H}_", substr(input$BF10.01, 3, 3), "$ over $\\mathcal{H}_", substr(input$BF10.01, 4, 4), "$ by a factor of ", round(BF(), 2), "-to-1 in favor of $\\mathcal{H}_", substr(input$BF10.01, 3, 3), "$. ", br(), "Here the main point is that the evidence provided by the Bayes factor is ", em("relative"), ".", br(), "That is, $\\mathcal{H}_", substr(input$BF10.01, 3, 3), "$ is being explicitly compared to $\\mathcal{H}_", substr(input$BF10.01, 4, 4), "$ and that must be acknowledged.", br(), br(), "Hence, we discourage simpliflied summaries of the type:", br(), "'", em("The results provide evidence "), if (BF() > 1) em("in favor of ") else em("against "), "$\\mathcal{H}_", substr(input$BF10.01, 3, 3), "$' ('against' because $BF_{", substr(input$BF10.01, 3, 4), "}", if (BF() > 1) "\\geq" else "\\leq", "1$).")
            }, 
            topic4 = {
-             outtext <- paste0("We often take a hypothesis such as $H_0:\\mu_1=\\mu_2$ to stand for the ", em("absence"), " of an effect (here, a difference between the two population means), and a hypothesis such as $H_1:\\mu_1\\not=\\mu_2$ to stand for the ", em("presence"), " of an effect.", br(), "Furthermore, practitioners seem to be often tempted to use the Bayes factor to establish the presence (or lack thereof) of such an effect.", br(), br(), "As it happens, there seems to be a lot of misunderstanding going on here.", br(), "Do notice the following:", br(), br(), HTML(renderMarkdown(text = "1. We should not confuse a _research_ hypothesis with a _statistical_ hypothesis.<br>A _research_ hypothesis is a scientific claim. It reflects a theory that we wish to put challenge.<br>A _statistical_ hypothesis, on the other hand, is a precise mathematical statement that should reflect some property of the population, assuming the research hypothesis were in fact correct.<br>As it happens, a theory such as 'an effect is absent' is a _research_ hypothesis, whereas a null hypothesis is only a _statistical_ hypothesis.<br>We cannot really test research hypotheses directly simply because we do not have the ability to fully understand all the intricacies of the real world problem under study. Statistical hypotheses are an easy surrogate for research hypotheses.<br>On its own, this distinction between research and statistical hypotheses should preclude researchers from attempting to use $p$ values or Bayes factors as a tool to _establish_ the presence or absence of an effect. Much more modestly, all we should derive from hypotheses testing is relative evidence between two competing hypotheses.<br><br>  \n2. The Bayes factor is only a number.<br> It would be quite strange to expect that from one sample-based number one could go as far as establishing that a theory essentially holds.\n")), br(), "We strong suggest that special care is taken when choosing the wording used to report findings. For example, it is best to avoid saying something like '(...) from the test we conclude that there is no effect ($BF_{01} = 11.2$)' or even '(...) we found an effect between both groups ($BF_{10}=11.2$)'.")
+             outtext <- paste0("We often take a hypothesis such as $\\mathcal{H}_0:\\mu_1=\\mu_2$ to stand for the ", em("absence"), " of an effect (here, a difference between the two population means), and a hypothesis such as $\\mathcal{H}_1:\\mu_1\\not=\\mu_2$ to stand for the ", em("presence"), " of an effect.", br(), "Furthermore, practitioners seem to be often tempted to use the Bayes factor to establish the presence (or lack thereof) of such an effect.", br(), br(), "As it happens, there seems to be a lot of misunderstanding going on here.", br(), "Do notice the following:", br(), br(), HTML(renderMarkdown(text = "1. We should not confuse a _researc\\mathcal{H}_ hypothesis with a _statistical_ hypothesis.<br>A _researc\\mathcal{H}_ hypothesis is a scientific claim. It reflects a theory that we wish to put challenge.<br>A _statistical_ hypothesis, on the other hand, is a precise mathematical statement that should reflect some property of the population, assuming the research hypothesis were in fact correct.<br>As it happens, a theory such as 'an effect is absent' is a _researc\\mathcal{H}_ hypothesis, whereas a null hypothesis is only a _statistical_ hypothesis.<br>We cannot really test research hypotheses directly simply because we do not have the ability to fully understand all the intricacies of the real world problem under study. Statistical hypotheses are an easy surrogate for research hypotheses.<br>On its own, this distinction between research and statistical hypotheses should preclude researchers from attempting to use $p$ values or Bayes factors as a tool to _establis\\mathcal{H}_ the presence or absence of an effect. Much more modestly, all we should derive from hypotheses testing is relative evidence between two competing hypotheses.<br><br>  \n2. The Bayes factor is only a number.<br> It would be quite strange to expect that from one sample-based number one could go as far as establishing that a theory essentially holds.\n")), br(), "We strong suggest that special care is taken when choosing the wording used to report findings. For example, it is best to avoid saying something like '(...) from the test we conclude that there is no effect ($BF_{01} = 11.2$)' or even '(...) we found an effect between both groups ($BF_{10}=11.2$)'.")
              }, 
            topic5 = {
              outtext <- paste0("The Bayes factor is ", em("not"), " an effect size measure. This can be easily checked by manipulating some inputs on the left-side menu, as follows:", HTML(renderMarkdown(text = "- Make sure that the two group means are different from each other, even if only by 0.1.\n- Try increasing both groups' sample size.\n")), "You can compare the value of the Bayes factor to that of Cohen's $d$ (which here is given by $d=\\frac{\\overline{X}_1-\\overline{X}_2}{\\sqrt{(\\hat{\\sigma}_1^2+\\hat{\\sigma}_2^2)/2}}$):")
              }, 
            topic6 = {
-             outtext <- paste0("A Bayes factor close to 1 implies that the observed data are about equally likely unde either $H_0$ or $H_1$.", br(), "In other words, the observed data do not help to distinguish between the predictive ability of the two competing hypotheses.", br(), br(), "In such cases, we should not make the mistake of concluding that there is evidence in favor of the 'no effect' null model. The fallacy would be of reasoning something like this: 'Since the test outcome is inconclusive, then maybe the null hypothesis holds after all'. The common fallacy of drawing support in favor of $H_0$ from a nonsignificant frequentist test result is a good analogy here.", br(), br(), "In short: From inconclusive evidence (i.e., Bayes factor of about 1) one should not infer that there is evidence of absence (i.e., $H_0$ is more supported than $H_1$).")
+             outtext <- paste0("A Bayes factor close to 1 implies that the observed data are about equally likely unde either $\\mathcal{H}_0$ or $\\mathcal{H}_1$.", br(), "In other words, the observed data do not help to distinguish between the predictive ability of the two competing hypotheses.", br(), br(), "In such cases, we should not make the mistake of concluding that there is evidence in favor of the 'no effect' null model. The fallacy would be of reasoning something like this: 'Since the test outcome is inconclusive, then maybe the null hypothesis holds after all'. The common fallacy of drawing support in favor of $\\mathcal{H}_0$ from a nonsignificant frequentist test result is a good analogy here.", br(), br(), "In short: From inconclusive evidence (i.e., Bayes factor of about 1) one should not infer that there is evidence of absence (i.e., $\\mathcal{H}_0$ is more supported than $\\mathcal{H}_1$).")
              }, 
            topic7 = {
-             outtext <- paste0("The Bayes factor is just a non-negative real number. How to ", em("interpret"), " this number is not trivial.", br(), "For example, what values of $BF_{10}$ should be considered as weak, moderate, or strong evidence in favor of $H_1$ over $H_0$?", br(), br(), "Several qualitative classification systems do exist; below are three commonly used grading systems.")
+             outtext <- paste0("The Bayes factor is just a non-negative real number. How to ", em("interpret"), " this number is not trivial.", br(), "For example, what values of $BF_{10}$ should be considered as weak, moderate, or strong evidence in favor of $\\mathcal{H}_1$ over $\\mathcal{H}_0$?", br(), br(), "Several qualitative classification systems do exist; below are three commonly used grading systems.")
            }
     )
     tagList(
@@ -742,9 +742,9 @@ server <- function(input, output, session) {
       BF(), 
       post.odds()
     )
-    colnames(tab) <- c(paste0("\\text{Prior odds}=\\frac{p(H_", substr(input$BF10.01, 3, 3), ")}{p(H_", substr(input$BF10.01, 4, 4), ")}"),
+    colnames(tab) <- c(paste0("\\text{Prior odds}=\\frac{p(\\mathcal{H}_", substr(input$BF10.01, 3, 3), ")}{p(\\mathcal{H}_", substr(input$BF10.01, 4, 4), ")}"),
                        paste0("BF_{", substr(input$BF10.01, 3, 4), "}"), 
-                       paste0("\\text{Posterior odds}=\\frac{p(H_", substr(input$BF10.01, 3, 3), "|D)}{p(H_", substr(input$BF10.01, 4, 4), "|D)}")
+                       paste0("\\text{Posterior odds}=\\frac{p(\\mathcal{H}_", substr(input$BF10.01, 3, 3), "|D)}{p(\\mathcal{H}_", substr(input$BF10.01, 4, 4), "|D)}")
     )
     # addtorow         <- list()
     # addtorow$pos     <- list(-1)
@@ -967,7 +967,7 @@ server <- function(input, output, session) {
       c("\\text{Not worth more than a bare mention}", "\\text{Substantial}", "\\text{Strong}", "\\text{Very strong}", "\\text{Decisive}")
     )
     colnames(tab) <- c(paste0("BF_{10}"), 
-                       paste0("\\text{Strength of evidence against }H_0")
+                       paste0("\\text{Strength of evidence against }\\mathcal{H}_0")
     )
     addtorow         <- list()
     addtorow$pos     <- as.list(c(-1, -1))
@@ -1000,7 +1000,7 @@ server <- function(input, output, session) {
       c("\\text{Not worth more than a bare mention}", "\\text{Positive}", "\\text{Strong}", "\\text{Very strong}")
     )
     colnames(tab) <- c(paste0("BF_{10}"), 
-                       paste0("\\text{Strength of evidence against }H_0")
+                       paste0("\\text{Strength of evidence against }\\mathcal{H}_0")
     )
     addtorow         <- list()
     addtorow$pos     <- as.list(c(-1, -1))
@@ -1033,7 +1033,7 @@ server <- function(input, output, session) {
       c("\\text{Anecdotal}", "\\text{Moderate}", "\\text{Strong}", "\\text{Very strong}", "\\text{Extreme}")
     )
     colnames(tab) <- c(paste0("BF_{10}"), 
-                       paste0("\\text{Strength of evidence against }H_0")
+                       paste0("\\text{Strength of evidence against }\\mathcal{H}_0")
     )
     addtorow         <- list()
     addtorow$pos     <- as.list(c(-1, -1))
