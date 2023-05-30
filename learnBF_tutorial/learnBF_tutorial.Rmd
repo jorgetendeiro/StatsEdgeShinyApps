@@ -1,14 +1,61 @@
 ---
 title: "The Bayes factor"
-output: learnr::tutorial
+output: 
+    learnr::tutorial:
+        css: "mystyle.css"
 runtime: shiny_prerendered
 description: "Learn about the Bayes factor!"
 ---
 
+
+
 ```{r setup, include=FALSE}
 library(learnr)
+library(shinyWidgets)
 knitr::opts_chunk$set(echo = FALSE)
 ```
+
+
+
+```{css, echo=FALSE}
+/* Button colors:  */
+.btn-primary, .btn-success, .btn-info {
+  background-color: #005E3CCC;
+  background-image: none;
+  border: none; 
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary:focus:active, .btn-success:hover, .btn-success:focus, .btn-success:active, .btn-success:focus:active, .btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info:focus:active {
+    background-color: #005E3C33; 
+    color: black;
+}
+.btn-primary:focus:hover, .btn-primary:active:hover, .btn-primary:focus:active:hover, .btn-success:focus:hover, .btn-success:active:hover, .btn-success:focus:active:hover, .btn-info:focus:hover, .btn-info:active:hover, .btn-info:focus:active:hover {
+    background-color: #005E3C; 
+    color: black;
+}
+.btn-primary.disabled, .btn-primary:disabled, .btn-primary.disabled:hover, .btn-primary:disabled:hover, .btn-success.disabled, .btn-success:disabled, .btn-success.disabled:hover, .btn-success:disabled:hover, .btn-info.disabled, .btn-info:disabled, .btn-info.disabled:hover, .btn-info:disabled:hover {
+    background-color: #005E3CCC; 
+}
+
+/* Slide bar colors */
+.irs--shiny .irs-bar {
+    top: 25px;
+    height: 8px;
+    border-top: 1px solid #DCA559;
+    border-bottom: 1px solid #DCA559;
+    background: #DCA559;
+}
+.irs--shiny .irs-single {
+    color: #fff;
+    text-shadow: none;
+    padding: 1px 3px;
+    background-color: #DCA559;
+    color: #595855;
+    border-radius: 3px;
+    font-size: 11px;
+    line-height: 1.333;
+}
+```
+
 
 
 Let's test your knowledge of the Bayes factor!

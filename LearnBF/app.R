@@ -288,6 +288,10 @@ ui <- fluidPage(
         ), 
         tabPanel("Let's practice!", 
                  br(), 
+                 # tags$style(
+                 #   ".irs--shiny .irs-bar {border-top: 1px solid #428bca; border-bottom: 1px solid #428bca; background: #428bca;}"
+                 # ), 
+                 # setSliderColor("#DCA559", 1),
                  fluidRow( htmlOutput("practice") ), 
                  "abc")
       ),
