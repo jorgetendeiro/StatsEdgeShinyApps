@@ -113,73 +113,103 @@ if (window.hljs) {
 <style type="text/css">
 /* Button colors:  */
 .btn-primary, .btn-success, .btn-info {
-  background-color: #005E3CCC;
-  background-image: none;
-  border: none; 
+background-color: #005E3CCC;
+background-image: none;
+border: none; 
 }
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary:focus:active, .btn-success:hover, .btn-success:focus, .btn-success:active, .btn-success:focus:active, .btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info:focus:active {
-    background-color: #005E3C33; 
-    color: black;
+background-color: #005E3C33; 
+color: black;
 }
 .btn-primary:focus:hover, .btn-primary:active:hover, .btn-primary:focus:active:hover, .btn-success:focus:hover, .btn-success:active:hover, .btn-success:focus:active:hover, .btn-info:focus:hover, .btn-info:active:hover, .btn-info:focus:active:hover {
-    background-color: #005E3C; 
-    color: black;
+background-color: #005E3C; 
+color: black;
 }
 .btn-primary.disabled, .btn-primary:disabled, .btn-primary.disabled:hover, .btn-primary:disabled:hover, .btn-success.disabled, .btn-success:disabled, .btn-success.disabled:hover, .btn-success:disabled:hover, .btn-info.disabled, .btn-info:disabled, .btn-info.disabled:hover, .btn-info:disabled:hover {
-    background-color: #005E3CCC; 
+background-color: #005E3CCC; 
 }
 
 /* Slide bar colors */
 .irs--shiny .irs-bar {
-    top: 25px;
-    height: 8px;
-    border-top: 1px solid #DCA559;
-    border-bottom: 1px solid #DCA559;
-    background: #DCA559;
+top: 25px;
+height: 8px;
+border-top: 1px solid #DCA559;
+border-bottom: 1px solid #DCA559;
+background: #DCA559;
 }
 .irs--shiny .irs-single {
-    color: #fff;
-    text-shadow: none;
-    padding: 1px 3px;
-    background-color: #DCA559;
-    color: #595855;
-    border-radius: 3px;
-    font-size: 11px;
-    line-height: 1.333;
+color: #fff;
+text-shadow: none;
+padding: 1px 3px;
+background-color: #DCA559;
+color: #595855;
+border-radius: 3px;
+font-size: 11px;
+line-height: 1.333;
 }
 </style>
 <p>Let’s test your knowledge of the Bayes factor!</p>
-<p>We will use a common setting across all questions: <br> Compare the
-null hypothesis <span class="math inline">\(\mathcal{H}_0:
-\mu_1=\mu_2\)</span> to the alternative hypothesis <span
-class="math inline">\(\mathcal{H}_1: \mu_1\not=\mu_2\)</span>.</p>
+<p>We will focus on the same independent samples <span
+class="math inline">\(t\)</span>-test setting from this tutorial: <span
+class="math display">\[\mathcal{H}_0: \mu_1=\mu_2 \quad \text{ versus }
+\quad \mathcal{H}_0: \mu_1\not=\mu_2.\]</span></p>
+<p>Equivalently, defining parameter <span
+class="math inline">\(\mu_D\)</span> as <span
+class="math inline">\((\mu_1-\mu_2)\)</span>, we can re-express <span
+class="math inline">\(\mathcal{H}_0\)</span> and <span
+class="math inline">\(\mathcal{H}_1\)</span> as follows: <span
+class="math display">\[\mathcal{H}_0: \mu_D=0 \quad \text{ versus }
+\quad \mathcal{H}_0: \mu_D\not=0.\]</span></p>
 <div class="panel-heading tutorial-quiz-title"></div>
 <div class="panel panel-default tutorial-question-container">
-<div data-label="questions_database-1" class="tutorial-question panel-body">
-<div id="questions_database-1-answer_container" class="shiny-html-output"></div>
-<div id="questions_database-1-message_container" class="shiny-html-output"></div>
-<div id="questions_database-1-action_button_container" class="shiny-html-output"></div>
-<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
-</div>
-</div>
-<div class="panel panel-default tutorial-question-container">
-<div data-label="questions_database-2" class="tutorial-question panel-body">
-<div id="questions_database-2-answer_container" class="shiny-html-output"></div>
-<div id="questions_database-2-message_container" class="shiny-html-output"></div>
-<div id="questions_database-2-action_button_container" class="shiny-html-output"></div>
+<div data-label="questions5-1" class="tutorial-question panel-body">
+<div id="questions5-1-answer_container" class="shiny-html-output"></div>
+<div id="questions5-1-message_container" class="shiny-html-output"></div>
+<div id="questions5-1-action_button_container" class="shiny-html-output"></div>
 <script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
 </div>
 </div>
 <div class="form-group shiny-input-container">
-<label class="control-label" id="bins-label" for="bins">Number of bins:</label>
-<input class="js-range-slider" id="bins" data-skin="shiny" data-min="1" data-max="50" data-from="30" data-step="1" data-grid="true" data-grid-num="9.8" data-grid-snap="false" data-prettify-separator="," data-prettify-enabled="true" data-keyboard="true" data-data-type="number"/>
+<label class="control-label" id="Ncommon-label" for="Ncommon">Sample size:</label>
+<input class="js-range-slider" id="Ncommon" data-skin="shiny" data-min="50" data-max="5000" data-from="50" data-step="50" data-grid="true" data-grid-num="9.9" data-grid-snap="false" data-prettify-separator="," data-prettify-enabled="true" data-keyboard="true" data-data-type="number"/>
+<div class="slider-animate-container">
+<a href="#" class="slider-animate-button" data-target-id="Ncommon" data-interval="100" data-loop="FALSE">
+<span class="play">
+<i aria-label="play icon" class="glyphicon glyphicon-play" role="presentation"></i>
+</span>
+<span class="pause">
+<i aria-label="pause icon" class="glyphicon glyphicon-pause" role="presentation"></i>
+</span>
+</a>
 </div>
-<div class="shiny-plot-output html-fill-item" id="distPlot" style="width:100%;height:400px;"></div>
+</div>
+<div class="row">
+<div class="col-sm-6" align="center">
+<div class="shiny-plot-output html-fill-item" id="plot1" style="width:100%;height:400px;"></div>
+</div>
+<div class="col-sm-6" align="center">
+<div class="shiny-plot-output html-fill-item" id="plot2" style="width:100%;height:400px;"></div>
+</div>
+</div>
+<div class="panel-heading tutorial-quiz-title"></div>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="questions6-1" class="tutorial-question panel-body">
+<div id="questions6-1-answer_container" class="shiny-html-output"></div>
+<div id="questions6-1-message_container" class="shiny-html-output"></div>
+<div id="questions6-1-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
 <p>
 <script type="application/shiny-prerendered" data-context="server-start">
 library(learnr)
+library(shiny)
 library(shinyWidgets)
+library(markdown)
 knitr::opts_chunk$set(echo = FALSE)
+
+# Load the functions allowing to compute the Bayes factors:
+source("BayesFactors.R")
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
@@ -203,66 +233,117 @@ session$onSessionEnded(function() {
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
-learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "questions_database-1", 
-    question = structure("Suppose that, a prior,", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_4a1cbaa", 
-        option = "base", value = "base", label = structure("base", html = TRUE, class = c("html", 
-        "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_cee6042", 
-        option = "tools", value = "tools", label = structure("tools", html = TRUE, class = c("html", 
-        "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5418b4f", 
-        option = "utils", value = "utils", label = structure("utils", html = TRUE, class = c("html", 
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "questions5-1", 
+    question = structure("Assume that the sample mean and the sample standard deviation of each group are fixed, such that the two means are different from each other.<br/>Further assume that both groups have the same sample size, which we can manipulate.<br/>What do you expect that happens to \\(BF_{10}\\) and to Cohen’s \\(d\\) as the sample size increases?", html = TRUE, class = c("html", 
+    "character")), answers = list(structure(list(id = "lnr_ans_494947e", 
+        option = "$BF_{10}$ increases, Cohen's $d$ stays constant.", 
+        value = "$BF_{10}$ increases, Cohen's $d$ stays constant.", 
+        label = structure("\\(BF_{10}\\) increases, Cohen’s \\(d\\) stays constant.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_dbd54ed", 
-        option = "codetools", value = "codetools", label = structure("codetools", html = TRUE, class = c("html", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_16eee26", 
+        option = "$BF_{10}$ stays constant, Cohen's $d$ increases.", 
+        value = "$BF_{10}$ stays constant, Cohen's $d$ increases.", 
+        label = structure("\\(BF_{10}\\) stays constant, Cohen’s \\(d\\) increases.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_61f2727", 
+        option = "$BF_{10}$ increases, Cohen's $d$ increases.", 
+        value = "$BF_{10}$ increases, Cohen's $d$ increases.", 
+        label = structure("\\(BF_{10}\\) increases, Cohen’s \\(d\\) increases.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_f8789a1", 
+        option = "$BF_{10}$ stays constant, Cohen's $d$ stays constant.", 
+        value = "$BF_{10}$ stays constant, Cohen's $d$ stays constant.", 
+        label = structure("\\(BF_{10}\\) stays constant, Cohen’s \\(d\\) stays constant.", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
     "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
     "character"))), messages = list(correct = structure("Yes!", html = TRUE, class = c("html", 
-    "character")), try_again = structure("Please try again!", html = TRUE, class = c("html", 
-    "character")), incorrect = structure("Upsy daisy!", html = TRUE, class = c("html", 
-    "character")), message = NULL, post_message = structure("This is what I will say to wrap this question up.", html = TRUE, class = c("html", 
-    "character"))), ids = list(answer = "questions_database-1-answer", 
-        question = "questions_database-1"), loading = NULL, random_answer_order = TRUE, 
-    allow_retry = TRUE, seed = 1956164358.08909, options = list()), class = c("learnr_radio", 
+    "character")), try_again = structure("Please try again.", html = TRUE, class = c("html", 
+    "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
+    "character")), message = NULL, post_message = structure("The effect size is independent from the sample size.<br/>Therefore, Cohen’s \\(d\\) is constant as a function of the sample size.<br/><br/> \\(BF_{10}\\), on the other hand, increases as a function of the sample size.<br/>The reason is that, as the sample size increases, the evidence in the data in favor of \\(\\mathcal{H}_1\\) over \\(\\mathcal{H}_0\\) keeps increasing.<br/><br/>You can play with the applet below to see this happening! This example is based on the following options:<ul><\u002fp>\n<li>Group 1: \\(\\overline{X}=0.1\\), \\(SD=1\\).<\u002fli>\n<li>Group 2: \\(\\overline{X}=0\\), \\(SD=1\\).<\u002fli>\n<li>Standard normal prior under \\(\\mathcal{H}_1\\).<\u002fli>\n<\u002ful>\n", html = TRUE, class = c("html", 
+    "character"))), ids = list(answer = "questions5-1-answer", 
+        question = "questions5-1"), loading = NULL, random_answer_order = TRUE, 
+    allow_retry = TRUE, seed = 1816377702.65418, options = list()), class = c("learnr_radio", 
 "tutorial_question")), session = session)
 </script>
 
 
 <script type="application/shiny-prerendered" data-context="server">
-learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "questions_database-2", 
-    question = structure("Which of the R packages listed below are used to create plots?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_e8d5bd4", 
-        option = "lattice", value = "lattice", label = structure("lattice", html = TRUE, class = c("html", 
-        "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_34cc06d", 
-        option = "tools", value = "tools", label = structure("tools", html = TRUE, class = c("html", 
-        "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_27ba191", 
-        option = "stats", value = "stats", label = structure("stats", html = TRUE, class = c("html", 
-        "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_4554d38", 
-        option = "grid", value = "grid", label = structure("grid", html = TRUE, class = c("html", 
-        "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
-    "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
-    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
-    "character")), try_again = structure("Incorrect. Be sure to select every correct answer.", html = TRUE, class = c("html", 
-    "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
-    "character")), message = NULL, post_message = NULL), ids = list(
-        answer = "questions_database-2-answer", question = "questions_database-2"), 
-    loading = NULL, random_answer_order = FALSE, allow_retry = FALSE, 
-    seed = 1512004381.79592, options = list()), class = c("learnr_checkbox", 
-"tutorial_question")), session = session)
+# Common sample size:
+N.supp <- seq(50, 5000, by = 50)
+
+# BF per sample size:
+t.test.summ <- function(m1=.1, m2=0, sd1=1, sd2=1, n1, n2)
+{
+  group1 <- scale(1:n1) * sd1 + m1
+  group2 <- scale(1:n2) * sd2 + m2
+  t.test(x = group1, y = group2)
+}
+BF.val <- rep(NA, length(N.supp))
+for (i in 1:length(N.supp))
+{
+  t.tmp     <- t.test.summ(n1 = N.supp[i], n2 = N.supp[i])$statistic
+  BF.tmp    <- suppressWarnings({ B01(t.tmp, N.supp[i], N.supp[i], normal.prior) })
+  BF.val[i] <- 1 / BF.tmp
+}
+
+output$plot1 <- renderPlot({
+  par(mar = c(4, 5.5, .5, 1))
+  plot(N.supp[1:(input$Ncommon/50)], BF.val[1:(input$Ncommon/50)], type = "l", log = "y", las = 1, bty = "n", yaxs = "i", xaxs = "i", 
+       xlim = c(50, 5000), ylim = c(0.1, 10000), col = "#005E3C", lwd = 2, 
+       xlab = "", ylab = "", yaxt = "n", xaxt = "n")
+  axis(1, at = seq(0, 5000, by = 1000), las = 1)
+  axis(2, at = 10^(-1:4), labels = c("0.1", "1", "10", "100", "1000", "10000"), las = 1)
+  mtext("Sample size per group", 1, 2.5)
+  mtext(expression("BF"[10]*" (log scale)"), 2, 3)
+})
+
+# Cohen's d is always 0.1:
+output$plot2 <- renderPlot({
+  par(mar = c(4, 5.5, .5, 1))
+  plot(N.supp[1:(input$Ncommon/50)], rep(.1, input$Ncommon/50), type = "l", las = 1, bty = "n", yaxs = "i", xaxs = "i", 
+       xlim = c(50, 5000), ylim = c(0, .3), col = "#005E3C", lwd = 2, 
+       xlab = "", ylab = "", yaxt = "n", xaxt = "n")
+  axis(1, at = seq(0, 5000, by = 1000), las = 1)
+  axis(2, at = seq(0, .3, by = .1), las = 1)
+  mtext("Sample size per group", 1, 2.5)
+  mtext(expression("Cohen's d"), 2, 3)
+})
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
-output$distPlot <- renderPlot({
-  x <- faithful[, 2]  # Old Faithful Geyser data
-  bins <- seq(min(x), max(x), length.out = input$bins + 1)
-  hist(x, breaks = bins, col = 'darkgray', border = 'white')
-})
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "questions6-1", 
+    question = structure("abc", html = TRUE, class = c("html", 
+    "character")), answers = list(structure(list(id = "lnr_ans_e9a3dee", 
+        option = "$BF_{10}$ increases, Cohen's $d$ stays constant.", 
+        value = "$BF_{10}$ increases, Cohen's $d$ stays constant.", 
+        label = structure("\\(BF_{10}\\) increases, Cohen’s \\(d\\) stays constant.", html = TRUE, class = c("html", 
+        "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_df61425", 
+        option = "$BF_{10}$ stays constant, Cohen's $d$ increases.", 
+        value = "$BF_{10}$ stays constant, Cohen's $d$ increases.", 
+        label = structure("\\(BF_{10}\\) stays constant, Cohen’s \\(d\\) increases.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_32b6ae3", 
+        option = "$BF_{10}$ increases, Cohen's $d$ increases.", 
+        value = "$BF_{10}$ increases, Cohen's $d$ increases.", 
+        label = structure("\\(BF_{10}\\) increases, Cohen’s \\(d\\) increases.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_f9d6f", 
+        option = "$BF_{10}$ stays constant, Cohen's $d$ stays constant.", 
+        value = "$BF_{10}$ stays constant, Cohen's $d$ stays constant.", 
+        label = structure("\\(BF_{10}\\) stays constant, Cohen’s \\(d\\) stays constant.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Yes!", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Please try again.", html = TRUE, class = c("html", 
+    "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
+    "character")), message = NULL, post_message = structure("def", html = TRUE, class = c("html", 
+    "character"))), ids = list(answer = "questions6-1-answer", 
+        question = "questions6-1"), loading = NULL, random_answer_order = TRUE, 
+    allow_retry = TRUE, seed = 1120559771.4782, options = list()), class = c("learnr_radio", 
+"tutorial_question")), session = session)
 </script>
 </p>
 <!--html_preserve-->

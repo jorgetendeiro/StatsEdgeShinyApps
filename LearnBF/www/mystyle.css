@@ -26,6 +26,15 @@ div.MathJax_Display{
     background-color: #DCA559!important;
 }
 
-
+.irs--shiny .irs-single {
+    color: #fff;
+    text-shadow: none;
+    padding: 1px 3px;
+    background-color: #DCA559;
+    color: #595855;
+    border-radius: 3px;
+    font-size: 11px;
+    line-height: 1.333;
+}
 
 

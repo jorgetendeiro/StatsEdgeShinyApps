@@ -691,10 +691,10 @@ server <- function(input, output, session) {
              outtext <- paste0("From $BF_{", substr(input$BF10.01, 3, 4), "}=", round(BF(), 2), "$ we can conclude that the observed data favor $\\mathcal{H}_", substr(input$BF10.01, 3, 3), "$ over $\\mathcal{H}_", substr(input$BF10.01, 4, 4), "$ by a factor of ", round(BF(), 2), "-to-1 in favor of $\\mathcal{H}_", substr(input$BF10.01, 3, 3), "$. ", br(), "Here the main point is that the evidence provided by the Bayes factor is ", em("relative"), ".", br(), "That is, $\\mathcal{H}_", substr(input$BF10.01, 3, 3), "$ is being explicitly compared to $\\mathcal{H}_", substr(input$BF10.01, 4, 4), "$ and that must be acknowledged.", br(), br(), "Hence, we discourage simpliflied summaries of the type:", br(), "'", em("The results provide evidence "), if (BF() > 1) em("in favor of ") else em("against "), "$\\mathcal{H}_", substr(input$BF10.01, 3, 3), "$' ('against' because $BF_{", substr(input$BF10.01, 3, 4), "}", if (BF() > 1) "\\geq" else "\\leq", "1$).")
            }, 
            topic4 = {
-             outtext <- paste0("We often take a hypothesis such as $\\mathcal{H}_0:\\mu_1=\\mu_2$ to stand for the ", em("absence"), " of an effect (here, a difference between the two population means), and a hypothesis such as $\\mathcal{H}_1:\\mu_1\\not=\\mu_2$ to stand for the ", em("presence"), " of an effect.", br(), "Furthermore, practitioners seem to be often tempted to use the Bayes factor to establish the presence (or lack thereof) of such an effect.", br(), br(), "As it happens, there seems to be a lot of misunderstanding going on here.", br(), "Do notice the following:", br(), br(), HTML(renderMarkdown(text = "1. We should not confuse a _researc\\mathcal{H}_ hypothesis with a _statistical_ hypothesis.<br>A _researc\\mathcal{H}_ hypothesis is a scientific claim. It reflects a theory that we wish to put challenge.<br>A _statistical_ hypothesis, on the other hand, is a precise mathematical statement that should reflect some property of the population, assuming the research hypothesis were in fact correct.<br>As it happens, a theory such as 'an effect is absent' is a _researc\\mathcal{H}_ hypothesis, whereas a null hypothesis is only a _statistical_ hypothesis.<br>We cannot really test research hypotheses directly simply because we do not have the ability to fully understand all the intricacies of the real world problem under study. Statistical hypotheses are an easy surrogate for research hypotheses.<br>On its own, this distinction between research and statistical hypotheses should preclude researchers from attempting to use $p$ values or Bayes factors as a tool to _establis\\mathcal{H}_ the presence or absence of an effect. Much more modestly, all we should derive from hypotheses testing is relative evidence between two competing hypotheses.<br><br>  \n2. The Bayes factor is only a number.<br> It would be quite strange to expect that from one sample-based number one could go as far as establishing that a theory essentially holds.\n")), br(), "We strong suggest that special care is taken when choosing the wording used to report findings. For example, it is best to avoid saying something like '(...) from the test we conclude that there is no effect ($BF_{01} = 11.2$)' or even '(...) we found an effect between both groups ($BF_{10}=11.2$)'.")
+             outtext <- paste0("We often take a hypothesis such as $\\mathcal{H}_0:\\mu_1=\\mu_2$ to stand for the ", em("absence"), " of an effect (here, a difference between the two population means), and a hypothesis such as $\\mathcal{H}_1:\\mu_1\\not=\\mu_2$ to stand for the ", em("presence"), " of an effect.", br(), "Furthermore, practitioners seem to be often tempted to use the Bayes factor to establish the presence (or lack thereof) of such an effect.", br(), br(), "As it happens, there seems to be a lot of misunderstanding going on here.", br(), "Do notice the following:", br(), br(), HTML(renderMarkdown(text = "1. We should not confuse a _research_ hypothesis with a _statistical_ hypothesis.<br>A _research_ hypothesis is a scientific claim. It reflects a theory that we wish to put challenge.<br>A _statistical_ hypothesis, on the other hand, is a precise mathematical statement that should reflect some property of the population, assuming the research hypothesis were in fact correct.<br>As it happens, a theory such as 'an effect is absent' is a _research_ hypothesis, whereas a null hypothesis is only a _statistical_ hypothesis.<br>We cannot really test research hypotheses directly simply because we do not have the ability to fully understand all the intricacies of the real world problem under study. Statistical hypotheses are an easy surrogate for research hypotheses.<br>On its own, this distinction between research and statistical hypotheses should preclude researchers from attempting to use _p_ values or Bayes factors as a tool to _establish_ the presence or absence of an effect. Much more modestly, all we should derive from hypotheses testing is relative evidence between two competing hypotheses.<br><br>  \n2. The Bayes factor is only a number.<br> It would be quite strange to expect that from one sample-based number one could go as far as establishing that a theory essentially holds.\n")), br(), "We strong suggest that special care is taken when choosing the wording used to report findings. For example, it is best to avoid saying something like '(...) from the test we conclude that there is no effect ($BF_{01} = 11.2$)' or even '(...) we found an effect between both groups ($BF_{10}=11.2$)'.")
              }, 
            topic5 = {
-             outtext <- paste0("The Bayes factor is ", em("not"), " an effect size measure. This can be easily checked by manipulating some inputs on the left-side menu, as follows:", HTML(renderMarkdown(text = "- Make sure that the two group means are different from each other, even if only by 0.1.\n- Try increasing both groups' sample size.\n")), "You can compare the value of the Bayes factor to that of Cohen's $d$ (which here is given by $d=\\frac{\\overline{X}_1-\\overline{X}_2}{\\sqrt{(\\hat{\\sigma}_1^2+\\hat{\\sigma}_2^2)/2}}$):")
+             outtext <- paste0("The Bayes factor is ", em("not"), " an effect size measure. This can be easily checked by manipulating some inputs on the left-side menu, as follows:", HTML(renderMarkdown(text = "- Make sure that the two group means are different from each other, even if only by 0.1.\n- Try increasing the sample size of both groups.\n")), "You can compare the value of the Bayes factor to that of Cohen's $d$ (which here is given by $d=\\frac{\\overline{X}_1-\\overline{X}_2}{\\sqrt{(\\hat{\\sigma}_1^2+\\hat{\\sigma}_2^2)/2}}$):")
              }, 
            topic6 = {
              outtext <- paste0("A Bayes factor close to 1 implies that the observed data are about equally likely unde either $\\mathcal{H}_0$ or $\\mathcal{H}_1$.", br(), "In other words, the observed data do not help to distinguish between the predictive ability of the two competing hypotheses.", br(), br(), "In such cases, we should not make the mistake of concluding that there is evidence in favor of the 'no effect' null model. The fallacy would be of reasoning something like this: 'Since the test outcome is inconclusive, then maybe the null hypothesis holds after all'. The common fallacy of drawing support in favor of $\\mathcal{H}_0$ from a nonsignificant frequentist test result is a good analogy here.", br(), br(), "In short: From inconclusive evidence (i.e., Bayes factor of about 1) one should not infer that there is evidence of absence (i.e., $\\mathcal{H}_0$ is more supported than $\\mathcal{H}_1$).")
@@ -758,7 +758,7 @@ server <- function(input, output, session) {
                       floating                   = FALSE,
                       tabular.environment        = "array",
                       comment                    = FALSE,
-                      print.results              = FALSE,
+                      print.results              = TRUE,
                       sanitize.colnames.function = identity,
                       include.rownames           = FALSE,  
                       add.to.row                 = list(
@@ -768,12 +768,12 @@ server <- function(input, output, session) {
     )
     tagList(
       #withMathJax(),
-      HTML(paste0("$$", LaTeXtab, "$$"))
-      # , tags$script(HTML(js)),
-      # tags$script(
-      #   async="", 
-      #   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-      # )
+      HTML(paste0("$$", LaTeXtab, "$$")),
+      tags$script(HTML(js)),
+      tags$script(
+        async="",
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+      )
     )
   })
   
@@ -917,7 +917,7 @@ server <- function(input, output, session) {
   })
   
   output$kim.out.topic5.part2 <- renderUI({
-    outtext <- paste0("Do observe that the Bayes factor keeps changing as the sample sizes change. In fact, since the two group means are different, $BF_{10}$ is expected to increase with no bound as the sample sizes increase.", br(), "Cohen's $d$, however, is constant since it does not depend on the group sample sizes.", br(), br(), "The main message here is twofold:", HTML(renderMarkdown(text = "- Do not interpret the magnitude of the Bayes factor as the magnitude of the effect size (here, the standardized difference between the group means).\n - When reporting the results, always include some effect size measure together with the test's result. These two pieces of information complement than replace each other.\n")))
+    outtext <- paste0("Do observe that the Bayes factor keeps changing as the sample sizes change. In fact, since the two group means are different, $BF_{10}$ is expected to increase with no bound as the sample sizes increase.", br(), "Cohen's $d$, however, is constant since it does not depend on the groups sample sizes.", br(), br(), "The main message here is twofold:", HTML(renderMarkdown(text = "- Do not interpret the magnitude of the Bayes factor as the magnitude of the effect size (here, the standardized difference between the group means).\n - When reporting the results, always include some effect size measure together with the test's result. These two pieces of information complement than replace each other.\n")))
     tagList(
       #withMathJax(),
       HTML(outtext),
@@ -1105,7 +1105,7 @@ server <- function(input, output, session) {
                       floating                   = FALSE,
                       tabular.environment        = "array",
                       comment                    = FALSE,
-                      print.results              = TRUE,
+                      print.results              = FALSE,
                       sanitize.colnames.function = identity,
                       sanitize.text.function     = identity,
                       include.rownames           = FALSE,  
