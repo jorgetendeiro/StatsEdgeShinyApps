@@ -277,6 +277,19 @@ ui <- fluidPage(
                  conditionalPanel("input.keepinmind == 'topic2'", uiOutput("kim.out.topic2.df1")), 
                  conditionalPanel("input.keepinmind == 'topic5'", uiOutput("kim.out.topic5.df1")), 
                  conditionalPanel("input.keepinmind == 'topic5'", uiOutput("kim.out.topic5.part2")), 
+                 conditionalPanel("input.keepinmind == 'topic5'", fluidRow(
+                   align = "center", 
+                   column(3),
+                   column(6, align = "center", sliderInput("Ncommon", "Sample size:", min = 50, max = 5000, value = 50, step = 50, 
+                                                            animate = animationOptions( interval = 100 ), width = '100%')), 
+                   column(3)
+                 )), 
+                 conditionalPanel("input.keepinmind == 'topic5'", fluidRow(
+                   column(1),
+                   column(5, align = 'center', plotOutput("kim.out.topic5.plot1")), 
+                   column(5, align = 'center', plotOutput("kim.out.topic5.plot2")), 
+                   column(1))), 
+                 conditionalPanel("input.keepinmind == 'topic5'", uiOutput("kim.out.topic5.part3")), 
                  conditionalPanel("input.keepinmind == 'topic7'", fluidRow(column(4, uiOutput("kim.out.topic7.df1")),
                                                                            column(4, uiOutput("kim.out.topic7.df2")),
                                                                            column(4, uiOutput("kim.out.topic7.df3")))),
@@ -758,7 +771,7 @@ server <- function(input, output, session) {
                       floating                   = FALSE,
                       tabular.environment        = "array",
                       comment                    = FALSE,
-                      print.results              = TRUE,
+                      print.results              = FALSE,
                       sanitize.colnames.function = identity,
                       include.rownames           = FALSE,  
                       add.to.row                 = list(
@@ -917,7 +930,20 @@ server <- function(input, output, session) {
   })
   
   output$kim.out.topic5.part2 <- renderUI({
-    outtext <- paste0("Do observe that the Bayes factor keeps changing as the sample sizes change. In fact, since the two group means are different, $BF_{10}$ is expected to increase with no bound as the sample sizes increase.", br(), "Cohen's $d$, however, is constant since it does not depend on the groups sample sizes.", br(), br(), "The main message here is twofold:", HTML(renderMarkdown(text = "- Do not interpret the magnitude of the Bayes factor as the magnitude of the effect size (here, the standardized difference between the group means).\n - When reporting the results, always include some effect size measure together with the test's result. These two pieces of information complement than replace each other.\n")))
+    outtext <- paste0("Do observe that the Bayes factor keeps changing as the sample sizes change. In fact, since the two group means are different, $BF_{10}$ is expected to increase with no bound as the sample sizes increase.", br(), "Cohen's $d$, however, is constant since it does not depend on the groups sample sizes.", br(), br(), "We can also see this in motion.", br(), "Below are the plots of both $BF_{10}$ and Cohen's $d$ as functions of the sample size, for one particular configuration (Group 1: mean = 0.1, SD = 1; Group 2: mean = 0, SD = 1; standard normal prior under $\\mathcal{H}_0$; equal sample size for both groups).", br(), "Try varying the sample size and see how both the Bayes factor and the effect size vary:", br())
+    tagList(
+      #withMathJax(),
+      HTML(outtext),
+      tags$script(HTML(js)),
+      tags$script(
+        async="",
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+      )
+    )
+  })
+  
+  output$kim.out.topic5.part3 <- renderUI({
+    outtext <- paste0(br(), "The main message here is twofold:", HTML(renderMarkdown(text = "- Do not interpret the magnitude of the Bayes factor as the magnitude of the effect size (here, the standardized difference between the group means).\n - When reporting the results, always include some effect size measure together with the test's result. These two pieces of information complement than replace each other.\n")))
     tagList(
       #withMathJax(),
       HTML(outtext),
@@ -964,6 +990,82 @@ server <- function(input, output, session) {
       )
     )
   })
+  
+  # Compute things to render both plots in topic 5:
+  {# Common sample size:
+    N.supp <- seq(50, 5000, by = 50)
+    
+    # BF per sample size:
+    t.test.summ <- function(m1=.1, m2=0, sd1=1, sd2=1, n1, n2)
+    {
+      group1 <- scale(1:n1) * sd1 + m1
+      group2 <- scale(1:n2) * sd2 + m2
+      t.test(x = group1, y = group2)
+    }
+    BF.val <- rep(NA, length(N.supp))
+    for (i in 1:length(N.supp))
+    {
+      t.tmp     <- t.test.summ(n1 = N.supp[i], n2 = N.supp[i])$statistic
+      BF.tmp    <- suppressWarnings({ B01(t.tmp, N.supp[i], N.supp[i], normal.prior) })
+      BF.val[i] <- 1 / BF.tmp
+    }
+  }
+  
+  output$kim.out.topic5.plot1 <- renderPlot({
+    par(mar = c(4, 5.5, .5, 1))
+    plot(N.supp[1:(input$Ncommon/50)], BF.val[1:(input$Ncommon/50)], type = "l", log = "y", las = 1, bty = "n", yaxs = "i", xaxs = "i", 
+         xlim = c(50, 5000), ylim = c(0.1, 10000), col = "#005E3C", lwd = 2, 
+         xlab = "", ylab = "", yaxt = "n", xaxt = "n")
+    axis(1, at = seq(0, 5000, by = 1000), las = 1)
+    axis(2, at = 10^(-1:4), labels = c("0.1", "1", "10", "100", "1000", "10000"), las = 1)
+    mtext("Sample size per group", 1, 2.5)
+    mtext(expression("BF"[10]*" (log scale)"), 2, 3)
+  })
+  
+  # Cohen's d is always 0.1:
+  output$kim.out.topic5.plot2 <- renderPlot({
+    par(mar = c(4, 5.5, .5, 1))
+    plot(N.supp[1:(input$Ncommon/50)], rep(.1, input$Ncommon/50), type = "l", las = 1, bty = "n", yaxs = "i", xaxs = "i", 
+         xlim = c(50, 5000), ylim = c(0, .3), col = "#005E3C", lwd = 2, 
+         xlab = "", ylab = "", yaxt = "n", xaxt = "n")
+    axis(1, at = seq(0, 5000, by = 1000), las = 1)
+    axis(2, at = seq(0, .3, by = .1), las = 1)
+    mtext("Sample size per group", 1, 2.5)
+    mtext(expression("Cohen's d"), 2, 3)
+  })
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   output$kim.out.topic7.df1 <- renderUI({
     tab <- data.frame(

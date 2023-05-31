@@ -40,25 +40,6 @@ color: black;
 .btn-primary.disabled, .btn-primary:disabled, .btn-primary.disabled:hover, .btn-primary:disabled:hover, .btn-success.disabled, .btn-success:disabled, .btn-success.disabled:hover, .btn-success:disabled:hover, .btn-info.disabled, .btn-info:disabled, .btn-info.disabled:hover, .btn-info:disabled:hover {
 background-color: #005E3CCC; 
 }
-
-/* Slide bar colors */
-.irs--shiny .irs-bar {
-top: 25px;
-height: 8px;
-border-top: 1px solid #DCA559;
-border-bottom: 1px solid #DCA559;
-background: #DCA559;
-}
-.irs--shiny .irs-single {
-color: #fff;
-text-shadow: none;
-padding: 1px 3px;
-background-color: #DCA559;
-color: #595855;
-border-radius: 3px;
-font-size: 11px;
-line-height: 1.333;
-}
 ```
 
 
@@ -81,8 +62,8 @@ questions.1 <- quiz(
       "Consider the following quote:", 
       br(), 
       HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\\'From $BF_{10} = 2$ we can conclude that $\\mathcal{H}_1$ is twice is probable as $\\mathcal{H}_0$, given the observed data.\\'"), br(), "Is this correct?"),
-    answer("False", correct = TRUE),
-    answer("True"), 
+    answer("False.", correct = TRUE),
+    answer("True."), 
     post_message = paste0(
       "In effect, the interpretation above concerns the posterior odds, $\\frac{p(\\mathcal{H}_1|D)}{p(\\mathcal{H}_0|D)}$.", 
       br(), 
@@ -100,8 +81,8 @@ questions.1 <- quiz(
       "Consider the following quote:", 
       br(), 
       HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\\'Assume that, a priori, both $\\mathcal{H}_0$ and $\\mathcal{H}_1$ are equally likely. Then, from $BF_{10} = 2$ we can conclude that $\\mathcal{H}_1$ is twice is probable as $\\mathcal{H}_0$, given the observed data.\\'"), br(), "Is this correct?"),
-    answer("True", correct = TRUE),
-    answer("False"), 
+    answer("True.", correct = TRUE),
+    answer("False."), 
     post_message = paste0(
       "In effect, the interpretation above concerns the posterior odds, $\\frac{p(\\mathcal{H}_1|D)}{p(\\mathcal{H}_0|D)}$.", 
       br(), 
@@ -119,8 +100,8 @@ questions.1 <- quiz(
   question(
     paste0(
       "Knowing that $p(\\mathcal{H}_0|D)=.2$ and $p(\\mathcal{H}_1|D)=.8$ we can conclude that $BF_{10} = \\frac{.8}{.2} = 4$."),
-    answer("False", correct = TRUE),
-    answer("True"),
+    answer("False.", correct = TRUE),
+    answer("True."),
     post_message = paste0(
       "From $p(\\mathcal{H}_0|D)=.2$ and $p(\\mathcal{H}_1|D)=.8$, we know that the posterior odds are equal to $\\frac{p(\\mathcal{H}_1|D)}{p(\\mathcal{H}_0|D)} = \\frac{.8}{.2} = 4$.", 
       br(), 
@@ -203,8 +184,8 @@ questions.2 <- quiz(
   # Prior under H0:
   question(
     paste0("A prior distribution for parameter $\\mu_D$ under $\\mathcal{H}_0$ must be chosen, as there are many possible priors available."),
-    answer("False", correct = TRUE),
-    answer("True"), 
+    answer("False.", correct = TRUE),
+    answer("True."), 
     post_message = paste0(
       "As specified, $\\mathcal{H}_0$ is a so-called ", em("point null"), " hypothesis: The only hypothesized value for parameter $\\mu_D$ is 0.", br(), 
       "Therefore, there is only one possible prior distribution under $\\mathcal{H}_0$: $p(\\mu_D) = 1$ when $\\mu_D = 0$, and $p(\\mu_D)=0$ when $\\mu_D\\not=0$.", br(), 
@@ -219,8 +200,8 @@ questions.2 <- quiz(
   # Prior under H1:
   question(
     paste0("A prior distribution for parameter $\\mu_D$ under $\\mathcal{H}_1$ must be chosen, as there are many possible priors available."),
-    answer("False"),
-    answer("True", correct = TRUE), 
+    answer("False."),
+    answer("True.", correct = TRUE), 
     post_message = paste0(
       "Bayesian hypothesis testing requires that, under any hypothesis, each parameter value has an associated a priori probability.", br(), 
       "In the case of hypothesis $\\mathcal{H}_1$, there are many values to consider (namely, all $\\mu_D$ values different from 0).", br(), 
@@ -273,7 +254,7 @@ questions.2 <- quiz(
     answer("Default priors make the computation of the Bayes factor more precise."), 
     answer("Default priors reflect better the current state of the art than custom-chosen priors."), 
     answer("Default priors facilitate comparisons between analyses.", correct = TRUE), 
-    answer("Default priors are more easily accepted by others than custom-chosen priors..", correct = TRUE), 
+    answer("Default priors are more easily accepted by others than custom-chosen priors.", correct = TRUE), 
     post_message = paste0(
       "Default priors were developed with some ideal statistical (and often mathematical) desideratum in mind.", br(), "In this sense, default priors do not necessarily adequately reflect prior knowledge nor the person's intentions.", br(), "Put it this way, we find it surprising how many people resort to default priors without giving it any second thought.", 
       br(), br(), 
@@ -303,8 +284,8 @@ questions.3 <- quiz(
       "Consider the following quote:", 
       br(), 
       HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\\'From $BF_{01} = 7$ we can conclude that the evidence supports $\\mathcal{H}_0$.\\'"), br(), "Is this correct?"),
-    answer("False", correct = TRUE),
-    answer("True"), 
+    answer("False.", correct = TRUE),
+    answer("True."), 
     post_message = paste0(
       em("It takes two to tango!"), " A hypotheses test requires two hypotheses, and it is a requirement that both hypotheses being tested are mentioned. In fact, the merit of any hypothesis is dependent on whatever alternative hypothesis we use for the test.", 
       br(), br(), 
@@ -329,8 +310,8 @@ questions.3 <- quiz(
       "Consider the following quote:", 
       br(), 
       HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\\'From $BF_{01} = 7$ we can conclude that the evidence supports $\\mathcal{H}_0$ over $\\mathcal{H}_1$.\\'"), br(), "Is this correct?"),
-    answer("True", correct = TRUE),
-    answer("False"), 
+    answer("True.", correct = TRUE),
+    answer("False."), 
     post_message = paste0(
       "The quote correctly associates the Bayes factor to the evidence in the data.", 
       br(), 
@@ -363,8 +344,8 @@ questions.4 <- quiz(
       "Consider the following quote:", 
       br(), 
       HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\\'From $BF_{01} = 170$ we can conclude that there is no mean group difference.\\'"), br(), "Is this correct?"),
-    answer("False", correct = TRUE),
-    answer("True"), 
+    answer("False.", correct = TRUE),
+    answer("True."), 
     post_message = paste0(
       "The Bayes factor pertains to the relative probability of the observed data under either hypothesis.", 
       br(), 
@@ -399,8 +380,8 @@ questions.4 <- quiz(
       "Consider the following quote:", 
       br(), 
       HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\\'From $BF_{10} = 322$ we can not conclude that there is a mean group difference.\\'"), br(), "Is this correct?"),
-    answer("True", correct = TRUE),
-    answer("False"), 
+    answer("True.", correct = TRUE),
+    answer("False."), 
     post_message = paste0(
       "The Bayes factor pertains to the relative probability of the observed data under either hypothesis.", 
       br(), 
@@ -441,7 +422,7 @@ questions.4 <- quiz(
 questions.5 <- quiz(
   caption = "", 
   
-  # BF not ES:
+  # BF not ES 1:
   question(
     paste0(
       "Assume that the sample mean and the sample standard deviation of each group are fixed, such that the two means are different from each other.", 
@@ -456,10 +437,31 @@ questions.5 <- quiz(
     post_message = paste0(
       "The effect size is independent from the sample size.", br(), "Therefore, Cohen's $d$ is constant as a function of the sample size.", 
       br(), br(), 
-      " $BF_{10}$, on the other hand, increases as a function of the sample size.", br(), "The reason is that, as the sample size increases, the evidence in the data in favor of $\\mathcal{H}_1$ over $\\mathcal{H}_0$ keeps increasing.", 
+      " $BF_{10}$, on the other hand, increases as a function of the sample size.", br(), "The reason is that, as the sample size increases, the evidence in the data in favor of $\\mathcal{H}_1$ over $\\mathcal{H}_0$ keeps increasing.")
+    , 
+    ###
+    try_again           = "Please try again.", 
+    correct             = "Yes!", 
+    allow_retry         = TRUE, 
+    random_answer_order	= TRUE
+  ), 
+  
+  # BF not ES 1:
+  question(
+    paste0(
+      "Assume that the sample mean and the sample standard deviation of each group are fixed, such that the two means are equal.", 
+      br(), 
+      "Further assume that both groups have the same sample size, which we can manipulate.", 
+      br(), 
+      "What do you expect that happens to $BF_{01}$ and to Cohen's $d$ as the sample size increases?"),
+    answer("$BF_{01}$ increases, Cohen's $d$ stays constant.", correct = TRUE),
+    answer("$BF_{01}$ stays constant, Cohen's $d$ increases."), 
+    answer("$BF_{01}$ increases, Cohen's $d$ increases."), 
+    answer("$BF_{01}$ stays constant, Cohen's $d$ stays constant."), 
+    post_message = paste0(
+      "The effect size is independent from the sample size.", br(), "Therefore, Cohen's $d$ is constant as a function of the sample size.", 
       br(), br(), 
-      "You can play with the applet below to see this happening! This example is based on the following options:", 
-      HTML(renderMarkdown(text = "- Group 1: $\\overline{X}=0.1$, $SD=1$.\n - Group 2: $\\overline{X}=0$, $SD=1$.\n - Standard normal prior under $\\mathcal{H}_1$.\n")))
+      " $BF_{01}$, on the other hand, increases as a function of the sample size.", br(), "The reason is that, as the sample size increases, the evidence in the data in favor of $\\mathcal{H}_0$ over $\\mathcal{H}_1$ keeps increasing.")
     , 
     ###
     try_again           = "Please try again.", 
@@ -469,78 +471,61 @@ questions.5 <- quiz(
   )
 )
 
-n.questions5    <- length(questions.5[[2]]) # 1:length(questions[[2]]) # sample(1:length(questions[[2]]), length(questions[[2]]), replace = FALSE)
-questions.5[[2]] <- questions.5[[2]][n.questions5]
-questions.5
+# n.questions5    <- length(questions.5[[2]]) # 1:length(questions[[2]]) # sample(1:length(questions[[2]]), length(questions[[2]]), replace = FALSE)
+# questions.5[[2]] <- questions.5[[2]][n.questions5]
+# questions.5
 ```
 
 
-```{r, echo=FALSE}
-sliderInput("Ncommon", "Sample size:", min = 50, max = 5000, value = 50, step = 50, 
-            animate = animationOptions( interval = 100 ))
-
-fluidRow(
-  column(6, align = 'center', plotOutput("plot1")), 
-  column(6, align = 'center', plotOutput("plot2")))
-```
-
-```{r, context="server"}
-# Common sample size:
-N.supp <- seq(50, 5000, by = 50)
-
-# BF per sample size:
-t.test.summ <- function(m1=.1, m2=0, sd1=1, sd2=1, n1, n2)
-{
-  group1 <- scale(1:n1) * sd1 + m1
-  group2 <- scale(1:n2) * sd2 + m2
-  t.test(x = group1, y = group2)
-}
-BF.val <- rep(NA, length(N.supp))
-for (i in 1:length(N.supp))
-{
-  t.tmp     <- t.test.summ(n1 = N.supp[i], n2 = N.supp[i])$statistic
-  BF.tmp    <- suppressWarnings({ B01(t.tmp, N.supp[i], N.supp[i], normal.prior) })
-  BF.val[i] <- 1 / BF.tmp
-}
-
-output$plot1 <- renderPlot({
-  par(mar = c(4, 5.5, .5, 1))
-  plot(N.supp[1:(input$Ncommon/50)], BF.val[1:(input$Ncommon/50)], type = "l", log = "y", las = 1, bty = "n", yaxs = "i", xaxs = "i", 
-       xlim = c(50, 5000), ylim = c(0.1, 10000), col = "#005E3C", lwd = 2, 
-       xlab = "", ylab = "", yaxt = "n", xaxt = "n")
-  axis(1, at = seq(0, 5000, by = 1000), las = 1)
-  axis(2, at = 10^(-1:4), labels = c("0.1", "1", "10", "100", "1000", "10000"), las = 1)
-  mtext("Sample size per group", 1, 2.5)
-  mtext(expression("BF"[10]*" (log scale)"), 2, 3)
-})
-
-# Cohen's d is always 0.1:
-output$plot2 <- renderPlot({
-  par(mar = c(4, 5.5, .5, 1))
-  plot(N.supp[1:(input$Ncommon/50)], rep(.1, input$Ncommon/50), type = "l", las = 1, bty = "n", yaxs = "i", xaxs = "i", 
-       xlim = c(50, 5000), ylim = c(0, .3), col = "#005E3C", lwd = 2, 
-       xlab = "", ylab = "", yaxt = "n", xaxt = "n")
-  axis(1, at = seq(0, 5000, by = 1000), las = 1)
-  axis(2, at = seq(0, .3, by = .1), las = 1)
-  mtext("Sample size per group", 1, 2.5)
-  mtext(expression("Cohen's d"), 2, 3)
-})
-```
 
 ```{r questions6}
 questions.6 <- quiz(
   caption = "", 
   
-  # :
+  # absence of evidence != evidence of absence 1:
   question(
     paste0(
-      "abc"),
-    answer("$BF_{10}$ increases, Cohen's $d$ stays constant.", correct = TRUE),
-    answer("$BF_{10}$ stays constant, Cohen's $d$ increases."), 
-    answer("$BF_{10}$ increases, Cohen's $d$ increases."), 
-    answer("$BF_{10}$ stays constant, Cohen's $d$ stays constant."), 
+      "Consider the following quote:", 
+      br(), 
+      HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\\'The Bayes factor is $BF_{01} = 1.3$, a value very close to the reference value of 1. We therefore infer that the two group means are likely to be equal to each other in the population. \\'"), br(), "Is this correct?"),
+    answer("False.", correct = TRUE),
+    answer("True."), 
     post_message = paste0(
-      "def")
+      "The test result is rather ", em("inconclusive"), " since the Bayes factor is about 1.", br(), "This means that the data are about equally likely under either hypothesis.", 
+      br(), 
+      "There is therefore ", em("absence of evidence"), " allowing us to favor any one hypothesis over the other.", 
+      br(), br(), 
+      "As such, it is incorrect to draw relative support in favor of $\\mathcal{H}_0$ as done in the quote (\'", em("the two group means are likely to be equal to each other in the population"), "\').", 
+      br(), 
+      "In other words, we have no grounds to claim that there is ", em("evidence of absence"), " of an effect.", 
+      br(), 
+      "To have evidence of absence of an effect, $BF_{01}$ should have been rather large (strong relative support for $\\mathcal{H}_0$ over $\\mathcal{H}_1$).")
+    , 
+    ###
+    try_again           = "Please try again.", 
+    correct             = "Yes!", 
+    allow_retry         = TRUE, 
+    random_answer_order	= TRUE
+  ), 
+  
+  # absence of evidence != evidence of absence 2:
+  question(
+    paste0(
+      "Consider the following quote:", 
+      br(), 
+      HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\\'The Bayes factor is $BF_{01} = 1.3$, a value very close to the reference value of 1. We therefore infer that the observed data are about equally likely under either $\\mathcal{H}_0$ or $\\mathcal{H}_1$. \\'"), br(), "Is this correct?"),
+    answer("True.", correct = TRUE),
+    answer("False."), 
+    post_message = paste0(
+      "The test result is rather ", em("inconclusive"), " since the Bayes factor is about 1.", br(), "This means that the data are about equally likely under either hypothesis, so indeed the quote is correct.", 
+      br(), 
+      "In other words, there is ", em("absence of evidence"), " allowing us to favor any one hypothesis over the other.", 
+      br(), br(), 
+      "It would be incorrect to draw relative support in favor of $\\mathcal{H}_0$.", 
+      br(), 
+      "In other words, we have no grounds to claim that there is ", em("evidence of absence"), " of an effect.", 
+      br(), 
+      "To have evidence of absence of an effect, $BF_{01}$ should have been rather large (strong relative support for $\\mathcal{H}_0$ over $\\mathcal{H}_1$).")
     , 
     ###
     try_again           = "Please try again.", 
@@ -550,14 +535,61 @@ questions.6 <- quiz(
   )
 )
 
-n.questions6    <- length(questions.6[[2]]) # 1:length(questions[[2]]) # sample(1:length(questions[[2]]), length(questions[[2]]), replace = FALSE)
-questions.6[[2]] <- questions.6[[2]][n.questions5]
-questions.6
+# n.questions6    <- length(questions.6[[2]]) # 1:length(questions[[2]]) # sample(1:length(questions[[2]]), length(questions[[2]]), replace = FALSE)
+# questions.6[[2]] <- questions.6[[2]][n.questions6]
+# questions.6
 ```
 
 
 
+```{r questions7}
+questions.7 <- quiz(
+  caption = "", 
+  
+  # Labels II:
+  question(
+    type = "multiple", 
+    paste0(
+      "Consider the following quote:", 
+      br(), 
+      HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\\'We computed the Bayes factor testing $\\mathcal{H}_0$ against $\\mathcal{H}_1$ (with a standard normal prior distribution on the standardized effect size). The strength of evidence in favor of $\\mathcal{H}_0$ is deemed \\'", em("positive"), "\\' based on the categorization of Kass and Raftery.\\'"), 
+      br(), br(), 
+      "There are at least three problems with this reporting of the results; please identify all three.", 
+      br(), 
+      "(select all options that apply)"),
+    answer("The exact value of the Bayes factor is missing.", correct = TRUE),
+    answer("It is not explained what \\'positive\\' evidence actually means.", correct = TRUE), 
+    answer("It must be stated that the evidence favors $\\mathcal{H}_0$ in comparison to the specific alternative hypothesis $\\mathcal{H}_1$ that was used in the test.", correct = TRUE), 
+    answer("The categorization by Jeffreys is more authorative than the one by Kass and Raftery and it should be favored."), 
+    post_message = paste0(
+      "Various things are not reported as ideally as one could wish for.", 
+      br(), br(), 
+      "For instance, the exact value of the Bayes factor should always be reported.", 
+      br(), 
+      "This makes it easier for other to judge by themselves how strong the evidence is. Furthermore, this makes it possible for anyone to compute posterior probabilities for either hypothesis, based on their own prior odds.", 
+      br(), br(), 
+      "Also, it is rather unclear what a \\'positive\\' amount of evidence stands for.", 
+      br(), 
+      "Instead, it is best that the researchers explain how relevant their finding is, in the context of the research question, experiment, quality of the data, generalizability, etc.", 
+      br(), br(), 
+      "Specifying that the evidence favors $\\mathcal{H}_0$ is also an incomplete statement.", 
+      br(), 
+      "No hypothesis is tested on its own. It takes another hypothesis (or model) for us to be able to perform a comparison.", 
+      br(), 
+      "We therefore encourage researchers to be explicit about this. An improved text could be as follows: \\'The strength of evidence in favor of $\\mathcal{H}_0$ over $\\mathcal{H}_1$...\\'")
+    , 
+    ###
+    try_again           = "Please try again.", 
+    correct             = "Yes!", 
+    allow_retry         = TRUE, 
+    random_answer_order	= TRUE
+  )
+)
 
+n.questions7    <- length(questions.7[[2]]) # 1:length(questions[[2]]) # sample(1:length(questions[[2]]), length(questions[[2]]), replace = FALSE)
+questions.7[[2]] <- questions.7[[2]][n.questions7]
+questions.7
+```
 
 
 

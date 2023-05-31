@@ -26,6 +26,7 @@ div.MathJax_Display{
     background-color: #DCA559!important;
 }
 
+/* slide inputs: */
 .irs--shiny .irs-single {
     color: #fff;
     text-shadow: none;
@@ -36,5 +37,20 @@ div.MathJax_Display{
     font-size: 11px;
     line-height: 1.333;
 }
+.irs--shiny .irs-bar {
+    top: 25px;
+    height: 8px;
+    border-top: 1px solid #DCA559;
+    border-bottom: 1px solid #DCA559;
+    background: #DCA559;
+}
 
-
+/* Animation play button */
+a {
+    color: #005E3C;
+    text-decoration: none
+}
+a:hover, a:focus {
+    color: #005E3CCC;
+    text-decoration: underline;
+}
