@@ -68,7 +68,7 @@ ui <- fluidPage(
       h3(strong("Descriptives")), 
       fluidRow(
         column(width = 6, align = "left", 
-               h4("Group 1"), 
+               h4("Group A"), 
                
                tags$div(class = "inline", 
                         numericInput(inputId = "mean1",
@@ -94,7 +94,7 @@ ui <- fluidPage(
                )
         ), 
         column(width = 6, align = "left", 
-               h4("Group 2"), 
+               h4("Group B"), 
                tags$div(class = "inline", 
                         numericInput(inputId = "mean2",
                                      label   = "Mean:",
@@ -196,13 +196,12 @@ ui <- fluidPage(
       
       tabsetPanel(
         type = "pills",
-        selected = "Instructions", ##### "Keep in mind", ##### "Bayesian t-test",
+        selected = "Introduction", ##### "Instructions", ##### "Keep in mind", ##### "Bayesian t-test",
         tabPanel("Instructions", 
                  uiOutput("instructions")
                  ),
         tabPanel("Introduction", 
-                 br(), 
-                 h5("abc")), 
+                 uiOutput("introduction")), 
         tabPanel("Bayesian t-test", 
                  br(), 
                  h5(strong(textOutput("Intro.BF.df1"))), 
@@ -331,6 +330,55 @@ server <- function(input, output, session) {
              br(), 
              )
   })
+  
+  # INTRODUCTION tab:
+  output$introduction <- renderUI({
+    intro1 <- paste0(
+      h5(strong("Background")), 
+      br(), 
+      "Significance testing in general, and ", em("null hypothesis significance testing"), " in particular (NHST, which we focus on in this app), have been around for about 100 years now.", 
+      br(), 
+      "Significance testing is arguably the most popular tool currently in use in science for performing statistical inference (ref). Concepts such as the null hypothesis ($\\mathcal{H}_0$) and alternative hypothesis ($\\mathcal{H}_1$), type I and II error rates, the $p$-value, 'reject' or 'fail to reject' $\\mathcal{H}_0$, became too common buzz words in science. We use them all the time in our research and we feel obliged to include them in our reports.", 
+      br(), br(), 
+      "Being this as it may be, it has been widely established that NHST is poorly understood by practitioners (refs). At least to some extent, it has been speculated that one of the main reasons for this sad state of affairs is the fact that NHST, and its $p$-value, does not do what we wish it could do. This has led to various developments to try to mitigate the problem. The ", em("Bayes factor"), " can be considered one such development.", 
+      br(), 
+      "This app aims to offer a practical tutorial over the inner workings of the Bayes factor. It is meant to be used by xxx.", 
+      br(), br(), 
+      "The apps focuses on one particular hypothesis testing scenario: That of an independent samples $t$-test.", 
+      br(), 
+      "Suppose we have two groups, say, A and B. It is assumed that the population associated to each group is normally distributed with means $\\mu_A$ and $\\mu_B$.  The hypotheses are given by $$\\mathcal{H}_0: \\mu_A = \\mu_B \\qquad\\text{ versus }\\qquad \\mathcal{H}_1: \\mu_A \\not= \\mu_B,$$ where", 
+      br(), br(), 
+      h4(strong("NHBT"))
+      
+      
+      )
+    
+    tagList( br(), 
+             HTML(intro1), 
+             br(), br(), 
+             h5(strong("Intended users")), 
+             br(), 
+             tags$script(HTML(js)), 
+             tags$script(
+               async="",
+               src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+             )
+    )
+  })
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   # LET'S PRACTICE tab:
   output$practice <- renderUI({
