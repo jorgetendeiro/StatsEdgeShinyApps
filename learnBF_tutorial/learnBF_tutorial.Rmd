@@ -46,12 +46,6 @@ background-color: #005E3CCC;
 
 Let's test your knowledge of the Bayes factor!
 
-We will focus on the same independent samples $t$-test setting from this tutorial:
-$$\mathcal{H}_0: \mu_1=\mu_2 \quad \text{ versus } \quad \mathcal{H}_0: \mu_1\not=\mu_2.$$
-
-Equivalently, defining parameter $\mu_D$ as $(\mu_1-\mu_2)$, we can re-express $\mathcal{H}_0$ and $\mathcal{H}_1$ as follows:
-$$\mathcal{H}_0: \mu_D=0 \quad \text{ versus } \quad \mathcal{H}_0: \mu_D\not=0.$$
-
 ```{r questions1}
 questions.1 <- quiz(
   caption = "", 
@@ -59,7 +53,7 @@ questions.1 <- quiz(
   # Posterior odds I:
   question(
     paste0(
-      HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\"From $BF_{10} = 2$ we can conclude that $\\mathcal{H}_1$ is twice is probable as $\\mathcal{H}_0$, given the observed data.\'\'"), 
+      HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\"From $BF_{10} = 2$ we can conclude that $\\mathcal{H}_1$ is twice as probable as $\\mathcal{H}_0$, given the observed data.\'\'"), 
       br(), br(), 
       "Is this correct?"),
     answer("False.", correct = TRUE),
@@ -78,7 +72,7 @@ questions.1 <- quiz(
   # Posterior odds II:
   question(
     paste0(
-      HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\"Assume that, a priori, both $\\mathcal{H}_0$ and $\\mathcal{H}_1$ are equally likely. Then, from $BF_{10} = 2$ we can conclude that $\\mathcal{H}_1$ is twice is probable as $\\mathcal{H}_0$, given the observed data.\'\'"), 
+      HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\"Assume that, a priori, both $\\mathcal{H}_0$ and $\\mathcal{H}_1$ are equally likely. Then, from $BF_{10} = 2$ we can conclude that $\\mathcal{H}_1$ is twice as probable as $\\mathcal{H}_0$, given the observed data.\'\'"), 
       br(), br(), 
       "Is this correct?"),
     answer("True.", correct = TRUE),

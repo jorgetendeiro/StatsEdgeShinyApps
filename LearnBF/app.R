@@ -336,15 +336,16 @@ server <- function(input, output, session) {
     intro1 <- paste0(
       "Significance testing in general, and ", em("null hypothesis significance testing"), " in particular (NHST, which we focus on in this app), have been around for about 100 years now.", 
       br(), 
-      "Significance testing is arguably the most popular tool currently in use in science for performing statistical inference (ref). Concepts such as the null hypothesis ($\\mathcal{H}_0$) and alternative hypothesis ($\\mathcal{H}_1$), type I and II error rates, the $p$-value, 'reject' or 'fail to reject' $\\mathcal{H}_0$, became too common buzz words in science. We use them all the time in our research and we feel obliged to include them in our reports.", 
+      "Significance testing is arguably the most popular tool currently in use in science for performing statistical inference (ref). Concepts such as the null hypothesis ($\\mathcal{H}_0$) and alternative hypothesis ($\\mathcal{H}_1$), type I and II error rates, the $p$-value, 'reject' or 'fail to reject' $\\mathcal{H}_0$, became too common buzz words in science. We use them all the time in our research and we pretty much feel obliged to include them in our reports.", 
       br(), br(), 
-      "Being this as it may be, it has been widely established that NHST is poorly understood by practitioners (refs). At least to some extent, it has been speculated that one of the main reasons for this sad state of affairs is the fact that NHST, and its $p$-value, does not do what we wish it could do. This has led to various developments to try to mitigate the problem. The ", em("Bayes factor"), " can be considered one such development.", 
+      "Being this as it may be, it has been widely established that NHST is poorly understood by practitioners (refs).", 
+      br(), 
+      "At least to some extent, it has been speculated that one of the main reasons for this sad state of affairs is the fact that NHST, and its $p$-value, does not do what we wish it could do. This has led to various developments to try to mitigate the problem. The ", em("Bayes factor"), " can be considered one such development.", 
       br(), 
       "This app aims to offer a practical tutorial over the inner workings of the Bayes factor. It is meant to be used by xxx.", 
       br(), br(), 
-      "The apps focuses on one particular hypothesis testing scenario: That of an independent samples $t$-test.", 
-      br(), 
-      "Suppose we have two groups, say, A and B. It is assumed that the population associated to each group is normally distributed with means $\\mu_A$ and $\\mu_B$.  The hypotheses are given by $$\\mathcal{H}_0: \\mu_A = \\mu_B \\qquad\\text{ versus }\\qquad \\mathcal{H}_1: \\mu_A \\not= \\mu_B,$$ where"
+      "This app focuses on one particular hypothesis testing scenario: That of an independent samples $t$-test.Thus, suppose we have two groups, say, A and B. It is assumed that the population associated to each group is normally distributed with means $\\mu_A$ and $\\mu_B$. The hypotheses being tested are given by $$\\mathcal{H}_0: \\mu_A = \\mu_B \\qquad\\text{ versus }\\qquad \\mathcal{H}_1: \\mu_A \\not= \\mu_B,$$ where $\\mu_A$ and $\\mu_B$ are the population means for group A and B, respectively. Equivalently, defining parameter $\\mu_D$ as $(\\mu_A-\\mu_B)$, we can re-express $\\mathcal{H}_0$ and $\\mathcal{H}_1$ as follows:
+$$\\mathcal{H}_0: \\mu_D=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\mu_D\\not=0.$$"
     )
     
     intro2 <- paste0(
@@ -354,7 +355,7 @@ server <- function(input, output, session) {
     tagList(br(), 
             h3(strong("Background")), 
             HTML(intro1), 
-            br(), br(), 
+            br(), 
             h3(strong("NHBT")), 
             HTML(intro2), 
             tags$script(HTML(js)), 
@@ -392,7 +393,7 @@ server <- function(input, output, session) {
       "Also because of all these misconceptions, valid alternatives to the $p$-value have been entertained. One such alternative is, precisely, the ", em("Bayes factor"), "."
     )
     
-    intro4 <- paste0("abc")
+    intro4 <- paste0("The Bayes factor")
     
     tagList(br(),
             HTML(intro3), 
@@ -469,55 +470,6 @@ server <- function(input, output, session) {
     )
     
   })
-  
-  # output$freqint1 <- renderUI({
-  #   # withMathJax()
-  #   outtext <- paste0("The test result is ",
-  #                     if (ttest.res()$p.value > input$alpha) "not ",
-  #                     "statistically significant ($t = ",
-  #                     round(ttest.res()$statistic, 2),
-  #                     "$, $df = ",
-  #                     round(ttest.res()$parameter, 1),
-  #                     "$, $p ",
-  #                     if (round(ttest.res()$p.value, 3) <= .001) "< .001" else paste0("=", round(ttest.res()$p.value, 3)),
-  #                     "$).", 
-  #                     br(), 
-  #                     "At $", round(100*(input$alpha), 3),
-  #                     "\\%$ significance level we ",
-  #                     if (round(ttest.res()$p.value, 3) > input$alpha) "fail to ",
-  #                     "reject the null hypothesis that the population group means are equal to each other."
-  #   )
-  #   tagList(
-  #     #withMathJax(),
-  #     HTML(outtext),
-  #     tags$script(HTML(js)),
-  #     tags$script(
-  #       async="", 
-  #       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-  #     )
-  #   )
-  #   
-  #   # )
-  # })
-  # output$freqint2 <- renderUI({
-  #   # withMathJax()
-  #   outtext <- paste0("At $", round(100*(input$alpha), 3),
-  #                     "\\%$ significance level we ",
-  #                     if (round(ttest.res()$p.value, 3) > input$alpha) "fail to ",
-  #                     "reject the null hypothesis that the population group means are equal to each other."
-  #   )
-  #   tagList(
-  #     #withMathJax(),
-  #     HTML(outtext),
-  #     tags$script(HTML(js)),
-  #     tags$script(
-  #       async="", 
-  #       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-  #     )
-  #   )
-  #   
-  #   # )
-  # })
   
   output$ttest.crit <- renderPlot({
     xlimupp <- max(5, ceiling(abs(ttest.res()$statistic))+2)
