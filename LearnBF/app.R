@@ -199,14 +199,35 @@ ui <- fluidPage(
         selected = "Introduction", ##### "Instructions", ##### "Keep in mind", ##### "Bayesian t-test",
         tabPanel("Instructions", 
                  uiOutput("instructions")
-                 ),
+        ),
         tabPanel("Introduction", 
-                 uiOutput("introduction1"), 
-                 uiOutput("ttest"),
-                 br(), 
-                 plotOutput("ttest.crit"), 
-                 uiOutput("introduction2")
+                 tags$style(
+                   ".btn-mycolor        {background-color: #005E3C1A}",
+                   ".btn-mycolor.active {background-color: #DCA55966}", 
+                   ".btn                {text-align: left}"
                  ), 
+                 radioGroupButtons(
+                   inputId = "intro",
+                   label = "",
+                   choices = c("1. Background"                                  = "intro.topic1", 
+                               "2. Null hypothesis significance testing (NHST)" = "intro.topic2", 
+                               "3. The Bayes factor"                            = "intro.topic3"
+                   ),
+                   direction = "vertical", 
+                   status = "mycolor", 
+                   checkIcon = list(
+                     yes = icon("ok", lib = "glyphicon")
+                     
+                   )
+                 ), 
+                 br(), 
+                 conditionalPanel("input.intro == 'intro.topic1'", uiOutput("introduction1")), 
+                 conditionalPanel("input.intro == 'intro.topic2'", uiOutput("introduction2a")), 
+                 conditionalPanel("input.intro == 'intro.topic2'", uiOutput("ttest")), 
+                 conditionalPanel("input.intro == 'intro.topic2'", plotOutput("ttest.crit")), 
+                 conditionalPanel("input.intro == 'intro.topic2'", uiOutput("introduction2b")), 
+                 conditionalPanel("input.intro == 'intro.topic3'", uiOutput("introduction3"))
+        ), 
         tabPanel("Bayesian t-test", 
                  br(), 
                  h5(strong(textOutput("Intro.BF.df1"))), 
@@ -260,7 +281,7 @@ ui <- fluidPage(
                                "5. Bayes factors are not effect sizes!"                                  = "topic5", 
                                "6. Inconclusive evidence is not evidence of absence!"                    = "topic6", 
                                "7. Using description labels is not problem-free!"                          = "topic7"
-                               ),
+                   ),
                    direction = "vertical", 
                    status = "mycolor", 
                    checkIcon = list(
@@ -269,7 +290,7 @@ ui <- fluidPage(
                    )
                  ), 
                  br(), 
-                 h5(strong("Explanation")), 
+                 h3(strong("Explanation")), 
                  uiOutput("kim.out"), 
                  conditionalPanel("input.keepinmind == 'topic1'", uiOutput("kim.out.topic1.df1")), 
                  conditionalPanel("input.keepinmind == 'topic2'", plotOutput("kim.out.topic2.plot1")), 
@@ -280,7 +301,7 @@ ui <- fluidPage(
                    align = "center", 
                    column(3),
                    column(6, align = "center", sliderInput("Ncommon", "Sample size:", min = 50, max = 5000, value = 50, step = 50, 
-                                                            animate = animationOptions( interval = 100 ), width = '100%')), 
+                                                           animate = animationOptions( interval = 100 ), width = '100%')), 
                    column(3)
                  )), 
                  conditionalPanel("input.keepinmind == 'topic5'", fluidRow(
@@ -319,45 +340,53 @@ server <- function(input, output, session) {
   # INSTRUCTIONS tab:
   output$instructions <- renderUI({
     outtext1 <- paste0("Welcome to the '", em("Learning about the Bayes factor!"), "' app!", 
-                      br(), br(), 
-                      "This app was created as a support medium for those interested in learning about the Bayes factor. ")
+                       br(), br(), 
+                       "This app was created as a support medium for those interested in learning about the Bayes factor. ")
     outtext2 <- paste0("Practitioners interested in null hypotheses Bayesiantesting")
     
     tagList(br(), 
             HTML(outtext1), 
             br(), br(), 
             h5(strong("Intended users")), 
-            br(), 
+            br()
     )
   })
   
   # INTRODUCTION tab:
   output$introduction1 <- renderUI({
-    intro1 <- paste0(
-      "Significance testing in general, and ", em("null hypothesis significance testing"), " in particular (NHST, which we focus on in this app), have been around for about 100 years now.", 
-      br(), 
-      "Significance testing is arguably the most popular tool currently in use in science for performing statistical inference (ref). Concepts such as the null hypothesis ($\\mathcal{H}_0$) and alternative hypothesis ($\\mathcal{H}_1$), type I and II error rates, the $p$-value, 'reject' or 'fail to reject' $\\mathcal{H}_0$, became too common buzz words in science. We use them all the time in our research and we pretty much feel obliged to include them in our reports.", 
+    outtext <- paste0(
+      "Significance testing is arguably the most popular tool currently in use in science for performing statistical inference (ref). Concepts such as the null hypothesis ($\\mathcal{H}_0$) and alternative hypothesis ($\\mathcal{H}_1$), type I and II error rates, the $p$-value, 'reject' or 'fail to reject' $\\mathcal{H}_0$, became common buzz words in science. We use them all the time in our research and we pretty much feel obliged to include them in our scientific reports.", 
       br(), br(), 
       "Being this as it may be, it has been widely established that NHST is poorly understood by practitioners (refs).", 
       br(), 
-      "At least to some extent, it has been speculated that one of the main reasons for this sad state of affairs is the fact that NHST, and its $p$-value, does not do what we wish it could do. This has led to various developments to try to mitigate the problem. The ", em("Bayes factor"), " can be considered one such development.", 
+      "At least to some extent, it has been speculated that one of the main reasons for this sad state of affairs is the fact that NHST, and its $p$-value, does not do what we wish it could do.", 
       br(), 
-      "This app aims to offer a practical tutorial over the inner workings of the Bayes factor. It is meant to be used by xxx.", 
+      "This has led to various developments to try to mitigate the problem. The ", em("Bayes factor"), " can be considered one such development.", 
       br(), br(), 
-      "This app focuses on one particular hypothesis testing scenario: That of an independent samples $t$-test.Thus, suppose we have two groups, say, A and B. It is assumed that the population associated to each group is normally distributed with means $\\mu_A$ and $\\mu_B$. The hypotheses being tested are given by $$\\mathcal{H}_0: \\mu_A = \\mu_B \\qquad\\text{ versus }\\qquad \\mathcal{H}_1: \\mu_A \\not= \\mu_B,$$ where $\\mu_A$ and $\\mu_B$ are the population means for group A and B, respectively. Equivalently, defining parameter $\\mu_D$ as $(\\mu_A-\\mu_B)$, we can re-express $\\mathcal{H}_0$ and $\\mathcal{H}_1$ as follows:
-$$\\mathcal{H}_0: \\mu_D=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\mu_D\\not=0.$$"
+      "This app aims to offer a practical tutorial over the inner workings of the Bayes factor.", 
+      br(), 
+      "The app is particularly aimed at all those who are new to Bayesian hypothesis testing and the Bayes factor.", 
+      br(), 
+      "We tried to keep the technical level of the presentation to a minimum. Our main goal is to understand how to use and interpret the Bayes factor, and not how to compute it (those interested may refer to refs).", 
+      br(), br(), 
+      "We focus on one particular hypothesis testing scenario: The independent samples $t$-test with equal variances assumed.", 
+      br(), 
+      "The idea is to use a very simple and familiar testing setting, so that we can allocate most of our attention on the Bayes factor itself.", 
+      br(), 
+      "All general guidelines discussed for this test extend to about all other Bayes factors currently available.", 
+      br(), br(), 
+      "Thus, suppose we have two groups, say, A and B. It is assumed that the population associated to each group is normally distributed with means $\\mu_A$ and $\\mu_B$, and that the population standard deviation is the same for both groups (say, $\\sigma$). The hypotheses being tested are given by $$\\mathcal{H}_0: \\mu_A = \\mu_B \\qquad\\text{ versus }\\qquad \\mathcal{H}_1: \\mu_A \\not= \\mu_B,$$ where $\\mu_A$ and $\\mu_B$ are the population means for group A and B, respectively. Equivalently, defining parameter $\\mu_D$ as $(\\mu_A-\\mu_B)$, we can re-express $\\mathcal{H}_0$ and $\\mathcal{H}_1$ as follows: $$\\mathcal{H}_0: \\mu_D=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\mu_D\\not=0.$$ For the Bayesian independent samples $t$-test used in this app (Rouder et al., 2009), the parameter being tested is actually the standardized effect size (i.e., standardized mean difference) defined as $\\delta=\\frac{\\mu_D}{\\sigma}$. The hypotheses being tested then become: $$\\mathcal{H}_0: \\delta=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\delta\\not=0.$$", 
+      br(), br(), 
+      "Below, we start by quickly revisiting how the independent samples $t$-test is typically performed in classical statistics.", 
+      br(), 
+      "We then proceed towards using Bayesian statistics and the Bayes factor.", 
+      br(), 
+      "Feel free to manipulate the inputs on the left-side menu. The results will update accordingly."
     )
     
-    intro2 <- paste0(
-      "Running a classic NHST independent samples $t$-test leads to the following output (Group A: mean $=", round(input$mean1, 3), "$, SD $=", round(input$sd1, 3), "$, $N=", input$n1, "$; Group B: mean $=", round(input$mean2, 3), "$, SD $=", round(input$sd2, 3), "$, $N=", input$n2, "$):"
-    )
-    
-    tagList(br(), 
-            h3(strong("Background")), 
-            HTML(intro1), 
+    tagList(h3(strong("Background")), 
             br(), 
-            h3(strong("NHBT")), 
-            HTML(intro2), 
+            HTML(outtext), 
             tags$script(HTML(js)), 
             tags$script(
               async="",
@@ -366,8 +395,24 @@ $$\\mathcal{H}_0: \\mu_D=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\mu_D
     )
   })
   
-  output$introduction2 <- renderUI({
-    intro3 <- paste0(
+  output$introduction2a <- renderUI({
+    outtext <- paste0(
+      "Running a classic NHST independent samples $t$-test leads to the following output (Group A: mean $=", round(input$mean1, 3), "$, SD $=", round(input$sd1, 3), "$, $N=", input$n1, "$; Group B: mean $=", round(input$mean2, 3), "$, SD $=", round(input$sd2, 3), "$, $N=", input$n2, "$):"
+    )
+    
+    tagList(h3(strong("Null hypothesis significance testing (NHST)")), 
+            br(),  
+            HTML(outtext), 
+            tags$script(HTML(js)), 
+            tags$script(
+              async="",
+              src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+            )
+    )
+  })
+  
+  output$introduction2b <- renderUI({
+    outtext <- paste0(
       "The green curve in the plot above shows the ", em("sampling distribution"), " of the test statistic $t$. This is the distribution of $t$ under repeated sampling, assuming that $\\mathcal{H}_0$ were indeed true.", 
       br(), 
       "The ", em("critical region"), " (red color) consists of all the values of $t$ that would lead to rejecting $\\mathcal{H}_0$ at $", round(100*(input$alpha), 3), "\\%$ significance level. The probability of $t$ belonging to the critical region is precisely equal to $\\alpha$.", 
@@ -393,13 +438,8 @@ $$\\mathcal{H}_0: \\mu_D=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\mu_D
       "Also because of all these misconceptions, valid alternatives to the $p$-value have been entertained. One such alternative is, precisely, the ", em("Bayes factor"), "."
     )
     
-    intro4 <- paste0("The Bayes factor")
-    
     tagList(br(),
-            HTML(intro3), 
-            br(), br(),
-            h3(strong("The Bayes factor")), 
-            HTML(intro4),
+            HTML(outtext), 
             tags$script(HTML(js)),
             tags$script(
               async="",
@@ -408,7 +448,35 @@ $$\\mathcal{H}_0: \\mu_D=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\mu_D
     )
   })
   
-  
+  output$introduction3 <- renderUI({
+    outtext <- paste0(
+      "While the $p$-value is defined as 
+      $$p\\text{-value} = p(\\text{observed data or more extreme data}|\\mathcal{H}_0),$$ 
+      the Bayes factor is defined as follows: 
+      $$BF_{01} = \\frac{p(\\text{observed data}|\\mathcal{H}_0)}{p(\\text{observed data}|\\mathcal{H}_1)}.$$ 
+      Two immediately apparent differences between the $p$-value and the Bayes factor are clear:", 
+      HTML(renderMarkdown(text = "- While the \\$p\\$-value only entertains what happens in case \\$\\mathcal{H}_0\\$ were true, the Bayes factor entertains both \\$\\mathcal{H}_0\\$ and \\$\\mathcal{H}_1\\$.\n - While the \\$p\\$-value involves 'imaginary data' (data _more extreme than the observed data_), the Bayes factor only relies on the observed data.")), 
+      "Therefore, the Bayes factor offers a means of comparing the predictive ability of both hypotheses.", 
+      br(), 
+      "$BF_{01}$ indicates how many times are the observed data more likely under $\\mathcal{H}_0$ in comparison to $\\mathcal{H}_1$.", 
+      br(), 
+      "$BF_{10} = \\frac{p(\\text{observed data}|\\mathcal{H}_1)}{p(\\text{observed data}|\\mathcal{H}_0)}$, on the other hand, is equal to $\\frac{1}{BF_{01}}$ and it indicates how many times are the observed data more likely under $\\mathcal{H}_1$ in comparison to $\\mathcal{H}_0$.", 
+      br(), br(), 
+      "The formula to compute either probability of the Bayes factor is not simple. It involves two steps:", 
+      HTML(renderMarkdown(text = "1. We need to choose a _prior distribution_ for each parameter (here we have two parameters: The standardized effect size \\$\\delta\\$ and the common groups standard deviation \\$\\sigma\\$). A prior distribution allocates probability to each possible parameter value, irrespective of what the observed data are. This may be done taking various things into account, for example:\n 2. We need to compute a weighted sum of the probability of the observed data at each combination of parameter values. The weights for each parameter are determined by the prior distributions.")), 
+      "The quantity $p(D|\\,mathcal{H}_i)$, for $i=0, 1$, is known as the ", em("marginal likelihood"), " of the observed data under $\\mathcal{H}_i$. 'Marginal' means 'across all possible parameter values', with weights dictated by the prior distributions."
+    )
+    
+    tagList(h3(strong("The Bayes factor")), 
+            br(), 
+            HTML(outtext), 
+            tags$script(HTML(js)),
+            tags$script(
+              async="",
+              src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+            )
+    )
+  })
   
   
   
@@ -458,7 +526,7 @@ $$\\mathcal{H}_0: \\mu_D=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\mu_D
                         command = "\\rowcolor{lightgray}"
                       )
     )
-
+    
     tagList(
       #withMathJax(),
       HTML(paste0("$$", LaTeXtab, "$$")),
@@ -666,9 +734,9 @@ $$\\mathcal{H}_0: \\mu_D=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\mu_D
             c(0, sin(seq(lines.angles[1], lines.angles[2], length.out = 1024)), 0), 
             col = if (input$BF10.01 == "BF10") "#005E3C1A" else "#DCA5591A", border = NA)
     points(cos(seq(lines.angles[1], lines.angles[2], length.out = 1024)), sin(seq(lines.angles[1], lines.angles[2], length.out = 1024)), 
-         xlim = c(-1, 1), ylim = c(-1.2, 1.2), type = "l", lwd = 1.5, 
-         ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", asp = 1, 
-         col = if (input$BF10.01 == "BF10") "#005E3C" else "#DCA559")
+           xlim = c(-1, 1), ylim = c(-1.2, 1.2), type = "l", lwd = 1.5, 
+           ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", asp = 1, 
+           col = if (input$BF10.01 == "BF10") "#005E3C" else "#DCA559")
     polygon(c(0, cos(seq(lines.angles[2], 2*pi+lines.angles[1], length.out = 1024)), 0),
             c(0, sin(seq(lines.angles[2], 2*pi+lines.angles[1], length.out = 1024)), 0),
             col = if (input$BF10.01 == "BF10") "#DCA5591A" else "#005E3C1A", border = NA)
@@ -757,13 +825,13 @@ $$\\mathcal{H}_0: \\mu_D=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\mu_D
            }, 
            topic4 = {
              outtext <- paste0("We often take a hypothesis such as $\\mathcal{H}_0:\\mu_1=\\mu_2$ to stand for the ", em("absence"), " of an effect (here, a difference between the two population means), and a hypothesis such as $\\mathcal{H}_1:\\mu_1\\not=\\mu_2$ to stand for the ", em("presence"), " of an effect.", br(), "Furthermore, practitioners seem to be often tempted to use the Bayes factor to establish the presence (or lack thereof) of such an effect.", br(), br(), "As it happens, there seems to be a lot of misunderstanding going on here.", br(), "Do notice the following:", br(), br(), HTML(renderMarkdown(text = "1. We should not confuse a _research_ hypothesis with a _statistical_ hypothesis.<br>A _research_ hypothesis is a scientific claim. It reflects a theory that we wish to put challenge.<br>A _statistical_ hypothesis, on the other hand, is a precise mathematical statement that should reflect some property of the population, assuming the research hypothesis were in fact correct.<br>As it happens, a theory such as 'an effect is absent' is a _research_ hypothesis, whereas a null hypothesis is only a _statistical_ hypothesis.<br>We cannot really test research hypotheses directly simply because we do not have the ability to fully understand all the intricacies of the real world problem under study. Statistical hypotheses are an easy surrogate for research hypotheses.<br>On its own, this distinction between research and statistical hypotheses should preclude researchers from attempting to use _p_ values or Bayes factors as a tool to _establish_ the presence or absence of an effect. Much more modestly, all we should derive from hypotheses testing is relative evidence between two competing hypotheses.<br><br>  \n2. The Bayes factor is only a number.<br> It would be quite strange to expect that from one sample-based number one could go as far as establishing that a theory essentially holds.\n")), br(), "We strong suggest that special care is taken when choosing the wording used to report findings. For example, it is best to avoid saying something like '(...) from the test we conclude that there is no effect ($BF_{01} = 11.2$)' or even '(...) we found an effect between both groups ($BF_{10}=11.2$)'.")
-             }, 
+           }, 
            topic5 = {
              outtext <- paste0("The Bayes factor is ", em("not"), " an effect size measure. This can be easily checked by manipulating some inputs on the left-side menu, as follows:", HTML(renderMarkdown(text = "- Make sure that the two group means are different from each other, even if only by 0.1.\n- Try increasing the sample size of both groups.\n")), "You can compare the value of the Bayes factor to that of Cohen's $d$ (which here is given by $d=\\frac{\\overline{X}_1-\\overline{X}_2}{\\sqrt{(\\hat{\\sigma}_1^2+\\hat{\\sigma}_2^2)/2}}$):")
-             }, 
+           }, 
            topic6 = {
              outtext <- paste0("A Bayes factor close to 1 implies that the observed data are about equally likely unde either $\\mathcal{H}_0$ or $\\mathcal{H}_1$.", br(), "In other words, the observed data do not help to distinguish between the predictive ability of the two competing hypotheses.", br(), br(), "In such cases, we should not make the mistake of concluding that there is evidence in favor of the 'no effect' null model. The fallacy would be of reasoning something like this: 'Since the test outcome is inconclusive, then maybe the null hypothesis holds after all'. The common fallacy of drawing support in favor of $\\mathcal{H}_0$ from a nonsignificant frequentist test result is a good analogy here.", br(), br(), "In short: From inconclusive evidence (i.e., Bayes factor of about 1) one should not infer that there is evidence of absence (i.e., $\\mathcal{H}_0$ is more supported than $\\mathcal{H}_1$).")
-             }, 
+           }, 
            topic7 = {
              outtext <- paste0("The Bayes factor is just a non-negative real number. How to ", em("interpret"), " this number is not trivial.", br(), "For example, what values of $BF_{10}$ should be considered as weak, moderate, or strong evidence in favor of $\\mathcal{H}_1$ over $\\mathcal{H}_0$?", br(), br(), "Several qualitative classification systems do exist; below are three commonly used grading systems.")
            }
@@ -1249,7 +1317,7 @@ $$\\mathcal{H}_0: \\mu_D=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\mu_D
     # )
     tab           <- data.frame(c("\\text{Jeffreys (1961)}", "\\text{Kass and Raftery (1955)}", "\\text{Lee and Wagenmakers (2014)}"), 
                                 c(BF.lab1, BF.lab2, BF.lab3)
-                                )
+    )
     colnames(tab) <- c("\\text{Classification}", paste0("BF_{", substr(input$BF10.01, 3, 4), "} = ", round(BF(), 3)))
     # addtorow         <- list()
     # addtorow$pos     <- list(-1)
@@ -1280,7 +1348,7 @@ $$\\mathcal{H}_0: \\mu_D=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\mu_D
   })
   
   
-
+  
   
   
   
