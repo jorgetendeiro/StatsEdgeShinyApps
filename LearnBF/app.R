@@ -201,7 +201,12 @@ ui <- fluidPage(
                  uiOutput("instructions")
                  ),
         tabPanel("Introduction", 
-                 uiOutput("introduction")), 
+                 uiOutput("introduction1"), 
+                 uiOutput("ttest"),
+                 br(), 
+                 plotOutput("ttest.crit"), 
+                 uiOutput("introduction2")
+                 ), 
         tabPanel("Bayesian t-test", 
                  br(), 
                  h5(strong(textOutput("Intro.BF.df1"))), 
@@ -229,18 +234,13 @@ ui <- fluidPage(
                  fluidRow(uiOutput("BF.formula2"), align = "center"), 
                  plotOutput("BFplot2")
         ),
-        tabPanel("Classic t-test", 
-                 br(), 
-                 h5(strong("Test result")), 
-                 uiOutput("ttest"), 
-                 br(), 
-                 h5(strong("Interpretation")), 
-                 withMathJax(uiOutput("freqint1")), 
-                 withMathJax(uiOutput("freqint2")), 
-                 br(), 
-                 h5(strong("Visualization")), 
-                 plotOutput("ttest.crit")
-        ),
+        # tabPanel("Classic t-test", 
+        #          br(), 
+        #          # uiOutput("ttest"), 
+        #          br(), 
+        #          h5(strong("Interpretation")), 
+        #          withMathJax(uiOutput("freqint1"))
+        # ),
         tabPanel("Keep in mind",
                  br(), 
                  h5("Below is a list of important things to keep in mind when interpreting the Bayes factor."),
@@ -323,19 +323,17 @@ server <- function(input, output, session) {
                       "This app was created as a support medium for those interested in learning about the Bayes factor. ")
     outtext2 <- paste0("Practitioners interested in null hypotheses Bayesiantesting")
     
-    tagList( br(), 
-             HTML(outtext1), 
-             br(), br(), 
-             h5(strong("Intended users")), 
-             br(), 
-             )
+    tagList(br(), 
+            HTML(outtext1), 
+            br(), br(), 
+            h5(strong("Intended users")), 
+            br(), 
+    )
   })
   
   # INTRODUCTION tab:
-  output$introduction <- renderUI({
+  output$introduction1 <- renderUI({
     intro1 <- paste0(
-      h5(strong("Background")), 
-      br(), 
       "Significance testing in general, and ", em("null hypothesis significance testing"), " in particular (NHST, which we focus on in this app), have been around for about 100 years now.", 
       br(), 
       "Significance testing is arguably the most popular tool currently in use in science for performing statistical inference (ref). Concepts such as the null hypothesis ($\\mathcal{H}_0$) and alternative hypothesis ($\\mathcal{H}_1$), type I and II error rates, the $p$-value, 'reject' or 'fail to reject' $\\mathcal{H}_0$, became too common buzz words in science. We use them all the time in our research and we feel obliged to include them in our reports.", 
@@ -346,27 +344,68 @@ server <- function(input, output, session) {
       br(), br(), 
       "The apps focuses on one particular hypothesis testing scenario: That of an independent samples $t$-test.", 
       br(), 
-      "Suppose we have two groups, say, A and B. It is assumed that the population associated to each group is normally distributed with means $\\mu_A$ and $\\mu_B$.  The hypotheses are given by $$\\mathcal{H}_0: \\mu_A = \\mu_B \\qquad\\text{ versus }\\qquad \\mathcal{H}_1: \\mu_A \\not= \\mu_B,$$ where", 
-      br(), br(), 
-      h4(strong("NHBT"))
-      
-      
-      )
+      "Suppose we have two groups, say, A and B. It is assumed that the population associated to each group is normally distributed with means $\\mu_A$ and $\\mu_B$.  The hypotheses are given by $$\\mathcal{H}_0: \\mu_A = \\mu_B \\qquad\\text{ versus }\\qquad \\mathcal{H}_1: \\mu_A \\not= \\mu_B,$$ where"
+    )
     
-    tagList( br(), 
-             HTML(intro1), 
-             br(), br(), 
-             h5(strong("Intended users")), 
-             br(), 
-             tags$script(HTML(js)), 
-             tags$script(
-               async="",
-               src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-             )
+    intro2 <- paste0(
+      "Running a classic NHST independent samples $t$-test leads to the following output (Group A: mean $=", round(input$mean1, 3), "$, SD $=", round(input$sd1, 3), "$, $N=", input$n1, "$; Group B: mean $=", round(input$mean2, 3), "$, SD $=", round(input$sd2, 3), "$, $N=", input$n2, "$):"
+    )
+    
+    tagList(br(), 
+            h3(strong("Background")), 
+            HTML(intro1), 
+            br(), br(), 
+            h3(strong("NHBT")), 
+            HTML(intro2), 
+            tags$script(HTML(js)), 
+            tags$script(
+              async="",
+              src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+            )
     )
   })
   
-  
+  output$introduction2 <- renderUI({
+    intro3 <- paste0(
+      "The green curve in the plot above shows the ", em("sampling distribution"), " of the test statistic $t$. This is the distribution of $t$ under repeated sampling, assuming that $\\mathcal{H}_0$ were indeed true.", 
+      br(), 
+      "The ", em("critical region"), " (red color) consists of all the values of $t$ that would lead to rejecting $\\mathcal{H}_0$ at $", round(100*(input$alpha), 3), "\\%$ significance level. The probability of $t$ belonging to the critical region is precisely equal to $\\alpha$.", 
+      br(), 
+      "Finally, the $p$-", em("value"), " (brown color) is the probability of observing a value of $t$ at least as extreme as the one we did observe.", 
+      br(), br(), 
+      "In significance testing, we decide to reject $\\mathcal{H}_0$ when the $p$-value is smaller than $\\alpha$ (the result is 'statistically significant') and we fail to reject $\\mathcal{H}_0$ otherwise (the result is not statistically significant).", 
+      br(), 
+      "In this case, the test result is ",
+      if (ttest.res()$p.value > input$alpha) "not ",
+      "statistically significant at $", round(100*(input$alpha), 3), "\\%$ significance level ($t = ",
+      round(ttest.res()$statistic, 3),
+      "$, df $ = ",
+      if (ttest.res()$parameter - round(ttest.res()$parameter) < 1e-12) round(ttest.res()$parameter, 0) else round(ttest.res()$parameter, 3), "$, $p ",
+      if (round(ttest.res()$p.value, 3) <= .001) "< .001" else paste0("=", round(ttest.res()$p.value, 3)),
+      "$).", 
+      br(), 
+      "We ",
+      if (round(ttest.res()$p.value, 3) > input$alpha) "fail to ",
+      "reject the null hypothesis that the population group means are equal to each other.",
+      br(), br(),
+      "There are a lot of misconceptions related to NHST in general and to the $p$-value in particular (refs). Just to mention a few examples, do observe that all the following interpretations of the $p$-value are ", em("incorrect:"), HTML(renderMarkdown(text = "- The probability of \\$\\mathcal{H}_0\\$ is equal to \\$p\\$.\n- The probability of \\$\\mathcal{H}_1\\$ is equal to \\$(1-p)\\$.\n- A nonsignificant difference (i.e., \\$p>\\alpha\\$) implies that there is no group mean difference.\n- If the result is significant (i.e., \\$p<\\alpha\\$), then probability of a Type I error is equal to \\$\\alpha\\$.")), 
+      "Also because of all these misconceptions, valid alternatives to the $p$-value have been entertained. One such alternative is, precisely, the ", em("Bayes factor"), "."
+    )
+    
+    intro4 <- paste0("abc")
+    
+    tagList(br(),
+            HTML(intro3), 
+            br(), br(),
+            h3(strong("The Bayes factor")), 
+            HTML(intro4),
+            tags$script(HTML(js)),
+            tags$script(
+              async="",
+              src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+            )
+    )
+  })
   
   
   
@@ -383,7 +422,7 @@ server <- function(input, output, session) {
   # LET'S PRACTICE tab:
   output$practice <- renderUI({
     tags$iframe(
-      src="http://133.41.116.75:3838/StatsEdgeShinyApps/learnBF_tutorial/", width="100%", height="100%", frameBorder=0, style="height: 100vh;", scrolling = 'yes'
+      src="https://statsedge.org/StatsEdgeShinyApps/learnBF_tutorial/", width="100%", height="100%", frameBorder=0, style="height: 100vh;", scrolling = 'yes'
     )
   })
   
@@ -400,24 +439,25 @@ server <- function(input, output, session) {
       input$mean1 - input$mean2, 
       ttest.res()$statistic, 
       ttest.res()$parameter, 
-      ttest.res()$p.value
+      if (round(ttest.res()$p.value, 3) >= .001) ttest.res()$p.value else "<.001"
     ) 
-    colnames(tab) <- c("\\text{Mean difference}", "\\text{$t$}", "\\text{$df$}", "\\text{$p$-value}")
+    colnames(tab) <- c("\\text{Mean difference}", "\\text{$t$}", "\\text{df}", "\\text{$p$-value}")
     
-    LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1),
-                             digits     = c(0, 2, 2, 2, if (round(ttest.res()$p.value, 3) >= .001) 3 else 2), 
-                             display    = c("s", "f", "f", "f", if (round(ttest.res()$p.value, 3) >= .001) "f" else "E"), ), 
+    LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1), 
+                             digits = c(0, 3, 3, if (ttest.res()$parameter - round(ttest.res()$parameter) < 1e-12) 0 else 3, 3)), 
                       floating                   = FALSE,
                       tabular.environment        = "array",
                       comment                    = FALSE,
                       print.results              = FALSE,
                       sanitize.colnames.function = identity,
-                      include.rownames           = FALSE, 
+                      sanitize.text.function     = identity,
+                      include.rownames           = FALSE,
                       add.to.row                 = list(
-                        pos     = as.list(-1),
-                        command = "\\rowcolor{lightgray}" # \\rowcolor{#005E3C1A}
+                        pos     = as.list(c(-1)),
+                        command = "\\rowcolor{lightgray}"
                       )
     )
+
     tagList(
       #withMathJax(),
       HTML(paste0("$$", LaTeXtab, "$$")),
@@ -427,79 +467,91 @@ server <- function(input, output, session) {
         src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
       )
     )
+    
   })
   
-  output$freqint1 <- renderUI({
-    # withMathJax()
-    outtext <- paste0("The test result is ",
-                      if (ttest.res()$p.value > input$alpha) "not ",
-                      "statistically significant ($t = ",
-                      round(ttest.res()$statistic, 2),
-                      "$, $df = ",
-                      round(ttest.res()$parameter, 1),
-                      "$, $p ",
-                      if (round(ttest.res()$p.value, 3) <= .001) "< .001" else paste0("=", round(ttest.res()$p.value, 3)),
-                      "$)."
-    )
-    tagList(
-      #withMathJax(),
-      HTML(outtext),
-      tags$script(HTML(js)),
-      tags$script(
-        async="", 
-        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-      )
-    )
-    
-    # )
-  })
-  output$freqint2 <- renderUI({
-    # withMathJax()
-    outtext <- paste0("At $", round(100*(input$alpha), 3),
-                      "\\%$ significance level we ",
-                      if (round(ttest.res()$p.value, 3) > input$alpha) "fail to ",
-                      "reject the null hypothesis that the population group means are equal to each other."
-    )
-    tagList(
-      #withMathJax(),
-      HTML(outtext),
-      tags$script(HTML(js)),
-      tags$script(
-        async="", 
-        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-      )
-    )
-    
-    # )
-  })
+  # output$freqint1 <- renderUI({
+  #   # withMathJax()
+  #   outtext <- paste0("The test result is ",
+  #                     if (ttest.res()$p.value > input$alpha) "not ",
+  #                     "statistically significant ($t = ",
+  #                     round(ttest.res()$statistic, 2),
+  #                     "$, $df = ",
+  #                     round(ttest.res()$parameter, 1),
+  #                     "$, $p ",
+  #                     if (round(ttest.res()$p.value, 3) <= .001) "< .001" else paste0("=", round(ttest.res()$p.value, 3)),
+  #                     "$).", 
+  #                     br(), 
+  #                     "At $", round(100*(input$alpha), 3),
+  #                     "\\%$ significance level we ",
+  #                     if (round(ttest.res()$p.value, 3) > input$alpha) "fail to ",
+  #                     "reject the null hypothesis that the population group means are equal to each other."
+  #   )
+  #   tagList(
+  #     #withMathJax(),
+  #     HTML(outtext),
+  #     tags$script(HTML(js)),
+  #     tags$script(
+  #       async="", 
+  #       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+  #     )
+  #   )
+  #   
+  #   # )
+  # })
+  # output$freqint2 <- renderUI({
+  #   # withMathJax()
+  #   outtext <- paste0("At $", round(100*(input$alpha), 3),
+  #                     "\\%$ significance level we ",
+  #                     if (round(ttest.res()$p.value, 3) > input$alpha) "fail to ",
+  #                     "reject the null hypothesis that the population group means are equal to each other."
+  #   )
+  #   tagList(
+  #     #withMathJax(),
+  #     HTML(outtext),
+  #     tags$script(HTML(js)),
+  #     tags$script(
+  #       async="", 
+  #       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+  #     )
+  #   )
+  #   
+  #   # )
+  # })
   
   output$ttest.crit <- renderPlot({
     xlimupp <- max(5, ceiling(abs(ttest.res()$statistic))+2)
-    par(mar = c(3, 1, 1.5, 1))
+    par(mar = c(3, 1, 2, 1))
     curve(dt(x, ttest.res()$parameter), from = -xlimupp, to = xlimupp, n = 1024, 
           ylim = c(0, 1.1 * dt(0, ttest.res()$parameter)), 
           bty = "n", yaxt = "n", ylab = "", lwd = 2, xaxt = "n", xlab = "", yaxs = "i", 
-          main = paste0("Student's t (df = ", round(ttest.res()$parameter, 2), ")"), 
+          main = paste0("Sampling distribution assuming H0 is true = Student's t (", round(ttest.res()$parameter, 3), ")"), 
           col = "#005E3C")
     axis(1, seq(-xlimupp, xlimupp, 1))
     mtext("Test statistic", 1, 2)
     x.supp.crit <- seq(qt(1-input$alpha/2, ttest.res()$parameter), xlimupp, length.out = 101)
+    polygon(x = c(x.supp.crit, rev(x.supp.crit)),
+            y = c(rep(1.*dt(0, ttest.res()$parameter), 101), rep(0, 101)),
+            col = "#FF000005", border = NA)
+    polygon(x = c(-x.supp.crit, rev(-x.supp.crit)),
+            y = c(rep(1.*dt(0, ttest.res()$parameter), 101), rep(0, 101)),
+            col = "#FF000005", border = NA)
     polygon(x = c(x.supp.crit, rev(x.supp.crit)), 
-            y = c(rep(1.*dt(0, ttest.res()$parameter), 101), rep(0, 101)), 
-            col = "#FF00000A", border = NA)
+            y = c(dt(x.supp.crit, ttest.res()$parameter), rep(0, 101)), 
+            col = "#FF00004D", border = NA)
     polygon(x = c(-x.supp.crit, rev(-x.supp.crit)), 
-            y = c(rep(1.*dt(0, ttest.res()$parameter), 101), rep(0, 101)), 
-            col = "#FF00000A", border = NA)
+            y = c(dt(-x.supp.crit, ttest.res()$parameter), rep(0, 101)), 
+            col = "#FF00004D", border = NA)
     x.supp <- seq(abs(ttest.res()$statistic), xlimupp, length.out = 101)
     polygon(x = c(x.supp, rev(x.supp)), 
             y = c(dt(x.supp, ttest.res()$parameter), rep(0, 101)), 
-            col = "#DCA55966", border = NA, density = 20, lwd = 2)
+            col = "#DCA55966", border = NA, density = 10, lwd = 4)
     polygon(x = c(-x.supp, rev(-x.supp)), 
             y = c(dt(-x.supp, ttest.res()$parameter), rep(0, 101)), 
-            col = "#DCA55966", border = NA, density = 20, lwd = 2)
+            col = "#DCA55966", border = NA, density = 10, lwd = 4)
     abline(v = ttest.res()$statistic, lwd = 2, col = "#DCA559")
-    text(ttest.res()$statistic, 1.05*dt(0, ttest.res()$parameter), paste0("t = ", round(ttest.res()$statistic, 2)), cex = 1.4, pos = if (ttest.res()$statistic < 0) 2 else 4)
-    text(if (ttest.res()$statistic < 0) xlimupp else -xlimupp, 1.05*dt(0, ttest.res()$parameter), "Critical region", 
+    text(ttest.res()$statistic, 1.05*dt(0, ttest.res()$parameter), paste0("t = ", round(ttest.res()$statistic, 3)), cex = 1.4, pos = if (ttest.res()$statistic < 0) 2 else 4)
+    text(if (ttest.res()$statistic < 0) xlimupp else -xlimupp, 1.05*dt(0, ttest.res()$parameter), paste0("Critical region (probability = ", input$alpha, ")"), 
          pos = if (ttest.res()$statistic < 0) 2 else 4, cex = 1.4, col = "#F00000")
   })
   
