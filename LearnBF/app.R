@@ -11,11 +11,11 @@ library(markdown)
 library(stevemisc)
 
 # Function computing the t-test from summaries ----
-t.test.summ <- function(m1, m2, sd1, sd2, n1, n2)
+t.test.summ <- function(m1, m2, sd, n1, n2)
 {
-  group1 <- scale(1:n1) * sd1 + m1
-  group2 <- scale(1:n2) * sd2 + m2
-  t.test(x = group1, y = group2)
+  group1 <- scale(1:n1) * sd + m1
+  group2 <- scale(1:n2) * sd + m2
+  t.test(x = group1, y = group2, var.equal = TRUE)
 }
 # Load the functions allowing to compute the Bayes factors:
 source("R_scripts/BayesFactors.R")
@@ -94,7 +94,7 @@ ui <- fluidPage(
                                 label   = em("Mean:"),
                                 min     = -10,
                                 max     = 10,
-                                value   = 0, 
+                                value   = 0.2, 
                                 step    = 0.1, 
                                 width = "100%"), class = "not_bold")
         ), 
@@ -110,7 +110,7 @@ ui <- fluidPage(
       fluidRow(
         column(3), 
         column(6, align = "left", 
-                        numericInput(inputId = "sd.common",
+                        numericInput(inputId = "sdcommon",
                                      label   = h4("Common standard deviation"),
                                      min     = 0,
                                      max     = NA,
@@ -376,29 +376,30 @@ server <- function(input, output, session) {
       br(), br(), 
       "Being this as it may be, it has been widely established that NHST is poorly understood by practitioners (refs).", 
       br(), 
-      "At least to some extent, it has been speculated that one of the main reasons for this sad state of affairs is the fact that NHST, and its $p$-value, does not do what we wish it could do.", 
-      br(), 
       "This has led to various developments to try to mitigate the problem. The ", em("Bayes factor"), " can be considered one such development.", 
       br(), br(), 
-      "This app aims to offer a practical tutorial over the inner workings of the Bayes factor.", 
+      h4("Goal"), 
+      "This app offers a practical tutorial of the Bayes factor.", 
       br(), 
-      "The app is particularly aimed at all those who are new to Bayesian hypothesis testing and the Bayes factor.", 
+      "The app is particularly aimed at those who are new to Bayesian hypothesis testing and to the Bayes factor.", 
       br(), 
-      "We tried to keep the technical level of the presentation to a minimum. Our main goal is to understand how to use and interpret the Bayes factor, and not how to compute it (those interested may refer to refs).", 
+      "We focus on ", em("understanding"), " and ", em("correctly"), " interpreting the Bayes factor.", 
       br(), br(), 
-      "We focus on one particular hypothesis testing scenario: The independent samples $t$-test with equal variances assumed.", 
+      h4("Hypothesis test used"), 
+      "We focus on one particular hypothesis testing scenario: The two-sided independent samples $t$-test with equal variances assumed.", 
       br(), 
       "The idea is to use a very simple and familiar testing setting, so that we can allocate most of our attention on the Bayes factor itself.", 
       br(), 
       "All general guidelines discussed for this test extend to about all other Bayes factors currently available.", 
       br(), br(), 
-      "Thus, suppose we have two groups, say, A and B. It is assumed that the population associated to each group is normally distributed with means $\\mu_A$ and $\\mu_B$, and that the population standard deviation is the same for both groups (say, $\\sigma$). The hypotheses being tested are given by $$\\mathcal{H}_0: \\mu_A = \\mu_B \\qquad\\text{ versus }\\qquad \\mathcal{H}_1: \\mu_A \\not= \\mu_B,$$ where $\\mu_A$ and $\\mu_B$ are the population means for group A and B, respectively. Equivalently, defining parameter $\\mu_D$ as $(\\mu_A-\\mu_B)$, we can re-express $\\mathcal{H}_0$ and $\\mathcal{H}_1$ as follows: $$\\mathcal{H}_0: \\mu_D=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\mu_D\\not=0.$$ For the Bayesian independent samples $t$-test used in this app (Rouder et al., 2009), the parameter being tested is actually the standardized effect size (i.e., standardized mean difference) defined as $\\delta=\\frac{\\mu_D}{\\sigma}$. The hypotheses being tested then become: $$\\mathcal{H}_0: \\delta=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\delta\\not=0.$$", 
-      br(), br(), 
-      "Below, we start by quickly revisiting how the independent samples $t$-test is typically performed in classical statistics.", 
+      "Thus, suppose we have two groups, say, A and B.", 
       br(), 
-      "We then proceed towards using Bayesian statistics and the Bayes factor.", 
+      "It is assumed that the population associated to each group is normally distributed, with mean $\\mu_A$ (group A) and $\\mu_B$ (group B), and that the population standard deviation is the same for both groups (say, $\\sigma$).", 
       br(), 
-      "Feel free to manipulate the inputs on the left-side menu. The results will update accordingly."
+      "The hypotheses being tested are given by $$\\mathcal{H}_0: \\mu_A = \\mu_B \\qquad\\text{ versus }\\qquad \\mathcal{H}_1: \\mu_A \\not= \\mu_B.$$ Equivalently, defining parameter $\\mu_D$ as $(\\mu_A-\\mu_B)$, we can re-express $\\mathcal{H}_0$ and $\\mathcal{H}_1$ as follows: $$\\mathcal{H}_0: \\mu_D=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\mu_D\\not=0.$$ For the Bayesian independent samples $t$-test used in this app, the parameter being tested is actually the standardized effect size (i.e., standardized mean difference) defined as $\\delta=\\frac{\\mu_D}{\\sigma}$ (Rouder et al., 2009).", 
+      br(), 
+      "The hypotheses being tested then become: $$\\mathcal{H}_0: \\delta=0 \\quad \\text{ versus } \\quad \\mathcal{H}_0: \\delta\\not=0.$$", 
+      br(), br()
     )
     
     tagList(h3(strong("Background")), 
@@ -418,9 +419,9 @@ server <- function(input, output, session) {
       br(), 
       "Go to the left-side menu, section ", strong("Descriptives"), ".", 
       br(), 
-      "Choose the mean, standard deviation, and sample size for each group.", 
+      "Choose the mean and sample size for each group, and the common standard deviation.", 
       br(), br(), 
-      "The result of running a classic independent samples $t$-test is shown below:", 
+      "Here is the outcome from running a frequentist two-sided independent samples $t$-test:", 
       br(), br()
     )
     
@@ -459,7 +460,7 @@ server <- function(input, output, session) {
       "reject the null hypothesis that the population group means are equal to each other.",
       br(), br(),
       "There are a lot of misconceptions related to NHST in general and to the $p$-value in particular (refs). Just to mention a few examples, do observe that all the following interpretations of the $p$-value are ", em("incorrect:"), HTML(renderMarkdown(text = "- The probability of \\$\\mathcal{H}_0\\$ is equal to \\$p\\$.\n- The probability of \\$\\mathcal{H}_1\\$ is equal to \\$(1-p)\\$.\n- A nonsignificant difference (i.e., \\$p>\\alpha\\$) implies that there is no group mean difference.\n- If the result is significant (i.e., \\$p<\\alpha\\$), then probability of a Type I error is equal to \\$\\alpha\\$.")), 
-      "Also because of all these misconceptions, valid alternatives to the $p$-value have been entertained. One such alternative is, precisely, the ", em("Bayes factor"), "."
+      "Also because of all these misconceptions, valid alternatives to the $p$-value have been entertained. One such alternative is, precisely, the ", em("Bayes factor"), ".", br(), br()
     )
     
     tagList(br(),
@@ -492,7 +493,8 @@ server <- function(input, output, session) {
       HTML(renderMarkdown(text = "1. We need to choose a _prior distribution_ for each parameter (here we have two parameters: The standardized effect size \\$\\delta\\$ and the common groups standard deviation \\$\\sigma\\$). A prior distribution allocates probability to each possible parameter value, irrespective of what the observed data are. This may be done taking various things into account, for example:\n 2. We need to compute a weighted sum of the probability of the observed data at each combination of parameter values. The weights for each parameter are determined by the prior distributions.")), 
       "The quantity $p(D|\\mathcal{H}_i)$, for $i=0, 1$, is known as the ", em("marginal likelihood"), " of the observed data under $\\mathcal{H}_i$.", 
       br(), 
-      "'Marginal' means 'across all possible parameter values', with weights given by the prior distributions."
+      "'Marginal' means 'across all possible parameter values', with weights given by the prior distributions.", 
+      br(), br()
     )
     
     tagList(h3(strong("The Bayes factor")), 
@@ -529,8 +531,8 @@ server <- function(input, output, session) {
       br(), 
       "So, if the results indicate that the posterior probability of $\\mathcal{H}_0$ is equal to 40% (and therefore the posterior probability of $\\mathcal{H}_1$ is equal to 60%), then the posterior odds equal $\\frac{p(\\mathcal{H}_0|D)}{p(\\mathcal{H}_1|D)} = \\frac{.4}{.6} = \\frac{2}{3}$. In this case, the odds are 2-to-3 in favor of $\\mathcal{H}_1$, after considering the data.", 
       br(), br(), 
-      "The Bayes factor indicates how a rational agent (i.e., one who adheres to basic axioms of probability) updates her relative belief on each hypothesis in light of the observed data. For example, $BF_{01}=5$ means that, ", em("irrespective of the prior odds"), ", one must revise his or her initial relative belief by a factor of 5-to-1 in favor of $\\mathcal{H}_0$."
-    
+      "The Bayes factor indicates how a rational agent (i.e., one who adheres to basic axioms of probability) updates her relative belief on each hypothesis in light of the observed data. For example, $BF_{01}=5$ means that, ", em("irrespective of the prior odds"), ", one must revise his or her initial relative belief by a factor of 5-to-1 in favor of $\\mathcal{H}_0$.", 
+      br(), br()
     )
     
     tagList(h3(strong("The Bayes factor")), 
@@ -666,7 +668,7 @@ server <- function(input, output, session) {
   
   # Run t-test:
   ttest.res <- reactive({
-    t.test.summ(input$mean1, input$mean2, input$sd.common, input$sd.common, input$n1, input$n2)
+    t.test.summ(input$mean1, input$mean2, input$sdcommon, input$n1, input$n2)
   })
   
   # t-test result:
@@ -680,8 +682,9 @@ server <- function(input, output, session) {
     ) 
     colnames(tab) <- c("\\text{Mean difference}", "\\text{$t$}", "\\text{df}", "\\text{$p$-value}", "\\text{Test decision}")
     
-    LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1), 
-                             digits = c(0, 3, 3, if (ttest.res()$parameter - round(ttest.res()$parameter) < 1e-12) 0 else 3, 3, 3)), 
+    LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1)
+                             # , digits = c(0, 3, 3, if (ttest.res()$parameter - round(ttest.res()$parameter) < 1e-12) 0 else 3, 3, 3)
+                             ), 
                       floating                   = FALSE,
                       tabular.environment        = "array",
                       comment                    = FALSE,
@@ -1244,7 +1247,7 @@ server <- function(input, output, session) {
   })
   
   output$kim.out.topic5.df1 <- renderUI({
-    cohen.d <- round((input$mean1 - input$mean2) / sqrt((input$sd.common + input$sd.common)/2), 2)
+    cohen.d <- round((input$mean1 - input$mean2) / sqrt((input$sdcommon + input$sdcommon)/2), 2)
     tab <- data.frame(
       BF(), 
       cohen.d
@@ -1284,10 +1287,10 @@ server <- function(input, output, session) {
     N.supp <- seq(50, 5000, by = 50)
     
     # BF per sample size:
-    t.test.summ <- function(m1=.1, m2=0, sd1=1, sd2=1, n1, n2)
+    t.test.summ <- function(m1=.1, m2=0, sd=1, n1, n2)
     {
-      group1 <- scale(1:n1) * sd1 + m1
-      group2 <- scale(1:n2) * sd2 + m2
+      group1 <- scale(1:n1) * sd + m1
+      group2 <- scale(1:n2) * sd + m2
       t.test(x = group1, y = group2)
     }
     BF.val <- rep(NA, length(N.supp))
