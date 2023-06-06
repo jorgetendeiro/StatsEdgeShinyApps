@@ -58,7 +58,8 @@ ui <- fluidPage(
   tags$style(HTML("
                   .tabbable > .nav > li > a                  {background-color: #C0C0C0; color:white; width: 10VW;}
                   .tabbable > .nav > li[class=active]    > a {background-color: #005E3C; color:white; width: 10VW; font-weight: bold}
-                  ")),
+                  "), 
+             HTML(".not_bold label {font-weight:normal;}")),
   
   titlePanel("Learning about the Bayes factor!"),
   
@@ -66,58 +67,58 @@ ui <- fluidPage(
     
     sidebarPanel(
       h3(strong("Descriptives")), 
+      h4("Group A"), 
       fluidRow(
-        column(width = 6, align = "left", 
-               h4("Group A"), 
-               
-               tags$div(class = "inline", 
-                        numericInput(inputId = "mean1",
-                                     label   = "Mean:",
-                                     min     = -10,
-                                     max     = 10,
-                                     value   = 0, 
-                                     step    = 0.1, 
-                                     width = "50%"), 
-                        numericInput(inputId = "sd1",
-                                     label   = "SD:",
-                                     min     = 0,
-                                     max     = NA,
-                                     value   = 1, 
-                                     step    = 0.1, 
-                                     width = "50%"), 
-                        numericInput(inputId = "n1",
-                                     label   = "N:",
-                                     min     = 5,
-                                     max     = 50,
-                                     value   = 30, 
-                                     width = "50%")
-               )
+        column(6, align = "left", 
+               div(numericInput(inputId = "mean1",
+                              label   = em("Mean:"),
+                              min     = -10,
+                              max     = 10,
+                              value   = 0, 
+                              step    = 0.1, 
+                              width = "100%"), class = "not_bold")
         ), 
-        column(width = 6, align = "left", 
-               h4("Group B"), 
-               tags$div(class = "inline", 
-                        numericInput(inputId = "mean2",
-                                     label   = "Mean:",
-                                     min     = -10,
-                                     max     = 10,
-                                     value   = .2, 
-                                     step    = 0.1, 
-                                     width   = "50%"), 
-                        numericInput(inputId = "sd2",
-                                     label   = "SD:",
+        column(6, align = "left", 
+               div(numericInput(inputId = "n1",
+                            label   = em("Sample size:"),
+                            min     = 5,
+                                     max     = 50,
+                                     value   = 30, 
+                                     width = "100%"), class = "not_bold")
+        )
+      ), 
+      h4("Group B"), 
+      fluidRow(
+        column(6, align = "left", 
+               div(numericInput(inputId = "mean2",
+                                label   = em("Mean:"),
+                                min     = -10,
+                                max     = 10,
+                                value   = 0, 
+                                step    = 0.1, 
+                                width = "100%"), class = "not_bold")
+        ), 
+        column(6, align = "left", 
+               div(numericInput(inputId = "n2",
+                                label   = em("Sample size:"),
+                                min     = 5,
+                                max     = 50,
+                                value   = 30, 
+                                width = "100%"), class = "not_bold")
+        )
+      ), 
+      fluidRow(
+        column(3), 
+        column(6, align = "left", 
+                        numericInput(inputId = "sd.common",
+                                     label   = h4("Common standard deviation"),
                                      min     = 0,
                                      max     = NA,
                                      value   = 1, 
                                      step    = 0.1, 
-                                     width   = "50%"), 
-                        numericInput(inputId = "n2",
-                                     label   = "N:",
-                                     min     = 5,
-                                     max     = 50,
-                                     value   = 30, 
-                                     width   = "50%")
-               )
-        )
+                                     width = "100%")
+        ), 
+        column(3)
       ), 
       hr(style = "border-top: 2px solid #005E3C;"), 
       h3(strong("Bayesian test")), 
@@ -175,20 +176,20 @@ ui <- fluidPage(
                          status   = "success", 
                          shape    = "round", 
                          fill     = TRUE), 
-      hr(style = "border-top: 2px solid #005E3C;"), 
-      h3(strong("Frequentist test")), 
-      fluidRow(
-        column(width = 12, 
-               tags$div(class = "inline", 
-                        numericInput(inputId = "alpha",
-                                     label   = "Sig. level:",
-                                     min     = 0,
-                                     max     = 1, 
-                                     step    = .01, 
-                                     value   = .05, 
-                                     width   = "100%"))
-        )
-      ), 
+      # hr(style = "border-top: 2px solid #005E3C;"), 
+      # h3(strong("Frequentist test")), 
+      # fluidRow(
+      #   column(width = 12, 
+      #          tags$div(class = "inline", 
+      #                   numericInput(inputId = "alpha",
+      #                                label   = "Sig. level:",
+      #                                min     = 0,
+      #                                max     = 1, 
+      #                                step    = .01, 
+      #                                value   = .05, 
+      #                                width   = "100%"))
+      #   )
+      # ), 
       width = 4
     ), 
     
@@ -225,8 +226,15 @@ ui <- fluidPage(
                  br(), 
                  conditionalPanel("input.intro == 'intro.topic1'", uiOutput("introduction1")), 
                  conditionalPanel("input.intro == 'intro.topic2'", uiOutput("introduction2a")), 
-                 conditionalPanel("input.intro == 'intro.topic2'", uiOutput("ttest")), 
+                 conditionalPanel("input.intro == 'intro.topic2'", fluidRow(
+                   align = "left", 
+                   column(4, align = "left", 
+                          tags$style(type = "text/css", ".irs-grid-pol.small {height: 0px;}"), 
+                          sliderInput("alpha", "Sig. level:", min = .001, max = 0.2, value = .05, step = .01, width = '100%')), 
+                   column(8)
+                 )), 
                  conditionalPanel("input.intro == 'intro.topic2'", plotOutput("ttest.crit")), 
+                 conditionalPanel("input.intro == 'intro.topic2'", uiOutput("ttest")), 
                  conditionalPanel("input.intro == 'intro.topic2'", uiOutput("introduction2b")), 
                  conditionalPanel("input.intro == 'intro.topic3'", uiOutput("introduction3")), 
                  conditionalPanel("input.intro == 'intro.topic4'", uiOutput("introduction4")), 
@@ -271,13 +279,6 @@ ui <- fluidPage(
                  fluidRow(uiOutput("BF.formula2"), align = "center"), 
                  plotOutput("BFplot2")
         ),
-        # tabPanel("Classic t-test", 
-        #          br(), 
-        #          # uiOutput("ttest"), 
-        #          br(), 
-        #          h5(strong("Interpretation")), 
-        #          withMathJax(uiOutput("freqint1"))
-        # ),
         tabPanel("Keep in mind",
                  br(), 
                  h5("Below is a list of important things to keep in mind when interpreting the Bayes factor."),
@@ -413,7 +414,14 @@ server <- function(input, output, session) {
   
   output$introduction2a <- renderUI({
     outtext <- paste0(
-      "Running a classic NHST independent samples $t$-test leads to the following output (Group A: mean $=", round(input$mean1, 3), "$, SD $=", round(input$sd1, 3), "$, $N=", input$n1, "$; Group B: mean $=", round(input$mean2, 3), "$, SD $=", round(input$sd2, 3), "$, $N=", input$n2, "$):"
+      "First let's get some data!", 
+      br(), 
+      "Go to the left-side menu, section ", strong("Descriptives"), ".", 
+      br(), 
+      "Choose the mean, standard deviation, and sample size for each group.", 
+      br(), br(), 
+      "The result of running a classic independent samples $t$-test is shown below:", 
+      br(), br()
     )
     
     tagList(h3(strong("Null hypothesis significance testing (NHST)")), 
@@ -658,7 +666,7 @@ server <- function(input, output, session) {
   
   # Run t-test:
   ttest.res <- reactive({
-    t.test.summ(input$mean1, input$mean2, input$sd1, input$sd2, input$n1, input$n2)
+    t.test.summ(input$mean1, input$mean2, input$sd.common, input$sd.common, input$n1, input$n2)
   })
   
   # t-test result:
@@ -667,12 +675,13 @@ server <- function(input, output, session) {
       input$mean1 - input$mean2, 
       ttest.res()$statistic, 
       ttest.res()$parameter, 
-      if (round(ttest.res()$p.value, 3) >= .001) ttest.res()$p.value else "<.001"
+      if (round(ttest.res()$p.value, 3) >= .001) ttest.res()$p.value else "<.001", 
+      if (ttest.res()$p.value <= input$alpha) "\\text{Reject $\\mathcal{H}_0$}" else "\\text{Fail to reject $\\mathcal{H}_0$}"
     ) 
-    colnames(tab) <- c("\\text{Mean difference}", "\\text{$t$}", "\\text{df}", "\\text{$p$-value}")
+    colnames(tab) <- c("\\text{Mean difference}", "\\text{$t$}", "\\text{df}", "\\text{$p$-value}", "\\text{Test decision}")
     
     LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1), 
-                             digits = c(0, 3, 3, if (ttest.res()$parameter - round(ttest.res()$parameter) < 1e-12) 0 else 3, 3)), 
+                             digits = c(0, 3, 3, if (ttest.res()$parameter - round(ttest.res()$parameter) < 1e-12) 0 else 3, 3, 3)), 
                       floating                   = FALSE,
                       tabular.environment        = "array",
                       comment                    = FALSE,
@@ -1235,7 +1244,7 @@ server <- function(input, output, session) {
   })
   
   output$kim.out.topic5.df1 <- renderUI({
-    cohen.d <- round((input$mean1 - input$mean2) / sqrt((input$sd1 + input$sd2)/2), 2)
+    cohen.d <- round((input$mean1 - input$mean2) / sqrt((input$sd.common + input$sd.common)/2), 2)
     tab <- data.frame(
       BF(), 
       cohen.d
