@@ -15,7 +15,11 @@ t.test.summ <- function(m1, m2, sd, n1, n2)
 {
   group1 <- scale(1:n1) * sd + m1
   group2 <- scale(1:n2) * sd + m2
-  t.test(x = group1, y = group2, var.equal = TRUE)
+  # t.test(x = group1, y = group2, var.equal = TRUE)
+  t      <- (m1 - m2) / (sd * sqrt(1/n1 + 1/n2))
+  p      <- 2 * pt(abs(t), n1 + n2 - 2, lower.tail = FALSE)
+  df     <- n1 + n2 - 2
+  c(t = t, df = df, p = p)
 }
 # Load the functions allowing to compute the Bayes factors:
 source("R_scripts/BayesFactors.R")
@@ -110,13 +114,13 @@ ui <- fluidPage(
       fluidRow(
         column(3), 
         column(6, align = "left", 
-                        numericInput(inputId = "sdcommon",
-                                     label   = h4("Common standard deviation"),
+                        div(numericInput(inputId = "sdcommon",
+                                     label   = em("Standard deviation:"),
                                      min     = 0,
                                      max     = NA,
                                      value   = 1, 
                                      step    = 0.1, 
-                                     width = "100%")
+                                     width = "100%"), class = "not_bold")
         ), 
         column(3)
       ), 
@@ -125,29 +129,29 @@ ui <- fluidPage(
       fluidRow(
         column(width = 6, 
                setSliderColor(c("#DCA559", "#DCA559"), c(1, 2)),
-               sliderInput(inputId = "priorprob0", 
-                           label   = "Prior probability H0:", 
+               div(sliderInput(inputId = "priorprob0", 
+                           label   = em("Prior probability of $\\mathcal{H}_0$:"), 
                            min     = 0, 
                            max     = 100, 
                            value   = 50, 
                            post    = "%", 
                            ticks   = FALSE, 
-                           step    = 5)), 
+                           step    = 5), class = "not_bold")), 
         column(width = 6, 
-               sliderInput(inputId = "priorprob1", 
-                           label   = "Prior probability H1:", 
+               div(sliderInput(inputId = "priorprob1", 
+                           label   = em("Prior probability of $\\mathcal{H}_1$:"), 
                            min     = 0, 
                            max     = 100, 
                            value   = 50, 
                            post    = "%", 
                            ticks   = FALSE, 
-                           step    = 5))
+                           step    = 5), class = "not_bold"))
       ), 
       br(), 
       fluidRow(
         column(width = 4, 
-               prettyRadioButtons(inputId  = "prior",
-                                  label    = "Prior:", 
+               div(prettyRadioButtons(inputId  = "prior",
+                                  label    = em("Prior:"), 
                                   choices  = list("Cauchy" = "cauchy", "Normal" = "normal", "t-Student" = "t.student"), 
                                   selected = "cauchy", 
                                   inline   = FALSE, 
@@ -155,7 +159,7 @@ ui <- fluidPage(
                                   status   = "success", 
                                   shape    = "round", 
                                   fill     = TRUE
-               )
+               ), class = "not_bold")
         ), 
         column(width = 8, 
                fluidRow(
@@ -166,8 +170,8 @@ ui <- fluidPage(
         )
       ), 
       br(),
-      prettyRadioButtons(inputId  = "BF10.01",
-                         label    = "Bayes Factor:", 
+      div(prettyRadioButtons(inputId  = "BF10.01",
+                         label    = em("Bayes Factor:"), 
                          choices  = list("BF10" = "BF10", 
                                          "BF01" = "BF01"), 
                          selected = "BF10", 
@@ -175,7 +179,7 @@ ui <- fluidPage(
                          width    = "100%", 
                          status   = "success", 
                          shape    = "round", 
-                         fill     = TRUE), 
+                         fill     = TRUE), class = "not_bold"), 
       # hr(style = "border-top: 2px solid #005E3C;"), 
       # h3(strong("Frequentist test")), 
       # fluidRow(
@@ -447,16 +451,16 @@ server <- function(input, output, session) {
       "In significance testing, we decide to reject $\\mathcal{H}_0$ when the $p$-value is smaller than $\\alpha$ (the result is 'statistically significant') and we fail to reject $\\mathcal{H}_0$ otherwise (the result is not statistically significant).", 
       br(), 
       "In this case, the test result is ",
-      if (ttest.res()$p.value > input$alpha) "not ",
+      if (ttest.res()["p"] > input$alpha) "not ",
       "statistically significant at $", round(100*(input$alpha), 3), "\\%$ significance level ($t = ",
-      round(ttest.res()$statistic, 3),
+      round(ttest.res()["t"], 3),
       "$, df $ = ",
-      if (ttest.res()$parameter - round(ttest.res()$parameter) < 1e-12) round(ttest.res()$parameter, 0) else round(ttest.res()$parameter, 3), "$, $p ",
-      if (round(ttest.res()$p.value, 3) <= .001) "< .001" else paste0("=", round(ttest.res()$p.value, 3)),
+      if (ttest.res()["df"] - round(ttest.res()["df"]) < 1e-12) round(ttest.res()["df"], 0) else round(ttest.res()["df"], 3), "$, $p ",
+      if (round(ttest.res()["p"], 3) <= .001) "< .001" else paste0("=", round(ttest.res()["p"], 3)),
       "$).", 
       br(), 
       "We ",
-      if (round(ttest.res()$p.value, 3) > input$alpha) "fail to ",
+      if (round(ttest.res()["p"], 3) > input$alpha) "fail to ",
       "reject the null hypothesis that the population group means are equal to each other.",
       br(), br(),
       "There are a lot of misconceptions related to NHST in general and to the $p$-value in particular (refs). Just to mention a few examples, do observe that all the following interpretations of the $p$-value are ", em("incorrect:"), HTML(renderMarkdown(text = "- The probability of \\$\\mathcal{H}_0\\$ is equal to \\$p\\$.\n- The probability of \\$\\mathcal{H}_1\\$ is equal to \\$(1-p)\\$.\n- A nonsignificant difference (i.e., \\$p>\\alpha\\$) implies that there is no group mean difference.\n- If the result is significant (i.e., \\$p<\\alpha\\$), then probability of a Type I error is equal to \\$\\alpha\\$.")), 
@@ -674,16 +678,16 @@ server <- function(input, output, session) {
   # t-test result:
   output$ttest <- renderUI({
     tab <- data.frame(
-      input$mean1 - input$mean2, 
-      ttest.res()$statistic, 
-      ttest.res()$parameter, 
-      if (round(ttest.res()$p.value, 3) >= .001) ttest.res()$p.value else "<.001", 
-      if (ttest.res()$p.value <= input$alpha) "\\text{Reject $\\mathcal{H}_0$}" else "\\text{Fail to reject $\\mathcal{H}_0$}"
+      (input$mean1 - input$mean2)/input$sdcommon, 
+      ttest.res()["t"], 
+      ttest.res()["df"], 
+      if (round(ttest.res()["p"], 3) >= .001) ttest.res()["p"] else "<.001", 
+      if (ttest.res()["p"] <= input$alpha) "\\text{Reject $\\mathcal{H}_0$}" else "\\text{Fail to reject $\\mathcal{H}_0$}"
     ) 
-    colnames(tab) <- c("\\text{Mean difference}", "\\text{$t$}", "\\text{df}", "\\text{$p$-value}", "\\text{Test decision}")
+    colnames(tab) <- c("\\text{Std. mean difference}", "\\text{$t$}", "\\text{df}", "\\text{$p$-value}", "\\text{Test decision}")
     
-    LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1)
-                             # , digits = c(0, 3, 3, if (ttest.res()$parameter - round(ttest.res()$parameter) < 1e-12) 0 else 3, 3, 3)
+    LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1), 
+                             digits = c(0, 3, 3, if (ttest.res()["df"] - round(ttest.res()["df"]) < 1e-12) 0 else 3, 3, 3)
                              ), 
                       floating                   = FALSE,
                       tabular.environment        = "array",
@@ -711,39 +715,39 @@ server <- function(input, output, session) {
   })
   
   output$ttest.crit <- renderPlot({
-    xlimupp <- max(5, ceiling(abs(ttest.res()$statistic))+2)
+    xlimupp <- max(5, ceiling(abs(ttest.res()["t"]))+2)
     par(mar = c(3, 1, 2, 1))
-    curve(dt(x, ttest.res()$parameter), from = -xlimupp, to = xlimupp, n = 1024, 
-          ylim = c(0, 1.1 * dt(0, ttest.res()$parameter)), 
+    curve(dt(x, ttest.res()["df"]), from = -xlimupp, to = xlimupp, n = 1024, 
+          ylim = c(0, 1.1 * dt(0, ttest.res()["df"])), 
           bty = "n", yaxt = "n", ylab = "", lwd = 2, xaxt = "n", xlab = "", yaxs = "i", 
-          main = paste0("Sampling distribution assuming H0 is true = Student's t (", round(ttest.res()$parameter, 3), ")"), 
+          main = paste0("Sampling distribution assuming H0 is true = Student's t (", round(ttest.res()["df"], 3), ")"), 
           col = "#005E3C")
     axis(1, seq(-xlimupp, xlimupp, 1))
     mtext("Test statistic", 1, 2)
-    x.supp.crit <- seq(qt(1-input$alpha/2, ttest.res()$parameter), xlimupp, length.out = 101)
+    x.supp.crit <- seq(qt(1-input$alpha/2, ttest.res()["df"]), xlimupp, length.out = 101)
     polygon(x = c(x.supp.crit, rev(x.supp.crit)),
-            y = c(rep(1.*dt(0, ttest.res()$parameter), 101), rep(0, 101)),
+            y = c(rep(1.*dt(0, ttest.res()["df"]), 101), rep(0, 101)),
             col = "#FF000005", border = NA)
     polygon(x = c(-x.supp.crit, rev(-x.supp.crit)),
-            y = c(rep(1.*dt(0, ttest.res()$parameter), 101), rep(0, 101)),
+            y = c(rep(1.*dt(0, ttest.res()["df"]), 101), rep(0, 101)),
             col = "#FF000005", border = NA)
     polygon(x = c(x.supp.crit, rev(x.supp.crit)), 
-            y = c(dt(x.supp.crit, ttest.res()$parameter), rep(0, 101)), 
+            y = c(dt(x.supp.crit, ttest.res()["df"]), rep(0, 101)), 
             col = "#FF00004D", border = NA)
     polygon(x = c(-x.supp.crit, rev(-x.supp.crit)), 
-            y = c(dt(-x.supp.crit, ttest.res()$parameter), rep(0, 101)), 
+            y = c(dt(-x.supp.crit, ttest.res()["df"]), rep(0, 101)), 
             col = "#FF00004D", border = NA)
-    x.supp <- seq(abs(ttest.res()$statistic), xlimupp, length.out = 101)
+    x.supp <- seq(abs(ttest.res()["t"]), xlimupp, length.out = 101)
     polygon(x = c(x.supp, rev(x.supp)), 
-            y = c(dt(x.supp, ttest.res()$parameter), rep(0, 101)), 
+            y = c(dt(x.supp, ttest.res()["df"]), rep(0, 101)), 
             col = "#DCA55966", border = NA, density = 10, lwd = 4)
     polygon(x = c(-x.supp, rev(-x.supp)), 
-            y = c(dt(-x.supp, ttest.res()$parameter), rep(0, 101)), 
+            y = c(dt(-x.supp, ttest.res()["df"]), rep(0, 101)), 
             col = "#DCA55966", border = NA, density = 10, lwd = 4)
-    abline(v = ttest.res()$statistic, lwd = 2, col = "#DCA559")
-    text(ttest.res()$statistic, 1.05*dt(0, ttest.res()$parameter), paste0("t = ", round(ttest.res()$statistic, 3)), cex = 1.4, pos = if (ttest.res()$statistic < 0) 2 else 4)
-    text(if (ttest.res()$statistic < 0) xlimupp else -xlimupp, 1.05*dt(0, ttest.res()$parameter), paste0("Critical region (probability = ", input$alpha, ")"), 
-         pos = if (ttest.res()$statistic < 0) 2 else 4, cex = 1.4, col = "#F00000")
+    abline(v = ttest.res()["t"], lwd = 2, col = "#DCA559")
+    text(ttest.res()["t"], 1.05*dt(0, ttest.res()["df"]), paste0("t = ", round(ttest.res()["t"], 3)), cex = 1.4, pos = if (ttest.res()["t"] < 0) 2 else 4)
+    text(if (ttest.res()["t"] < 0) xlimupp else -xlimupp, 1.05*dt(0, ttest.res()["df"]), paste0("Critical region (probability = ", input$alpha, ")"), 
+         pos = if (ttest.res()["t"] < 0) 2 else 4, cex = 1.4, col = "#F00000")
   })
   
   
@@ -754,11 +758,11 @@ server <- function(input, output, session) {
   BF <- reactive({
     # Compute BF01: 
     BF.tmp <- switch(input$prior, 
-                     "cauchy"    = B01(ttest.res()$statistic, input$n1, input$n2, 
+                     "cauchy"    = B01(ttest.res()["t"], input$n1, input$n2, 
                                        cauchy.prior, location = location.c(), scale = scale.c()), 
-                     "normal"    = B01(ttest.res()$statistic, input$n1, input$n2, 
+                     "normal"    = B01(ttest.res()["t"], input$n1, input$n2, 
                                        normal.prior, location = location.n(), scale = scale.n()), 
-                     "t.student" = B01(ttest.res()$statistic, input$n1, input$n2, 
+                     "t.student" = B01(ttest.res()["t"], input$n1, input$n2, 
                                        tstude.prior, location = location.t(), scale = scale.t(), df = df.t()))
     
     # names(BF.tmp) <- "BF01"
@@ -789,7 +793,7 @@ server <- function(input, output, session) {
   
   
   output$Intro.BF.df1 <- renderText({
-    paste0("Bayes factor and information on the ", switch(input$prior, "cauchy"="Cauchy", "normal"="Normal", "t.student"="t-Student"), " prior (location, scale", if (input$prior == "t.student") ", df):" else ")"
+    paste0("Bayes factor and information on the ", switch(input$prior, "cauchy"="Cauchy", "normal"="Normal", "t.student"="t-Student"), " prior (location, scale", if (input$prior == "t.student") ", df)" else ")"
     )
   })
   
@@ -805,7 +809,8 @@ server <- function(input, output, session) {
                             "cauchy"    = c(paste0("BF_{", substr(input$BF10.01, 3, 4), "}"), "\\text{Location}", "\\text{Scale}"), 
                             "normal"    = c(paste0("BF_{", substr(input$BF10.01, 3, 4), "}"), "\\text{Location}", "\\text{Scale}"), 
                             "t.student" = c(paste0("BF_{", substr(input$BF10.01, 3, 4), "}"), "\\text{Location}", "\\text{Scale}", "\\text{df}"))
-    LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1),), 
+    LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1),
+                             digits = c(0, rep(3, ncol(tab)))), 
                       floating                   = FALSE,
                       tabular.environment        = "array",
                       comment                    = FALSE,
@@ -845,7 +850,8 @@ server <- function(input, output, session) {
     # addtorow$pos     <- list(-1)
     # addtorow$command <- "\\multicolumn\\{6\\}\\{l\\}\\{abc\\}\\\\"
     
-    LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1),),
+    LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1),
+                             digits = c(0, rep(3, ncol(tab)))),
                       floating                   = FALSE,
                       tabular.environment        = "array",
                       comment                    = FALSE,
@@ -1287,16 +1293,16 @@ server <- function(input, output, session) {
     N.supp <- seq(50, 5000, by = 50)
     
     # BF per sample size:
-    t.test.summ <- function(m1=.1, m2=0, sd=1, n1, n2)
-    {
-      group1 <- scale(1:n1) * sd + m1
-      group2 <- scale(1:n2) * sd + m2
-      t.test(x = group1, y = group2)
-    }
+    # t.test.summ <- function(m1=.1, m2=0, sd=1, n1, n2)
+    # {
+    #   group1 <- scale(1:n1) * sd + m1
+    #   group2 <- scale(1:n2) * sd + m2
+    #   t.test(x = group1, y = group2)
+    # }
     BF.val <- rep(NA, length(N.supp))
     for (i in 1:length(N.supp))
     {
-      t.tmp     <- t.test.summ(n1 = N.supp[i], n2 = N.supp[i])$statistic
+      t.tmp     <- t.test.summ(.1, 0, 1, N.supp[i], N.supp[i])["t"]
       BF.tmp    <- suppressWarnings({ B01(t.tmp, N.supp[i], N.supp[i], normal.prior, scale = 1) })
       BF.val[i] <- 1 / BF.tmp
     }
@@ -1578,66 +1584,66 @@ server <- function(input, output, session) {
   # Decide with parameter input to show depending on the chosen prior:
   output$prior.param1 <- renderUI({
     if (input$prior == 'cauchy') {
-      numericInput(inputId  = "location.c", 
-                   label    = "Location:", 
+      div(numericInput(inputId  = "location.c", 
+                   label    = em("Location:"), 
                    min      = -5,
                    max      = 5,
                    value    = 0, 
                    step     = 0.1, 
-                   width    = "100%")
+                   width    = "100%"), class = "not_bold")
     } else if (input$prior == 'normal') {
-      numericInput(inputId = "location.n",
-                   label   = "Location:",
+      div(numericInput(inputId = "location.n",
+                   label   = em("Location:"),
                    min     = -5,
                    max     = 5,
                    value   = 0, 
                    step    = 0.1, 
-                   width   = "100%")
+                   width   = "100%"), class = "not_bold")
     } else {
-      numericInput(inputId = "location.t",
-                   label   = "Location:",
+      div(numericInput(inputId = "location.t",
+                   label   = em("Location:"),
                    min     = -5,
                    max     = 5,
                    value   = 0, 
                    step    = 0.1, 
-                   width   = "100%")
+                   width   = "100%"), class = "not_bold")
     }
   })
   output$prior.param2 <- renderUI({
     if (input$prior == 'cauchy') {
-      numericInput(inputId  = "scale.c", 
-                   label    = "Scale:", 
+      div(numericInput(inputId  = "scale.c", 
+                   label    = em("Scale:"), 
                    min     = 0,
                    max     = 5,
                    value   = 0.707, 
                    step    = 0.1, 
-                   width   = "100%")
+                   width   = "100%"), class = "not_bold")
     } else if (input$prior == 'normal') {
-      numericInput(inputId  = "scale.n", 
-                   label    = "Scale:", 
+      div(numericInput(inputId  = "scale.n", 
+                   label    = em("Scale:"), 
                    min     = 0,
                    max     = 5,
                    value   = 1, 
                    step    = 0.1, 
-                   width   = "100%")
+                   width   = "100%"), class = "not_bold")
     } else {
-      numericInput(inputId  = "scale.t", 
-                   label    = "Scale:", 
+      div(numericInput(inputId  = "scale.t", 
+                   label    = em("Scale:"), 
                    min      = 0,
                    max      = 5,
                    value    = 1, 
                    step     = 0.1, 
-                   width    = "100%")
+                   width    = "100%"), class = "not_bold")
     }
   })
   output$prior.param3 <- renderUI({
     if (input$prior == 't.student') {
-      numericInput(inputId = "df.t",
-                   label   = "df:",
+      div(numericInput(inputId = "df.t",
+                   label   = em("df:"),
                    min     = 1,
                    max     = 50,
                    value   = 1, 
-                   width   = "100%")
+                   width   = "100%"), class = "not_bold")
     }
   })
   
