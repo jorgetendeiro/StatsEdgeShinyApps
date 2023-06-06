@@ -211,7 +211,9 @@ ui <- fluidPage(
                    label = "",
                    choices = c("1. Background"                                  = "intro.topic1", 
                                "2. Null hypothesis significance testing (NHST)" = "intro.topic2", 
-                               "3. The Bayes factor"                            = "intro.topic3"
+                               "3. The Bayes factor \u2013 Definition 1"        = "intro.topic3", 
+                               "4. The Bayes factor \u2013 Definition 2"        = "intro.topic4", 
+                               "5. Supporting $\\mathcal{H}_0$"                 = "intro.topic5"
                    ),
                    direction = "vertical", 
                    status = "mycolor", 
@@ -226,7 +228,21 @@ ui <- fluidPage(
                  conditionalPanel("input.intro == 'intro.topic2'", uiOutput("ttest")), 
                  conditionalPanel("input.intro == 'intro.topic2'", plotOutput("ttest.crit")), 
                  conditionalPanel("input.intro == 'intro.topic2'", uiOutput("introduction2b")), 
-                 conditionalPanel("input.intro == 'intro.topic3'", uiOutput("introduction3"))
+                 conditionalPanel("input.intro == 'intro.topic3'", uiOutput("introduction3")), 
+                 conditionalPanel("input.intro == 'intro.topic4'", uiOutput("introduction4")), 
+                 conditionalPanel("input.intro == 'intro.topic5'", uiOutput("introduction5")), 
+                 conditionalPanel("input.intro == 'intro.topic5'", fluidRow(
+                   align = "center", 
+                   column(3),
+                   column(6, align = "center", sliderInput("Ncommon.BF.p", "Sample size:", min = 50, max = 5000, value = 50, step = 50, 
+                                                           animate = animationOptions( interval = 100 ), width = '100%')), 
+                   column(3)
+                 )), 
+                 conditionalPanel("input.intro == 'intro.topic5'", fluidRow(
+                   column(1),
+                   column(5, align = 'center', plotOutput("intro.topic5.plot1")), 
+                   column(5, align = 'center', plotOutput("intro.topic5.plot2")), 
+                   column(1)))
         ), 
         tabPanel("Bayesian t-test", 
                  br(), 
@@ -280,7 +296,7 @@ ui <- fluidPage(
                                "4. Bayes factors cannot establish the presence or absence of an effect!" = "topic4", 
                                "5. Bayes factors are not effect sizes!"                                  = "topic5", 
                                "6. Inconclusive evidence is not evidence of absence!"                    = "topic6", 
-                               "7. Using description labels is not problem-free!"                          = "topic7"
+                               "7. Using description labels is not problem-free!"                        = "topic7"
                    ),
                    direction = "vertical", 
                    status = "mycolor", 
@@ -450,24 +466,30 @@ server <- function(input, output, session) {
   
   output$introduction3 <- renderUI({
     outtext <- paste0(
+      "Let's denote the observed data by $D$.", 
+      br(), br(), 
       "While the $p$-value is defined as 
-      $$p\\text{-value} = p(\\text{observed data or more extreme data}|\\mathcal{H}_0),$$ 
+      $$p\\text{-value} = p(D\\text{ or more extreme data}|\\mathcal{H}_0),$$ 
       the Bayes factor is defined as follows: 
-      $$BF_{01} = \\frac{p(\\text{observed data}|\\mathcal{H}_0)}{p(\\text{observed data}|\\mathcal{H}_1)}.$$ 
+      $$BF_{01} = \\frac{p(D|\\mathcal{H}_0)}{p(D|\\mathcal{H}_1)}.$$ 
       Two immediately apparent differences between the $p$-value and the Bayes factor are clear:", 
       HTML(renderMarkdown(text = "- While the \\$p\\$-value only entertains what happens in case \\$\\mathcal{H}_0\\$ were true, the Bayes factor entertains both \\$\\mathcal{H}_0\\$ and \\$\\mathcal{H}_1\\$.\n - While the \\$p\\$-value involves 'imaginary data' (data _more extreme than the observed data_), the Bayes factor only relies on the observed data.")), 
-      "Therefore, the Bayes factor offers a means of comparing the predictive ability of both hypotheses.", 
+      "The Bayes factor offers a means of comparing the ", em("predictive ability"), " of both hypotheses.", 
       br(), 
       "$BF_{01}$ indicates how many times are the observed data more likely under $\\mathcal{H}_0$ in comparison to $\\mathcal{H}_1$.", 
       br(), 
-      "$BF_{10} = \\frac{p(\\text{observed data}|\\mathcal{H}_1)}{p(\\text{observed data}|\\mathcal{H}_0)}$, on the other hand, is equal to $\\frac{1}{BF_{01}}$ and it indicates how many times are the observed data more likely under $\\mathcal{H}_1$ in comparison to $\\mathcal{H}_0$.", 
+      "$BF_{10} = \\frac{p(D|\\mathcal{H}_1)}{p(D|\\mathcal{H}_0)}$, on the other hand, is equal to $\\frac{1}{BF_{01}}$ and it indicates how many times are the observed data more likely under $\\mathcal{H}_1$ in comparison to $\\mathcal{H}_0$.", 
       br(), br(), 
       "The formula to compute either probability of the Bayes factor is not simple. It involves two steps:", 
       HTML(renderMarkdown(text = "1. We need to choose a _prior distribution_ for each parameter (here we have two parameters: The standardized effect size \\$\\delta\\$ and the common groups standard deviation \\$\\sigma\\$). A prior distribution allocates probability to each possible parameter value, irrespective of what the observed data are. This may be done taking various things into account, for example:\n 2. We need to compute a weighted sum of the probability of the observed data at each combination of parameter values. The weights for each parameter are determined by the prior distributions.")), 
-      "The quantity $p(D|\\,mathcal{H}_i)$, for $i=0, 1$, is known as the ", em("marginal likelihood"), " of the observed data under $\\mathcal{H}_i$. 'Marginal' means 'across all possible parameter values', with weights dictated by the prior distributions."
+      "The quantity $p(D|\\mathcal{H}_i)$, for $i=0, 1$, is known as the ", em("marginal likelihood"), " of the observed data under $\\mathcal{H}_i$.", 
+      br(), 
+      "'Marginal' means 'across all possible parameter values', with weights given by the prior distributions."
     )
     
     tagList(h3(strong("The Bayes factor")), 
+            br(), 
+            h4(strong("Definition 1: As a ratio of marginal likelihoods")), 
             br(), 
             HTML(outtext), 
             tags$script(HTML(js)),
@@ -477,6 +499,143 @@ server <- function(input, output, session) {
             )
     )
   })
+  
+  output$introduction4 <- renderUI({
+    outtext <- paste0(
+      "The Bayes factor can be derived from the ", tagList("", a("Bayes theorem", href="https://en.wikipedia.org/wiki/Bayes%27_theorem", target="_blank")), ", $$\\overset{\\text{posterior}}{\\overbrace{p(\\mathcal{H}_i|D)}} = \\frac{\\overset{\\text{prior}}{\\overbrace{p(\\mathcal{H}_i)}}\\ \\overset{\\text{likelihood}}{\\overbrace{p(D|\\mathcal{H}_i)}}}{\\underset{\\text{marginal likelihood}}{\\underbrace{p(D)}}}, \\text{ for } i=0, 1.$$ To proceed, we need to assume that $\\mathcal{H}_0$ and $\\mathcal{H}_1$ are the only hypotheses of interest. In this sense, we act as if $\\mathcal{H}_0$ and $\\mathcal{H}_1$ reflect the only two models that could have generated the observed data. A consequence is that the probabilities of both hypotheses are complementary, that is, they sum to 1. This is true both ", em("a priori"), " (i.e., before observing the data: $p(\\mathcal{H}_0)+p(\\mathcal{H}_1)=1$) and ", em("a posteriori"), " (i.e., after observing the data: $p(\\mathcal{H}_0|D)+p(\\mathcal{H}_1|D)=1$).", 
+      br(), br(), 
+      "Dividing the equations member by member when $i=0$ and $i=1$ we have that 
+      $$\\frac{p(\\mathcal{H}_0|D)}{p(\\mathcal{H}_1|D)} = \\frac{p(\\mathcal{H}_0)p(D|\\mathcal{H}_0) \\bigg/ p(D)}{p(\\mathcal{H}_1)p(D|\\mathcal{H}_1) \\bigg/ p(D)}.$$ Do note that, due to the fact that we are conditional on $\\mathcal{H}_0$ and $\\mathcal{H}_1$ only, the marginal likelihood, $p(D)$, is the same for both hypotheses (namely, $p(D)=p(\\mathcal{H}_0)p(D|\\mathcal{H}_0) + p(\\mathcal{H}_1)p(D|\\mathcal{H}_1)$; this is due to the ", tagList("", a("law of total probability", href="https://en.wikipedia.org/wiki/Law_of_total_probability", target="_blank")), "). We can therefore drop the two $p(D)$ terms in the equation above. Simplifying and rearranging the remaining terms leads to 
+      $$\\underset{\\text{prior odds}}{\\underbrace{\\frac{p(\\mathcal{H}_0)}{p(\\mathcal{H}_1)}}} \\times \\textcolor{#DCA559}{\\underset{BF_{01}}{\\underbrace{\\frac{p(D|\\mathcal{H}_0)}{p(D|\\mathcal{H}_1)}}}} = \\underset{\\text{posterior odds}}{\\underbrace{\\frac{p(\\mathcal{H}_0|D)}{p(\\mathcal{H}_1|D)}}}.$$
+      We just recovered Definition 1: The Bayes factor as a ratio of two marginal likelihoods.", 
+      br(), 
+      "But now the Bayes factor can also be interpreted as ", em("the factor updating the prior odds into the posterior odds."), 
+      br(), br(), 
+      "The prior odds reflect the relative initial belief on either hypothesis.", 
+      br(), 
+      "For example, equal initial belief implies that the prior odds equal $\\frac{p(\\mathcal{H}_0)}{p(\\mathcal{H}_1)} = 1$.", 
+      br(), 
+      "Or, strong initial belief in $\\mathcal{H}_0$, say 80% for $\\mathcal{H}_0$ and 20% for $\\mathcal{H}_1$, implies that the prior odds equal $\\frac{p(\\mathcal{H}_0)}{p(\\mathcal{H}_1)} = \\frac{.8}{.2} = 4$. In this case, the odds are 4-to-1 in favor of $\\mathcal{H}_0$, before considering the data.", 
+      br(), br(), 
+      "Likewise, the posterior odds reflect the relative belief on either hypothesis, ", em("after"), " looking at the data.", 
+      br(), 
+      "So, if the results indicate that the posterior probability of $\\mathcal{H}_0$ is equal to 40% (and therefore the posterior probability of $\\mathcal{H}_1$ is equal to 60%), then the posterior odds equal $\\frac{p(\\mathcal{H}_0|D)}{p(\\mathcal{H}_1|D)} = \\frac{.4}{.6} = \\frac{2}{3}$. In this case, the odds are 2-to-3 in favor of $\\mathcal{H}_1$, after considering the data.", 
+      br(), br(), 
+      "The Bayes factor indicates how a rational agent (i.e., one who adheres to basic axioms of probability) updates her relative belief on each hypothesis in light of the observed data. For example, $BF_{01}=5$ means that, ", em("irrespective of the prior odds"), ", one must revise his or her initial relative belief by a factor of 5-to-1 in favor of $\\mathcal{H}_0$."
+    
+    )
+    
+    tagList(h3(strong("The Bayes factor")), 
+            br(), 
+            h4(strong("Definition 2: As an updating factor")), 
+            br(), 
+            HTML(outtext), 
+            tags$script(HTML(js)),
+            tags$script(
+              async="",
+              src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+            )
+    )
+  })
+  
+  output$introduction5 <- renderUI({
+    outtext <- paste0(
+      "NHBT and its Bayes factor is not just a simple replacement to NHST and its $p$-value. The Bayes factor and the $p$-value are different statistical quantities, with different properties and allowing for different types of conclusions. For users of the $p$-value who are now trying to transition towards the Bayes factor, this cannot be stressed enough: ", em("The Bayes factor must be learned and appreciated by its own merits and pitfals."), 
+      br(), br(), 
+      "Here we highlight one clear difference between the $p$-value and the Bayes factor:", 
+      br(), 
+      HTML("&nbsp;&nbsp;&nbsp;"), em("Bayes factors allow providing relative support in favor of \\$\\mathcal{H}_0\\$, whereas \\$p\\$-values do not."), 
+      br(), br(), 
+      "Let's assume that $\\mathcal{H}_0$ is ", em("true"), ".", 
+      br(), br(), 
+      "It is ", tagList("", a("well known", href="https://statproofbook.github.io/P/pval-h0.html", target="_blank")), " that, in this case, the $p$-value is uniformly distributed in the $(0,1)$ interval, across repeated sampling. In other words, the p-value is equally likely to assume any value between 0 and 1. At significance level $\\alpha$, it is therefore expected that the test will turn out non-significant (i.e., $p>\\alpha$) with probability $(1-\\alpha)$, irrespective of the sample size.", 
+      br(), 
+      "And in case the observed means are ", em("exactly"), " equal to each other, then the $p$-value will be exactly equal to 1, thus the test outcome will always be non-significant.", 
+      br(), 
+      "Unfortunately, we can not derive any conclusion from a non-significant test result. By definition, the $p$-value is a probability that is computed assuming that $\\mathcal{H}_0$ is true. We cannot both ", em("assume"), " that $\\mathcal{H}_0$ is true and then, conditional on this assumption, derive ", em("support"), " in favor of $\\mathcal{H}_0$!", 
+      br(), br(), 
+      "The Bayes factor is different from the $p$-value in this regard. ", em("For a given alternative hypothesis $\\mathcal{H}_1$"), ", large values of $BF_{01}$ do provide relative evidence favoring $\\mathcal{H}_0$ over ", em("the particular alternative hypothesis $\\mathcal{H}_1$"), " that was used in the testing procedure.", 
+      br(), br(), 
+      "The app below gives an idea about how the Bayes factor varies, in an idealized setting. The two group means are fixed and ", em("exactly"), " equal to each other at each sample size value (rather arbitrarily we used a common mean of 0 for both groups). Both group standard deviations are equal to 1, and we use a standard normal prior distribution of the effect size $\\delta$. You can see how the $p$-value and the Bayes factor behave as the sample size increases."
+    )
+    
+    tagList(h3(strong("Supporting $\\mathcal{H}_0$")), 
+            br(), 
+            HTML(outtext), 
+            tags$script(HTML(js)),
+            tags$script(
+              async="",
+              src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+            )
+    )
+  })
+  
+  # Compute things to render the plot in intro.topic 5:
+  {# Common sample size:
+    N.supp <- seq(50, 5000, by = 50)
+    
+    # BF and p-value per sample size:
+    BF.val.it5 <- rep(NA, length(N.supp))
+    p.val.it5  <- rep(NA, length(N.supp))
+    for (i in 1:length(N.supp))
+    {
+      group1     <- scale(rnorm(N.supp[i]))
+      group2     <- scale(rnorm(N.supp[i]))
+      # 
+      ttest.tmp     <- t.test(group1, group2)
+      t.tmp         <- ttest.tmp$statistic
+      BF.val.it5[i] <- suppressWarnings({ B01(t.tmp, N.supp[i], N.supp[i], normal.prior, scale = 1) })
+      p.val.it5[i]  <- ttest.tmp$p.value
+    }
+  }
+  
+  output$intro.topic5.plot1 <- renderPlot({
+    par(mar = c(4, 5.5, .5, 1))
+    plot(N.supp[1:(input$Ncommon.BF.p/50)], BF.val.it5[1:(input$Ncommon.BF.p/50)], type = "l", las = 1, bty = "n", yaxs = "i", xaxs = "i", 
+         xlim = c(50, 5000), ylim = c(0, 50), col = "#005E3C", lwd = 2,
+         xlab = "", ylab = "", yaxt = "n", xaxt = "n")
+    axis(1, at = seq(0, 5000, by = 1000), las = 1)
+    axis(2, at = seq(0, 50, 10), las = 1)
+    mtext("Sample size per group", 1, 2.5)
+    mtext(expression("BF"["01"] * " (log scale)"), 2, 3)
+  })
+  
+  output$intro.topic5.plot2 <- renderPlot({
+    par(mar = c(4, 5.5, .5, 1))
+    plot(N.supp[1:(input$Ncommon.BF.p/50)], p.val.it5[1:(input$Ncommon.BF.p/50)], type = "l", las = 1, bty = "n", yaxs = "i", xaxs = "i",
+         xlim = c(50, 5000), ylim = c(0, 1.01), col = "#005E3C", lwd = 2,
+         xlab = "", ylab = "", yaxt = "n", xaxt = "n")
+    axis(1, at = seq(0, 5000, by = 1000), las = 1)
+    axis(2, at = seq(0, 1, by = .2), las = 1)
+    mtext("Sample size per group", 1, 2.5)
+    mtext(expression(italic("p") * "-value"), 2, 3)
+  })
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   
@@ -1126,7 +1285,7 @@ server <- function(input, output, session) {
     for (i in 1:length(N.supp))
     {
       t.tmp     <- t.test.summ(n1 = N.supp[i], n2 = N.supp[i])$statistic
-      BF.tmp    <- suppressWarnings({ B01(t.tmp, N.supp[i], N.supp[i], normal.prior) })
+      BF.tmp    <- suppressWarnings({ B01(t.tmp, N.supp[i], N.supp[i], normal.prior, scale = 1) })
       BF.val[i] <- 1 / BF.tmp
     }
   }
