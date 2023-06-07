@@ -1,0 +1,6 @@
+<ul>
+<li>$p(\mathcal{H}_0)$ and $p(\mathcal{H}_1)$ are the so-called <em>prior probabilities</em> of $\mathcal{H}_0$ and $\mathcal{H}_1$, respectively.<br> These probabilities reflect our initial belief on either hypothesis, before we consider the observed data.<br>Because $\mathcal{H}_0$ and $\mathcal{H}_1$ are the only hypotheses of interest, these prior probabilities are complementary, that is, they sum to 1: $p(\mathcal{H}_0)+p(\mathcal{H}_1)=1$.<br><br></li>
+<li>$p(D|\mathcal{H}_0)$ and $p(D|\mathcal{H}_1)$ are the <em>marginal likelihoods</em> of the data under either hypothesis.<br> These values reflect the probability of the observed data under either hypothesis.</li>
+<li>$p(D)$ is known as the <em>evidence</em>. It represents the probability of the observed data across both hypothesis (namely, $p(D)=p(\mathcal{H}_0)p(D|\mathcal{H}_0) + p(\mathcal{H}_1)p(D|\mathcal{H}_1)$; this is due to the</li>
+</ul>
+

@@ -2,6 +2,8 @@
 title: "The Bayes factor"
 output: 
     learnr::tutorial:
+        # progressive: true
+        # allow_skip: false
         css: "mystyle.css"
 runtime: shiny_prerendered
 description: "Learn about the Bayes factor!"
@@ -610,11 +612,36 @@ deployQs[[2]] <- c(questions.1[[2]], questions.2[[2]], questions.3[[2]],
 deployQs
 ```
 
+<!-- ## {data-progressive=TRUE} -->
 
+<!-- ```{r deploy1} -->
+<!-- tmp <- c(questions.1[[2]], questions.2[[2]], questions.3[[2]], -->
+<!--                   questions.4[[2]], questions.5[[2]], questions.6[[2]], questions.7[[2]]) |> sample() -->
+<!-- deployQs1      <- deployQs -->
+<!-- deployQs1[[2]] <- tmp[1] -->
+<!-- deployQs1 -->
+<!-- ``` -->
 
+<!-- ## {data-progressive=TRUE} -->
 
+<!-- ```{r deploy2} -->
+<!-- deployQs1[[2]] <- tmp[2:4] -->
+<!-- deployQs1 -->
+<!-- ``` -->
 
+<!-- ## {data-progressive=TRUE} -->
 
+<!-- ```{r deploy3} -->
+<!-- deployQs1[[2]] <- tmp[5] -->
+<!-- deployQs1 -->
+<!-- ``` -->
+
+<!-- ## {data-progressive=TRUE} -->
+
+<!-- ```{r deploy4} -->
+<!-- deployQs1[[2]] <- tmp[6] -->
+<!-- deployQs1 -->
+<!-- ``` -->
 
 
 
