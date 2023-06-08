@@ -20,7 +20,7 @@ output$kim.out <- renderUI({
            outtext <- paste0("A Bayes factor close to 1 implies that the observed data are about equally likely unde either $\\mathcal{H}_0$ or $\\mathcal{H}_1$.", br(), "In other words, the observed data do not help to distinguish between the predictive ability of the two competing hypotheses.", br(), br(), "In such cases, we should not make the mistake of concluding that there is evidence in favor of the 'no effect' null model. The fallacy would be of reasoning something like this: 'Since the test outcome is inconclusive, then maybe the null hypothesis holds after all'. The common fallacy of drawing support in favor of $\\mathcal{H}_0$ from a nonsignificant frequentist test result is a good analogy here.", br(), br(), "In short: From inconclusive evidence (i.e., Bayes factor of about 1) one should not infer that there is evidence of absence (i.e., $\\mathcal{H}_0$ is more supported than $\\mathcal{H}_1$).")
          }, 
          topic7 = {
-           outtext <- paste0("The Bayes factor is just a non-negative real number. How to ", em("interpret"), " this number is not trivial.", br(), "For example, what values of $BF_{10}$ should be considered as weak, moderate, or strong evidence in favor of $\\mathcal{H}_1$ over $\\mathcal{H}_0$?", br(), br(), "Several qualitative classification systems do exist; below are three commonly used grading systems.")
+           outtext <- paste0("The Bayes factor is just a non-negative real number. How to ", em("interpret"), " this number is not trivial.", br(), "For example, what values of $BF_{10}$ should be considered as weak, moderate, or strong evidence in favor of $\\mathcal{H}_1$ over $\\mathcal{H}_0$?", br(), br(), "Several qualitative classification systems do exist; below you can choose among three popular options:")
          }
   )
   tagList(
@@ -343,7 +343,7 @@ output$kim.out.topic5.plot2 <- renderPlot({
 
 
 
-output$kim.out.topic7.df1 <- renderUI({
+kim.out.topic7.df1 <- reactive({
   tab <- data.frame(
     c("1 - 3.2", "3.2 - 10", "10 - 31.6", "31.6 - 100", "> 100"), 
     c("\\text{Not worth more than a bare mention}", "\\text{Substantial}", "\\text{Strong}", "\\text{Very strong}", "\\text{Decisive}")
@@ -365,18 +365,10 @@ output$kim.out.topic7.df1 <- renderUI({
                     include.rownames           = FALSE, 
                     add.to.row                 = addtorow
   )
-  tagList(
-    #withMathJax(),
-    HTML(paste0("$$", LaTeXtab, "$$"))#,
-    # tags$script(HTML(js)),
-    # tags$script(
-    #   async="", 
-    #   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-    # )
-  )
+  LaTeXtab
 })
 
-output$kim.out.topic7.df2 <- renderUI({
+kim.out.topic7.df2 <- reactive({
   tab <- data.frame(
     c("1 - 3", "3 - 20", "20 - 150", "> 150"), 
     c("\\text{Not worth more than a bare mention}", "\\text{Positive}", "\\text{Strong}", "\\text{Very strong}")
@@ -398,18 +390,10 @@ output$kim.out.topic7.df2 <- renderUI({
                     include.rownames           = FALSE, 
                     add.to.row                 = addtorow
   )
-  tagList(
-    #withMathJax(),
-    HTML(paste0("$$", LaTeXtab, "$$"))#,
-    # tags$script(HTML(js)),
-    # tags$script(
-    #   async="", 
-    #   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-    # )
-  )
+  LaTeXtab
 })
 
-output$kim.out.topic7.df3 <- renderUI({
+kim.out.topic7.df3 <- reactive({
   tab <- data.frame(
     c("1 - 3", "3 - 10", "10 - 30", "30-100", "> 100"), 
     c("\\text{Anecdotal}", "\\text{Moderate}", "\\text{Strong}", "\\text{Very strong}", "\\text{Extreme}")
@@ -431,16 +415,26 @@ output$kim.out.topic7.df3 <- renderUI({
                     include.rownames           = FALSE, 
                     add.to.row                 = addtorow
   )
+  LaTeXtab
+})
+
+output$kim.out.topic7.dfchosen <- renderUI({
+  LaTeXtab <- switch(input$BFClassTbl, 
+                     "Jeffreys (1961)"            = kim.out.topic7.df1(), 
+                     "Kass and Raftery (1995)"    = kim.out.topic7.df2(), 
+                     "Lee and Wagenmakers (2014)" = kim.out.topic7.df3())
+  
   tagList(
     #withMathJax(),
-    HTML(paste0("$$", LaTeXtab, "$$")),
-    # tags$script(HTML(js)),
-    # tags$script(
-    #   async="", 
-    #   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-    # )
+    HTML(paste0("$$", LaTeXtab, "$$")), 
+    tags$script(HTML(js)),
+    tags$script(
+      async="",
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    )
   )
 })
+
 
 output$kim.out.topic7.df4 <- renderUI({
   BF.tmp   <- if (BF() > 1) BF() else 1/BF()
@@ -450,34 +444,11 @@ output$kim.out.topic7.df4 <- renderUI({
   BF.lab2  <- if (BF.tmp <= 3) BF.labs2[1] else if (BF.tmp <= 20) BF.labs2[2] else if (BF.tmp <= 150) BF.labs2[3] else BF.labs2[4]
   BF.labs3 <- c("\\text{Anecdotal}", "\\text{Moderate}", "\\text{Strong}", "\\text{Very strong}", "\\text{Extreme}")
   BF.lab3  <- if (BF.tmp <= 3) BF.labs3[1] else if (BF.tmp <= 10) BF.labs3[2] else if (BF.tmp <= 30) BF.labs3[3] else if (BF.tmp <= 100) BF.labs3[4] else  BF.labs3[5]
-  # tab <- data.frame(BF(), BF.lab1, BF.lab2, BF.lab3)
-  # colnames(tab) <- c(paste0("BF_{", substr(input$BF10.01, 3, 4), "}"), 
-  #                    c("\\text{Jeffreys (1961)}", "\\text{Kass and Raftery (1955)}", "\\text{Lee and Wagenmakers (2014)}")
-  # )
-  # # addtorow         <- list()
-  # # addtorow$pos     <- list(-1)
-  # # addtorow$command <- "\\multicolumn\\{6\\}\\{l\\}\\{abc\\}\\\\"
-  # 
-  # LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1), digits=c(0, 3, 0, 0, 0)),
-  #                   floating                   = FALSE,
-  #                   tabular.environment        = "array",
-  #                   comment                    = FALSE,
-  #                   print.results              = TRUE,
-  #                   sanitize.colnames.function = identity,
-  #                   sanitize.text.function     = identity,
-  #                   include.rownames           = FALSE,  
-  #                   add.to.row                 = list(
-  #                     pos     = as.list(-1),
-  #                     command = as.vector(c("\\rowcolor{lightgray}"), mode = "character") # \\rowcolor{#005E3C1A}
-  #                   )
-  # )
-  tab           <- data.frame(c("\\text{Jeffreys (1961)}", "\\text{Kass and Raftery (1955)}", "\\text{Lee and Wagenmakers (2014)}"), 
+
+  tab      <- data.frame(c("\\text{Jeffreys (1961)}", "\\text{Kass and Raftery (1955)}", "\\text{Lee and Wagenmakers (2014)}"), 
                               c(BF.lab1, BF.lab2, BF.lab3)
   )
   colnames(tab) <- c("\\text{Classification}", paste0("BF_{", substr(input$BF10.01, 3, 4), "} = ", round(BF(), 3)))
-  # addtorow         <- list()
-  # addtorow$pos     <- list(-1)
-  # addtorow$command <- "\\multicolumn\\{6\\}\\{l\\}\\{abc\\}\\\\"
   
   LaTeXtab <- print(xtable(tab, align = c("l", "l", "l")),
                     floating                   = FALSE,

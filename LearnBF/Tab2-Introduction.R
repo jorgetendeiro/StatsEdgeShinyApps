@@ -29,7 +29,7 @@ output$ttest <- renderUI({
   include.rownames           = FALSE,
   add.to.row                 = list(
     pos     = as.list(c(-1)),
-    command = "\\rowcolor{lightgray}"
+    command = "\\rowcolor{#005E3C1A}"
   )
   )
   
@@ -331,31 +331,94 @@ output$introduction4b <- renderUI({
   )
 })
 
-output$introduction5 <- renderUI({
+output$introduction5a <- renderUI({
   outtext <- paste0(
-    "The formula to compute either probability of the Bayes factor, $p(D|\\mathcal{H}_i)$ for $i=0, 1$, is not simple.", 
+    "The formula to compute either probability of the Bayes factor, $p(D|\\mathcal{H}_i)$ for $i=0, 1$, is not simple (see Box below for the technical details).", 
     br(), 
     "It involves two steps:", 
     br(), br(), 
-    HTML(renderMarkdown(text = "1. We need to choose a _prior distribution_ for each parameter (here we have two parameters: The standardized effect size \\$\\delta\\$ and the common groups standard deviation \\$\\sigma\\$).<br> A prior distribution allocates probability to each possible parameter value, irrespective of what the observed data are. This may be done taking various things into account, for example: Current knowledge, differing scientific perspectives (e.g., skeptical or liberal), or known parameter constraints (e.g., avoid negative variance values 0).\n 2. For each hypothesis, we need to compute a weighted sum of the probability of the observed data at each combination of parameter values. The weights for each parameter are determined by the prior distributions.")), 
-    "The quantity $p(D|\\mathcal{H}_i$ is known as the ", em("marginal likelihood"), " of the observed data under $\\mathcal{H}_i$.", 
+    HTML(renderMarkdown(text = "1. We need to choose a <font color=\"#DCA559\"><b>prior distribution</b></font> for each parameter (here we have two parameters: The standardized effect size \\$\\delta\\$ and the common groups standard deviation \\$\\sigma\\$).<br> A prior distribution allocates probability to each possible parameter value, irrespective of what the observed data are.<br> This may be done taking various things into account, for example: Current knowledge, differing scientific perspectives (e.g., skeptical or liberal), or known parameter constraints (e.g., avoid negative variance values 0).<br><br>\n 2. For each hypothesis, we need to compute a weighted sum of the probability of the observed data at each combination of parameter values.<br> The weights are determined by the prior distributions.")), 
+    "The quantity $p(D|\\mathcal{H}_i)$ is known as the ", em("marginal likelihood"), " of the observed data under $\\mathcal{H}_i$.", 
     br(), 
     "'Marginal' means 'across all possible parameter values', with weights given by the prior distributions.", 
     br(), br(), 
+    "At this point what is important to notice is that choosing prior distributions is not only important; it is crucial.", 
+    br(), 
+    "Prior distributions are used directly in the computation of the Bayes factor.", 
+    br(), 
+    "Different prior distributions ultimately instantiate different hypotheses, and this will lead to different Bayes factor values.", 
+    br(), br(), 
+    "For this reason, it does not suffice to simply say that something like \"$\\mathcal{H}_1$ is the hypothesis that $\\delta\\not=0$\".", 
+    br(), 
+    "We must further specify, and report, how likely we think each value under $\\mathcal{H}_1$ may be.",
+    br(), 
+    "In other words, we ", em("must choose"), " prior distributions.",
+    br(), br(), 
     h4("Default priors"), 
-    "For the Bayesian independent samples $t$-test we have two paramaters under either hypothesis: The effect size $\\delta$ and the standard deviation $\\sigma$.", 
+    "Choosing a prior distribution for each parameter is not trivial. As explained above, we may take different things into account when choosing a prior",
+    br(), br(), 
+    "To make things easier, most software packages suggest seemingly sensible <font color=\"#DCA559\"><b>default priors</b></font>. Such priors are chosen by taking some idealized properties into consideration (often mathematical reasons). Whether such priors match the requirements of the researcher for each performed test is of course unknown. Only the researcher may be able to answer to such a question.", 
+    br(), br(), 
+    "We strongly advice that researchers consider the priors they are using. At a bare minimum, vizualizing the priors can be extremely insightful. We will do so below.",
     br(), 
-    "Since $\\mathcal{H}_0: \\delta=0$, there is really only one prior for $\\delta$ &#8212; The distribution assigning all probability to the $\\delta=0$ value.", 
+    "Let's discuss the options available for both parameters (standardized effect size $\\delta$ and the standard deviation $\\sigma$).", 
+    br(), br(),
+    h4(em("Prior for $\\delta$")), 
+    "Since $\\mathcal{H}_0: \\delta=0$, there is really only one possible prior for $\\delta$ &#8212; The distribution assigning all probability to the $\\delta=0$ value.", 
+    br(), br(), 
+    "Choosing a prior for $\\delta$ under $\\mathcal{H}_1:\\delta\\not=0$ is a notoriously more difficult task. There is an infinity of possible distributions that we could choose from.", 
+    br(), br(), 
+    "On the left-hand side menu under ", strong("Bayesian test"), " we offer three possible priors for $\\delta$, based on the Cauchy, normal, and $t$-Student distribution families.", 
     br(), 
-    "Choosing a prior for $\\delta$ under $\\mathcal{H}_1:\\delta\\not=0$ is a notoriously more difficult task. There is an infinity of possible distributions that we could choose from. Due to this, some ", em("default"), " priors have been suggested for various testing settings. On the left-hand side menu under ", strong("Bayesian test"), " we offer three possible priors for $\\delta$, based on the Cauchy, normal, and $t$-Student distribution families. Try changing the distribution and their parameters and see how that affects the probability of each value of $\\delta$."
+    "Try changing the distribution and their parameters and see how that affects the probability of each value of $\\delta$."
   )
   
   tagList(h3(strong("Priors")), 
           br(), 
-          h4("Marginal likelihood"), 
+          h4("Marginal likelihoods"), 
           br(), 
           HTML(outtext), 
           br(), br(), 
+          tags$script(HTML(js)),
+          tags$script(
+            async="",
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+          )
+  )
+})
+
+output$introduction5b <- renderUI({
+  outtext <- paste0(
+    h4(em("Prior for $\\sigma$")), 
+    "Parameter $\\sigma$ is common to both hypotheses $\\mathcal{H}_0$ and $\\mathcal{H}_1$"
+  )
+  
+  tagList(HTML(outtext), 
+          br(), br(), 
+          tags$script(HTML(js)),
+          tags$script(
+            async="",
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+          )
+  )
+})
+
+output$introduction5c <- renderUI({
+  outtext <- paste0(
+    "The <font color=\"#DCA559\"><b>marginal likelihood</b></font> for $\\mathcal{H}_i$ is given by $$p(D|\\mathcal{H}_i) = \\int_{\\Theta_i}\\underbrace{p(D|\\theta_i,\\mathcal{H}_i)}_{\\text{likelihood}}\\,\\underbrace{p(\\theta_i|\\mathcal{H}_i)}_{\\text{prior}}d\\theta_i.$$ The first term is the ", em("likelihood function"), " (for the $t$-test, the normal distribution), evaluated for the observed data $D$.", 
+    br(), 
+    "The second term is the joint ", em("prior distribution"), " for all parameters from the likelihood function (for the Bayesian $t$-test, $\\delta$ and $\\sigma$). ", 
+    br(), 
+    "The parameters of the likelihood function are jointly denoted by vector $\\theta_i$. Thus, for this $t$-test in particular, $\\theta_i=(\\delta, \\sigma)$.", 
+    br(), 
+    "And finally, all possible values for the parameters (here, all possible parameter combinations $(\\delta, \\sigma)$) are denoted by $\\Theta_i$.",
+    br(), br(), 
+    "In simple terms, $p(D|\\mathcal{H}_i)$ is related to the probability of the observed data, taking into account all the uncertainty in the parameter values as dictated by the chosen prior distributions.", 
+    br(), br(), 
+    "$p(D|\\mathcal{H}_i)$ is actually a <font color=\"#DCA559\"><b>weighted average</b></font> of $p(D|\\theta_i,\\mathcal{H}_i)$, which is related to the probability of the observed data at each combination of parameter values, $\\theta_i$. The weights are determined by $p(\\theta_i|\\mathcal{H}_i)$, the prior distribution for the parameters."
+  )
+  
+  tagList(HTML(outtext), 
           tags$script(HTML(js)),
           tags$script(
             async="",
@@ -436,3 +499,72 @@ output$intro.topic6.plot2 <- renderPlot({
   mtext("Sample size per group", 1, 2.5)
   mtext(expression(italic("p") * "-value"), 2, 3)
 })
+
+output$intro.topic5.plot1 <- renderPlot({
+  layout(matrix(c(1, 2), 1, 2, byrow = TRUE))
+  
+  # Left plot:
+  par(mar = c(2, 4, 1.5, .5))
+  plot(NULL, xlim = c(0, 1), ylim = c(0, 1.05), ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", 
+       cex.axis = 2, main = expression("Prior for " * delta * "  under " * H[0]), cex.main = 1.5, font.main = 1)
+  axis(1, c(0, .5, 1), c("", "0", ""))
+  axis(2, c(0, 1), las = 1)
+  segments(.5, 0, .5, 1, lty = 2, col = "gray")
+  points(.5, 1, pch = 16, cex = 2, col = "#005E3C")
+  segments(0, 0, 1, 0, lty = 1, col = "#005E3C", lwd = 2)
+  points(.5, 0, pch = 21, cex = 2, bg = "white", col = "#005E3C")
+  mtext(expression(delta), 1, 1, at = .95, cex = 1.5)
+  mtext("Probability", 2, 2, cex = 1.5)
+  
+  # Right plot:
+  x.supp <- switch(input$prior,
+                   "cauchy"    = seq(floor(location.c() - 3.5*scale.c()), ceiling(location.c() + 3.5*scale.c()), length.out = 1024),
+                   "normal"    = seq(floor(location.n() - 3.5*scale.n()), ceiling(location.n() + 3.5*scale.n()), length.out = 1024),
+                   "t.student" = seq(floor(location.t() - 3.5*scale.t()), ceiling(location.t() + 3.5*scale.t()), length.out = 1024))
+  y      <- switch(input$prior, 
+                   "cauchy"    = dcauchy(x.supp, location.c(), scale.c()), 
+                   "normal"    = dnorm  (x.supp, location.n(), scale.n()), 
+                   "t.student" = dst    (x.supp, df.t(), location.t(), scale.t()))
+  
+  par(mar = c(2, 4, 1.5, .5))
+  plot(x.supp, y, xlim = c(min(x.supp), max(x.supp)), ylim = c(0, 1.2*max(y)), ylab = "", xlab = "", bty = "n",
+       las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", 
+       cex.main = 1.5, font.main = 1, 
+       main = switch(input$prior,
+                     "cauchy"    = expression("Prior for " * delta * "  under " * H[1] * " (Cauchy)"),
+                     "normal"    = expression("Prior for " * delta * "  under " * H[1] * " (Normal)"),
+                     "t.student" = expression("Prior for " * delta * "  under " * H[1] * " (" * italic(t) * "-Student)")))
+  axis(1, at = min(x.supp):max(x.supp))
+  mtext("Density", 2, 3, cex = 1.5)
+  polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
+  
+})
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

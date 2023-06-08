@@ -149,8 +149,8 @@ ui <- fluidPage(
       ), 
       br(), 
       div(prettyRadioButtons(inputId  = "prior",
-                             label    = em("Prior:"), 
-                             choices  = list("Cauchy" = "cauchy", "Normal" = "normal", "t-Student" = "t.student"), 
+                             label    = em("Prior for $\\delta$:"), 
+                             choices  = list("Cauchy" = "cauchy", "Normal" = "normal", "$t$-Student" = "t.student"), 
                              selected = "cauchy", 
                              inline   = TRUE, 
                              width    = "100%", 
@@ -166,8 +166,8 @@ ui <- fluidPage(
     br(),
       div(prettyRadioButtons(inputId  = "BF10.01",
                              label    = em("Bayes Factor:"), 
-                             choices  = list("BF10" = "BF10", 
-                                             "BF01" = "BF01"), 
+                             choices  = list("$BF_{10}$" = "BF10", 
+                                             "$BF_{01}$" = "BF01"), 
                              selected = "BF10", 
                              inline   = TRUE, 
                              width    = "100%", 
@@ -182,7 +182,7 @@ ui <- fluidPage(
       tabsetPanel(
         id = "maintabs", 
         type = "pills",
-        selected = "Introduction", ##### "Instructions", ##### "Keep in mind", ##### "Bayesian t-test",
+        selected = "Introduction", ##### "Bayesian t-test", ##### "Instructions", ##### "Keep in mind", 
         tabPanel("Instructions",
                  uiOutput("instructions")
         ),
@@ -227,7 +227,13 @@ ui <- fluidPage(
                  conditionalPanel("input.intro == 'intro.topic4'", h4(em("Box: How to derive the Bayes factor.")), div(style = "border-style: solid; border-color: #DCA559; padding: 10px; color: gray;",
                                                                        uiOutput("introduction4b"))), 
                  conditionalPanel("input.intro == 'intro.topic4'", br(), br()), 
-                 conditionalPanel("input.intro == 'intro.topic5'", uiOutput("introduction5")), 
+                 conditionalPanel("input.intro == 'intro.topic5'", uiOutput("introduction5a")), 
+                 conditionalPanel("input.intro == 'intro.topic5'", plotOutput("intro.topic5.plot1")), 
+                 conditionalPanel("input.intro == 'intro.topic5'", br(), br()),
+                 conditionalPanel("input.intro == 'intro.topic5'", uiOutput("introduction5b")), 
+                 conditionalPanel("input.intro == 'intro.topic5'", h4(em("Box: The marginal likelihood.")), div(style = "border-style: solid; border-color: #DCA559; padding: 10px; color: gray;",
+                                                                                                                       uiOutput("introduction5c"))), 
+                 conditionalPanel("input.intro == 'intro.topic5'", br(), br()),
                  conditionalPanel("input.intro == 'intro.topic6'", uiOutput("introduction6")), 
                  conditionalPanel("input.intro == 'intro.topic6'", fluidRow(
                    align = "center", 
@@ -244,13 +250,13 @@ ui <- fluidPage(
         ), 
         tabPanel("Bayesian t-test", 
                  br(), 
-                 h5(strong(textOutput("Intro.BF.df1"))), 
+                 h4("Bayes factor and the prior distribution for $\\delta$ under $\\mathcal{H}_1$"), 
                  uiOutput("BF.df1"), 
-                 br(), 
-                 h5(strong("Prior and posterior model probabilities")),
+                 br(), br(), 
+                 h4("Prior and posterior model probabilities"),
                  uiOutput("BF.df2"), 
-                 br(), 
-                 h5(strong("Interpretation 1")), 
+                 br(), br(), 
+                 h4("Interpretation 1"), 
                  withMathJax(uiOutput("BFint1")), 
                  fluidRow(align = 'center', 
                           column(3), 
@@ -263,11 +269,13 @@ ui <- fluidPage(
                                         }')), 
                                  tags$div(class = "verticalcenter", uiOutput("BF.formula1"))), 
                           column(3)),
-                 h5(strong("Interpretation 2")), 
+                 br(), br(), 
+                 h4("Interpretation 2"), 
                  withMathJax(uiOutput("BFint2")), 
                  br(), 
                  fluidRow(uiOutput("BF.formula2"), align = "center"), 
-                 plotOutput("BFplot2")
+                 plotOutput("BFplot2"), 
+                 br(), br()
         ),
         tabPanel("Keep in mind",
                  br(), 
@@ -317,9 +325,24 @@ ui <- fluidPage(
                    column(5, align = 'center', plotOutput("kim.out.topic5.plot2")), 
                    column(1))), 
                  conditionalPanel("input.keepinmind == 'topic5'", uiOutput("kim.out.topic5.part3")), 
-                 conditionalPanel("input.keepinmind == 'topic7'", fluidRow(column(4, uiOutput("kim.out.topic7.df1")),
-                                                                           column(4, uiOutput("kim.out.topic7.df2")),
-                                                                           column(4, uiOutput("kim.out.topic7.df3")))),
+                 # conditionalPanel("input.keepinmind == 'topic7'", fluidRow(column(4, uiOutput("kim.out.topic7.df1")),
+                 #                                                           column(4, uiOutput("kim.out.topic7.df2")),
+                 #                                                           column(4, uiOutput("kim.out.topic7.df3")))),
+                 
+                 
+                 conditionalPanel("input.keepinmind == 'topic7'", 
+                                  fluidRow(
+                                    column(4, selectInput("BFClassTbl", "Choose:", 
+                                                          choices = c("Jeffreys (1961)", 
+                                                                      "Kass and Raftery (1995)", 
+                                                                      "Lee and Wagenmakers (2014)"), 
+                                                          selected = "Kass and Raftery (1995)", width = '100%')
+                                    ), 
+                                    column(8, uiOutput("kim.out.topic7.dfchosen"))
+                                  )
+                 ), 
+                 
+                 
                  conditionalPanel("input.keepinmind == 'topic7'", uiOutput("kim.out.topic7.part2")), 
                  conditionalPanel("input.keepinmind == 'topic7'", uiOutput("kim.out.topic7.df4")),
                  conditionalPanel("input.keepinmind == 'topic7'", uiOutput("kim.out.topic7.part3"))
@@ -328,10 +351,6 @@ ui <- fluidPage(
         ), 
         tabPanel("Let's practice!", 
                  br(), 
-                 # tags$style(
-                 #   ".irs--shiny .irs-bar {border-top: 1px solid #428bca; border-bottom: 1px solid #428bca; background: #428bca;}"
-                 # ), 
-                 # setSliderColor("#DCA559", 1),
                  fluidRow( htmlOutput("practice") ), 
                  "abc")
       ),
@@ -464,6 +483,12 @@ server <- function(input, output, session) {
     updateTabsetPanel(session, "maintabs", "Bayesian t-test")
   })
   observeEvent(input$intro.tab4a, {
+    updateTabsetPanel(session, "maintabs", "Keep in mind")
+  })
+  observeEvent(input$intro.tab4b, {
+    updateTabsetPanel(session, "maintabs", "Keep in mind")
+  })
+  observeEvent(input$intro.tab4c, {
     updateTabsetPanel(session, "maintabs", "Keep in mind")
   })
   observeEvent(input$intro.tab5a, {
