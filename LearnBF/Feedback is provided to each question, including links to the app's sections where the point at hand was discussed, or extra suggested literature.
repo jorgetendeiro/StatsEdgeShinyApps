@@ -1,7 +1,0 @@
-<ul>
-<li>Read through the rest in this <strong>Introduction</strong>.<br> We start by running the very familiar two-sided independent samples $t$-test. We do so in order to start from familiar ground, and also to start highlighting on the similarities and differences between NHST and the $p$-value and their Bayesian counterparts (NHBT and the Bayes factor).<br> We then introduce the Bayes factor. The Bayes factor may be thought of in two complementary ways. We discuss each in turn.<br> We end the introduction by underlining some clear differences between the Bayes factor and the $p$-value. This is important, because the Bayes factor is not simply the ‘Bayesian $p$-value’.<br><br></li>
-<li>Proceed to tab <strong>Bayesian $t$-test</strong>.<br> Feel free to manipulate the data (left-hand side menu, <strong>Descriptives</strong>) and the various test options (left-hand side menu, <strong>Bayesian test</strong>), and see how that affects the various results displayed.<br><br></li>
-<li>Proceed to tab <strong>Keep in mind</strong>.<br> Here we highlight important ideas, especially pitfalls that one should avoid (ref).<br> We also provide some good examples that may be used as a reference.<br><br></li>
-<li>Proceed to tab <strong>Let’s practice!</strong>.<br> Test your knowledge by answering to a few questions.</li>
-</ul>
-

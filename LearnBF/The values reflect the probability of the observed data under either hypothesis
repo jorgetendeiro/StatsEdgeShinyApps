@@ -1,5 +1,0 @@
-<ul>
-<li>$p(\mathcal{H}_0)$ and $p(\mathcal{H}_1)$ are the so-called <em>prior probabilities</em> of $\mathcal{H}_0$ and $\mathcal{H}_1$, respectively.<br> These probabilities reflect our initial belief on either hypothesis, before we consider the observed data.</li>
-<li>$p(D|\mathcal{H}_0)$ and $p(D|\mathcal{H}_1)$ are the so-called likelihoods.</li>
-</ul>
-
