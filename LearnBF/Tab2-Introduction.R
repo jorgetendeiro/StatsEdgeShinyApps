@@ -29,7 +29,7 @@ output$ttest <- renderUI({
   include.rownames           = FALSE,
   add.to.row                 = list(
     pos     = as.list(c(-1)),
-    command = "\\rowcolor{#005E3C1A}"
+    command = "\\rowcolor{lightgray}"
   )
   )
   

@@ -69,7 +69,7 @@ output$BF.df1 <- renderUI({
                     include.rownames           = FALSE, 
                     add.to.row                 = list(
                       pos     = as.list(-1),
-                      command = "\\rowcolor{#005E3C1A}"
+                      command = "\\rowcolor{lightgray}"
                     )
   )
   tagList(
@@ -110,7 +110,7 @@ output$BF.df2 <- renderUI({
                     include.rownames           = FALSE,  
                     add.to.row                 = list(
                       pos     = as.list(-1),
-                      command = "\\rowcolor{#005E3C1A}"
+                      command = "\\rowcolor{lightgray}"
                     )
   )
   tagList(
