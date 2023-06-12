@@ -263,7 +263,7 @@ output$kim.out.topic5.part3 <- renderUI({
 })
 
 output$kim.out.topic5.df1 <- renderUI({
-  cohen.d <- round((input$mean1 - input$mean2) / sqrt((input$sdcommon + input$sdcommon)/2), 2)
+  cohen.d <- round((input$mean1 - input$mean2) / sqrt((((input$n1-1)*(input$sd1^2)+(input$n2-1)*(input$sd2^2)))/(input$n1+input$n2-2)), 2)
   tab <- data.frame(
     BF(), 
     cohen.d
@@ -312,9 +312,11 @@ output$kim.out.topic5.df1 <- renderUI({
   BF.val <- rep(NA, length(N.supp))
   for (i in 1:length(N.supp))
   {
-    t.tmp     <- t.test.summ(.1, 0, 1, N.supp[i], N.supp[i])["t"]
-    BF.tmp    <- suppressWarnings({ B01(t.tmp, N.supp[i], N.supp[i], normal.prior, scale = 1) })
-    BF.val[i] <- 1 / BF.tmp
+    t.tmp     <- t.test.summ(.1, 0, 1, 1, N.supp[i], N.supp[i])["t"]
+    reactive ({ 
+      BF.tmp    <- suppressWarnings({ B01(t.tmp, N.supp[i], N.supp[i], normal.prior, input$H1hyp, H1pointslide(), scale = 1) }) 
+      BF.val[i] <- 1 / BF.tmp()
+    })
   }
 }
 

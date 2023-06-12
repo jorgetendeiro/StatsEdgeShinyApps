@@ -6,11 +6,11 @@ BF <- reactive({
   # Compute BF01: 
   BF.tmp <- switch(input$prior, 
                    "cauchy"    = B01(ttest.res()["t"], input$n1, input$n2, 
-                                     cauchy.prior, location = location.c(), scale = scale.c()), 
+                                     cauchy.prior, input$H1hyp, H1pointslide(), location = location.c(), scale = scale.c()), 
                    "normal"    = B01(ttest.res()["t"], input$n1, input$n2, 
-                                     normal.prior, location = location.n(), scale = scale.n()), 
+                                     normal.prior, input$H1hyp, H1pointslide(), location = location.n(), scale = scale.n()), 
                    "t.student" = B01(ttest.res()["t"], input$n1, input$n2, 
-                                     tstude.prior, location = location.t(), scale = scale.t(), df = df.t()))
+                                     tstude.prior, input$H1hyp, H1pointslide(), location = location.t(), scale = scale.t(), df = df.t()))
   
   # names(BF.tmp) <- "BF01"
   if (input$BF10.01 == "BF10") {
@@ -44,44 +44,122 @@ post.odds <- reactive({
 })
 
 
-# output$Intro.BF.df1 <- renderText({
-#   paste0("Bayes factor and information on the ", switch(input$prior, "cauchy"="Cauchy", "normal"="Normal", "t.student"="t-Student"), " prior (location, scale", if (input$prior == "t.student") ", df)" else ")"
+output$BF.df1 <- function() {
+  if (input$H1hyp != "H1.point") 
+  {
+    # BF.tmp <- if (substr(input$BF10.01, 3, 4) == "10") paste0("$BF_{10}$") else paste0("$BF_{01}$")
+    BF.tmp <- paste0("$BF_{", substr(input$BF10.01, 3, 4), "}$")
+    
+    tab <- data.frame(
+      "$\\delta=0$", 
+      "vs", 
+      switch(input$H1hyp, 
+             "H1.diff0"    = "$\\delta\\not=0$", 
+             "H1.larger0"  = "$\\delta>0$", 
+             "H1.smaller0" = "$\\delta<0$", 
+             "H1.point"    = paste0("$\\delta=", input$H1pointslide, "$")),
+      "", 
+      switch(input$prior, 
+             "cauchy"    = paste0("$\\text{Cauchy}", if (input$H1hyp == 'H1.larger0') '^+' else if (input$H1hyp == 'H1.smaller0') '^-', "$"), 
+             "normal"    = "$\\text{Normal}$", 
+             "t.student" = "$\\text{$t$-Student}$"),
+      switch(input$prior, 
+             "cauchy"    = paste0("$", location.c(), "$"), 
+             "normal"    = paste0("$", location.n(), "$"), 
+             "t.student" = paste0("$", location.t(), "$")), 
+      switch(input$prior, 
+             "cauchy"    = paste0("$", scale.c(), "$"), 
+             "normal"    = paste0("$", scale.n(), "$"), 
+             "t.student" = paste0("$", scale.t(), "$")), 
+      "", 
+      paste0("$", formatC(round(BF(), 3), 3, format = "f"), "$"),
+      stringsAsFactors = FALSE, 
+      check.names = FALSE, 
+      row.names = NULL
+    )
+    colnames(tab) <- c("$\\mathcal{H}_0$", 
+                       " ", 
+                       "$\\mathcal{H}_1$", 
+                       "$\\hspace{5mm}$", 
+                       "$\\text{Distribution}$", 
+                       "$\\text{Location}$", 
+                       "$\\text{Scale}$", 
+                       "$\\hspace{5mm}$", 
+                       paste0("$BF_{", substr(input$BF10.01, 3, 4), "}$"))
+    tab %>%
+      knitr::kable("html", escape = FALSE, align = 'c', table.attr='class="myTable"') %>%
+      add_header_above(c("$\\text{Hypotheses}$" = 3, "", "$\\text{Prior for }\\delta\\text{ under }\\mathcal{H}_1$" = 3, "", "$\\text{Bayes factor}$" = 1), bold = FALSE, extra_css = "border-bottom: 1px solid black;", line = FALSE, escape = TRUE) %>% 
+      row_spec(0, extra_css = "border-bottom: 1px solid; border-top: 2px solid;", background = "#005E3C1A") %>%
+      row_spec(1, extra_css = "border-bottom: 2px solid; border-top: 1px solid;") %>% 
+      # row_spec(0, bold = TRUE, background = "#005E3C1A") %>% 
+      kable_styling(full_width = FALSE)
+  } else 
+  {
+    tab <- data.frame(
+      "$\\delta=0$", 
+      "vs", 
+      switch(input$H1hyp, 
+             "H1.diff0"    = "$\\delta\\not=0$", 
+             "H1.larger0"  = "$\\delta>0$", 
+             "H1.smaller0" = "$\\delta<0$", 
+             "H1.point"    = paste0("$\\delta=", input$H1pointslide, "$")), 
+      "", 
+      paste0("All probability assigned to ", input$H1pointslide), 
+      "", 
+      paste0("$", formatC(round(BF(), 3), 3, format = "f"), "$"),
+      stringsAsFactors = FALSE, 
+      check.names = FALSE
+    )
+    colnames(tab) <- c("$\\mathcal{H}_0$", 
+                       " ", 
+                       "$\\mathcal{H}_1$", 
+                       "$\\hspace{5mm}$", 
+                       "$\\text{Distribution}$", 
+                       "$\\hspace{5mm}$", 
+                       paste0("$BF_{", substr(input$BF10.01, 3, 4), "}$"))
+    tab %>%
+      knitr::kable("html", escape = FALSE, align = 'c', table.attr='class="myTable"') %>%
+      add_header_above(c("$\\text{Hypotheses}$" = 3, "", "$\\text{Prior under }\\mathcal{H}_1$" = 1, "", "$\\text{Bayes factor}$" = 1), bold = FALSE, extra_css = "border-bottom: 1px solid black;", line = FALSE, escape = TRUE) %>% 
+      row_spec(0, extra_css = "border-bottom: 1px solid; border-top: 2px solid;", background = "#005E3C1A") %>%
+      row_spec(1, extra_css = "border-bottom: 2px solid; border-top: 1px solid;") %>% 
+      # row_spec(0, bold = TRUE, background = "#005E3C1A") %>% 
+      kable_styling(full_width = FALSE)
+  }
+} 
+
+# output$BF.df1 <- renderUI({
+#   tab <- switch(input$prior, 
+#                 "cauchy"    = data.frame(BF(), "\\text{Cauchy}", location.c(), scale.c()), 
+#                 "normal"    = data.frame(BF(), "\\text{Normal}", location.n(), scale.n()), 
+#                 "t.student" = data.frame(BF(), "\\text{$t$-Student}", location.t(), scale.t(), df.t()))
+#   colnames(tab) <- switch(input$prior, 
+#                           "cauchy"    = c(paste0("BF_{", substr(input$BF10.01, 3, 4), "}"), "\\text{Prior}", "\\text{Location}", "\\text{Scale}"), 
+#                           "normal"    = c(paste0("BF_{", substr(input$BF10.01, 3, 4), "}"), "\\text{Prior}", "\\text{Location}", "\\text{Scale}"), 
+#                           "t.student" = c(paste0("BF_{", substr(input$BF10.01, 3, 4), "}"), "\\text{Prior}", "\\text{Location}", "\\text{Scale}", "\\text{df}"))
+#   LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1),
+#                            digits = c(0, rep(3, ncol(tab)))), 
+#                     floating                   = FALSE,
+#                     tabular.environment        = "array",
+#                     comment                    = FALSE,
+#                     print.results              = FALSE,
+#                     sanitize.colnames.function = identity,
+#                     sanitize.text.function     = identity,
+#                     include.rownames           = FALSE, 
+#                     add.to.row                 = list(
+#                       pos     = as.list(-1),
+#                       command = "\\rowcolor{lightgray}"
+#                     )
+#   )
+#   tagList(
+#     #withMathJax(),
+#     HTML(paste0("$$", LaTeXtab, "$$")),
+#     tags$script(HTML(js)),
+#     tags$script(
+#       async="", 
+#       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+#     )
 #   )
 # })
-
-output$BF.df1 <- renderUI({
-  tab <- switch(input$prior, 
-                "cauchy"    = data.frame(BF(), "\\text{Cauchy}", location.c(), scale.c()), 
-                "normal"    = data.frame(BF(), "\\text{Normal}", location.n(), scale.n()), 
-                "t.student" = data.frame(BF(), "\\text{$t$-Student}", location.t(), scale.t(), df.t()))
-  colnames(tab) <- switch(input$prior, 
-                          "cauchy"    = c(paste0("BF_{", substr(input$BF10.01, 3, 4), "}"), "\\text{Prior}", "\\text{Location}", "\\text{Scale}"), 
-                          "normal"    = c(paste0("BF_{", substr(input$BF10.01, 3, 4), "}"), "\\text{Prior}", "\\text{Location}", "\\text{Scale}"), 
-                          "t.student" = c(paste0("BF_{", substr(input$BF10.01, 3, 4), "}"), "\\text{Prior}", "\\text{Location}", "\\text{Scale}", "\\text{df}"))
-  LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1),
-                           digits = c(0, rep(3, ncol(tab)))), 
-                    floating                   = FALSE,
-                    tabular.environment        = "array",
-                    comment                    = FALSE,
-                    print.results              = FALSE,
-                    sanitize.colnames.function = identity,
-                    sanitize.text.function     = identity,
-                    include.rownames           = FALSE, 
-                    add.to.row                 = list(
-                      pos     = as.list(-1),
-                      command = "\\rowcolor{lightgray}"
-                    )
-  )
-  tagList(
-    #withMathJax(),
-    HTML(paste0("$$", LaTeXtab, "$$")),
-    tags$script(HTML(js)),
-    tags$script(
-      async="", 
-      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-    )
-  )
-})
 
 output$BF.df2 <- renderUI({
   tab <- data.frame(

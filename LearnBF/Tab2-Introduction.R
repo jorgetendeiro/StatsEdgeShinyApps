@@ -3,13 +3,13 @@
 
 # Run t-test:
 ttest.res <- reactive({
-  t.test.summ(input$mean1, input$mean2, input$sdcommon, input$n1, input$n2)
+  t.test.summ(input$mean1, input$mean2, input$sd1, input$sd2, input$n1, input$n2)
 })
 
 # t-test result:
 output$ttest <- renderUI({
   tab <- data.frame(
-    (input$mean1 - input$mean2)/input$sdcommon, 
+    (input$mean1 - input$mean2) / sqrt((((input$n1-1)*(input$sd1^2)+(input$n2-1)*(input$sd2^2)))/(input$n1+input$n2-2)), 
     ttest.res()["t"], 
     ttest.res()["df"], 
     if (round(ttest.res()["p"], 3) >= .001) ttest.res()["p"] else "<.001", 
@@ -473,7 +473,7 @@ output$introduction6 <- renderUI({
     # 
     ttest.tmp     <- t.test(group1, group2)
     t.tmp         <- ttest.tmp$statistic
-    BF.val.it6[i] <- suppressWarnings({ B01(t.tmp, N.supp[i], N.supp[i], normal.prior, scale = 1) })
+    reactive({ BF.val.it6[i] <- suppressWarnings({ B01(t.tmp, N.supp[i], N.supp[i], normal.prior, input$H1hyp, H1pointslide(), scale = 1) }) })
     p.val.it6[i]  <- ttest.tmp$p.value
   }
 }

@@ -11,12 +11,13 @@ library(markdown)
 library(stevemisc)
 
 # Function computing the t-test from summaries ----
-t.test.summ <- function(m1, m2, sd, n1, n2)
+t.test.summ <- function(m1, m2, sd1, sd2, n1, n2)
 {
-  group1 <- scale(1:n1) * sd + m1
-  group2 <- scale(1:n2) * sd + m2
+  group1 <- scale(1:n1) * sd1 + m1
+  group2 <- scale(1:n2) * sd2 + m2
   # t.test(x = group1, y = group2, var.equal = TRUE)
-  t      <- (m1 - m2) / (sd * sqrt(1/n1 + 1/n2))
+  sp     <- sqrt((((n1-1)*(sd1^2)+(n2-1)*(sd2^2)))/(n1+n2-2))
+  t      <- (m1 - m2) / (sp * sqrt(1/n1 + 1/n2))
   p      <- 2 * pt(abs(t), n1 + n2 - 2, lower.tail = FALSE)
   df     <- n1 + n2 - 2
   c(t = t, df = df, p = p)
@@ -43,7 +44,7 @@ ui <- fluidPage(
   includeCSS("www/mystyle.css"),
   #!#!#!#!
   tags$head(
-    tags$script(async = "", 
+    tags$script(async = "",
                 src   = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"),
     tags$script( HTML(js) )
   ), 
@@ -73,7 +74,7 @@ ui <- fluidPage(
       h3(strong("Descriptives")), 
       h4("Group A"), 
       fluidRow(
-        column(6, align = "left", 
+        column(4, align = "left", 
                div(numericInput(inputId = "mean1",
                                 label   = em("Mean:"),
                                 min     = -10,
@@ -82,18 +83,27 @@ ui <- fluidPage(
                                 step    = 0.1, 
                                 width = "100%"), class = "not_bold")
         ), 
-        column(6, align = "left", 
-               div(numericInput(inputId = "n1",
-                                label   = em("Sample size:"),
-                                min     = 5,
-                                max     = 50,
-                                value   = 30, 
+        column(4, align = "left", 
+               div(numericInput(inputId = "sd1",
+                                label   = em("SD:"),
+                                min     = 0,
+                                max     = NA,
+                                value   = 1, 
+                                step    = .1, 
                                 width = "100%"), class = "not_bold")
+        ), 
+        column(4, align = "left", 
+                div(numericInput(inputId = "n1",
+                                 label   = em("$N$:"),
+                                 min     = 5,
+                                 max     = 50,
+                                 value   = 30, 
+                                 width = "100%"), class = "not_bold")
         )
       ), 
       h4("Group B"), 
       fluidRow(
-        column(6, align = "left", 
+        column(4, align = "left", 
                div(numericInput(inputId = "mean2",
                                 label   = em("Mean:"),
                                 min     = -10,
@@ -102,54 +112,48 @@ ui <- fluidPage(
                                 step    = 0.1, 
                                 width = "100%"), class = "not_bold")
         ), 
-        column(6, align = "left", 
+        column(4, align = "left", 
+               div(numericInput(inputId = "sd2",
+                                label   = em("SD:"),
+                                min     = 0,
+                                max     = NA,
+                                value   = 1, 
+                                step    = .1, 
+                                width = "100%"), class = "not_bold")
+        ), 
+        column(4, align = "left", 
                div(numericInput(inputId = "n2",
-                                label   = em("Sample size:"),
+                                label   = em("$N$:"),
                                 min     = 5,
                                 max     = 50,
                                 value   = 30, 
                                 width = "100%"), class = "not_bold")
         )
       ), 
-      fluidRow(
-        column(3), 
-        column(6, align = "left", 
-               div(numericInput(inputId = "sdcommon",
-                                label   = em("Standard deviation:"),
-                                min     = 0,
-                                max     = NA,
-                                value   = 1, 
-                                step    = 0.1, 
-                                width = "100%"), class = "not_bold")
-        ), 
-        column(3)
-      ), 
       hr(style = "border-top: 2px solid #005E3C;"), 
       h3(strong("Bayesian test")), 
+      em("Null and alternative hypotheses:"), 
       fluidRow(
+        column(width = 6, "$\\mathcal{H}_0: \\delta=0$"), 
         column(width = 6, 
-               setSliderColor(c("#DCA559", "#DCA559"), c(1, 2)),
-               div(sliderInput(inputId = "priorprob0", 
-                               label   = em("Prior probability of $\\mathcal{H}_0$:"), 
-                               min     = 0, 
-                               max     = 100, 
-                               value   = 50, 
-                               post    = "%", 
-                               ticks   = FALSE, 
-                               step    = 5), class = "not_bold")), 
-        column(width = 6, 
-               div(sliderInput(inputId = "priorprob1", 
-                               label   = em("Prior probability of $\\mathcal{H}_1$:"), 
-                               min     = 0, 
-                               max     = 100, 
-                               value   = 50, 
-                               post    = "%", 
-                               ticks   = FALSE, 
-                               step    = 5), class = "not_bold"))
+               div(prettyRadioButtons(inputId  = "H1hyp",
+                                      label    = em("$\\mathcal{H}_1$:"), 
+                                      choices  = list("$\\delta\\not=0$" = "H1.diff0", 
+                                                      "$\\delta>0$" = "H1.larger0", 
+                                                      "$\\delta<0$" = "H1.smaller0", 
+                                                      "$\\delta=\\delta_1$" = "H1.point"), 
+                                      selected = "H1.diff0", 
+                                      inline   = FALSE, 
+                                      width    = "100%", 
+                                      status   = "success", 
+                                      shape    = "round", 
+                                      fill     = TRUE
+               ), class = "not_bold"), 
+               uiOutput("H1point"))
       ), 
       br(), 
       div(prettyRadioButtons(inputId  = "prior",
-                             label    = em("Prior for $\\delta$:"), 
+                             label    = em("Prior for $\\delta$ under $\\mathcal{H}_1$:"), 
                              choices  = list("Cauchy" = "cauchy", "Normal" = "normal", "$t$-Student" = "t.student"), 
                              selected = "cauchy", 
                              inline   = TRUE, 
@@ -174,6 +178,30 @@ ui <- fluidPage(
                              status   = "success", 
                              shape    = "round", 
                              fill     = TRUE), class = "not_bold"), 
+    br(), 
+    em("Prior probability:"), 
+    fluidRow(
+      column(width = 6, 
+             setSliderColor(c("#DCA559", "#DCA559"), c(1, 2)),
+             div(sliderInput(inputId = "priorprob0", 
+                             label   = em("$\\mathcal{H}_0$:"), 
+                             min     = 0, 
+                             max     = 100, 
+                             value   = 50, 
+                             post    = "%", 
+                             ticks   = FALSE, 
+                             step    = 5), class = "not_bold")), 
+      column(width = 6, 
+             div(sliderInput(inputId = "priorprob1", 
+                             label   = em("$\\mathcal{H}_1$:"), 
+                             min     = 0, 
+                             max     = 100, 
+                             value   = 50, 
+                             post    = "%", 
+                             ticks   = FALSE, 
+                             step    = 5), class = "not_bold"))
+    ), 
+    br(), 
       width = 4
     ), 
     
@@ -182,7 +210,7 @@ ui <- fluidPage(
       tabsetPanel(
         id = "maintabs", 
         type = "pills",
-        selected = "Introduction", ##### "Bayesian t-test", ##### "Instructions", ##### "Keep in mind", 
+        selected = "Bayesian t-test", ##### "Introduction", ##### "Instructions", ##### "Keep in mind", 
         tabPanel("Instructions",
                  uiOutput("instructions")
         ),
@@ -250,9 +278,12 @@ ui <- fluidPage(
         ), 
         tabPanel("Bayesian t-test", 
                  br(), 
-                 h4("Bayes factor and the prior distribution for $\\delta$ under $\\mathcal{H}_1$"), 
-                 uiOutput("BF.df1"), 
+                 h4("Summary"),
+                 tableOutput("BF.df1"),
                  br(), br(), 
+                 # h4("Bayes factor and the prior distribution for $\\delta$ under $\\mathcal{H}_1$"), 
+                 # uiOutput("BF.df1"), 
+                 # br(), br(), 
                  h4("Prior and posterior model probabilities"),
                  uiOutput("BF.df2"), 
                  br(), br(), 
@@ -400,66 +431,77 @@ server <- function(input, output, session) {
   # Decide which parameter input to show depending on the chosen prior:
   output$prior.param1 <- renderUI({
     if (input$prior == 'cauchy') {
-      div(numericInput(inputId  = "location.c", 
-                       label    = em("Location:"), 
-                       min      = -5,
-                       max      = 5,
-                       value    = 0, 
-                       step     = 0.1, 
-                       width    = "100%"), class = "not_bold")
+      div(sliderInput(inputId = "location.c", 
+                      label   = em("Location:"), 
+                      min     = -3, 
+                      max     = 3, 
+                      value   = 0, 
+                      ticks   = FALSE, 
+                      step    = 0.1, 
+                      width   = "100%"), class = "not_bold")
     } else if (input$prior == 'normal') {
-      div(numericInput(inputId = "location.n",
-                       label   = em("Location:"),
-                       min     = -5,
-                       max     = 5,
-                       value   = 0, 
-                       step    = 0.1, 
-                       width   = "100%"), class = "not_bold")
+      div(sliderInput(inputId = "location.n", 
+                      label   = em("Location:"), 
+                      min     = -3, 
+                      max     = 3, 
+                      value   = 0, 
+                      ticks   = FALSE, 
+                      step    = 0.1, 
+                      width   = "100%"), class = "not_bold")
     } else {
-      div(numericInput(inputId = "location.t",
-                       label   = em("Location:"),
-                       min     = -5,
-                       max     = 5,
-                       value   = 0, 
-                       step    = 0.1, 
-                       width   = "100%"), class = "not_bold")
+      div(sliderInput(inputId = "location.t", 
+                      label   = em("Location:"), 
+                      min     = -3, 
+                      max     = 3, 
+                      value   = 0, 
+                      ticks   = FALSE, 
+                      step    = 0.1, 
+                      width   = "100%"), class = "not_bold")
     }
   })
   output$prior.param2 <- renderUI({
     if (input$prior == 'cauchy') {
-      div(numericInput(inputId  = "scale.c", 
-                       label    = em("Scale:"), 
-                       min     = 0,
-                       max     = 5,
-                       value   = 0.707, 
-                       step    = 0.1, 
-                       width   = "100%"), class = "not_bold")
+      div(sliderInput(inputId = "scale.c", 
+                      label   = em("Scale:"), 
+                      min     = 0.1, 
+                      max     = 2, 
+                      value   = 0.707, 
+                      ticks   = FALSE, 
+                      step    = 0.001, 
+                      round   = -3, 
+                      width   = "100%"), class = "not_bold")
     } else if (input$prior == 'normal') {
-      div(numericInput(inputId  = "scale.n", 
-                       label    = em("Scale:"), 
-                       min     = 0,
-                       max     = 5,
-                       value   = 1, 
-                       step    = 0.1, 
-                       width   = "100%"), class = "not_bold")
+      div(sliderInput(inputId = "scale.n", 
+                      label   = em("Scale:"), 
+                      min     = 0.1, 
+                      max     = 2, 
+                      value   = 1, 
+                      ticks   = FALSE, 
+                      step    = 0.001, 
+                      round   = -3, 
+                      width   = "100%"), class = "not_bold")
     } else {
-      div(numericInput(inputId  = "scale.t", 
-                       label    = em("Scale:"), 
-                       min      = 0,
-                       max      = 5,
-                       value    = 1, 
-                       step     = 0.1, 
-                       width    = "100%"), class = "not_bold")
+      div(sliderInput(inputId = "scale.t", 
+                      label   = em("Scale:"), 
+                      min     = 0.1, 
+                      max     = 2, 
+                      value   = 1, 
+                      ticks   = FALSE, 
+                      step    = 0.001, 
+                      round   = -3, 
+                      width   = "100%"), class = "not_bold")
     }
   })
   output$prior.param3 <- renderUI({
     if (input$prior == 't.student') {
-      div(numericInput(inputId = "df.t",
-                       label   = em("df:"),
-                       min     = 1,
-                       max     = 50,
-                       value   = 1, 
-                       width   = "100%"), class = "not_bold")
+      div(sliderInput(inputId = "df.t", 
+                      label   = em("df:"), 
+                      min     = 1, 
+                      max     = 100, 
+                      value   = 1, 
+                      ticks   = FALSE, 
+                      step    = 1, 
+                      width   = "100%"), class = "not_bold")
     }
   })
   
@@ -494,6 +536,22 @@ server <- function(input, output, session) {
   observeEvent(input$intro.tab5a, {
     updateTabsetPanel(session, "maintabs", "Let's practice!")
   })
+  
+  # Slide bar for point H1:
+  output$H1point <- renderUI({
+    if (input$H1hyp == 'H1.point') {
+      div(sliderInput(inputId = "H1pointslide", 
+                      label   = NULL, 
+                      min     = -2, 
+                      max     = 2, 
+                      value   = .2, 
+                      ticks   = FALSE, 
+                      step    = .1, 
+                      width   = "100%"), class = "not_bold")
+    }
+  })
+  # To force this input to be available:
+  H1pointslide <- reactive({ if (input$H1hyp == 'H1.point') req(input$H1pointslide) })
   
 }
 
