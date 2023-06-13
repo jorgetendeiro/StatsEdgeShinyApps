@@ -7,43 +7,96 @@ ttest.res <- reactive({
 })
 
 # t-test result:
-output$ttest <- renderUI({
+output$ttest <- function() {
   tab <- data.frame(
-    (input$mean1 - input$mean2) / sqrt((((input$n1-1)*(input$sd1^2)+(input$n2-1)*(input$sd2^2)))/(input$n1+input$n2-2)), 
-    ttest.res()["t"], 
-    ttest.res()["df"], 
-    if (round(ttest.res()["p"], 3) >= .001) ttest.res()["p"] else "<.001", 
-    if (ttest.res()["p"] <= input$alpha) "\\text{Reject $\\mathcal{H}_0$}" else "\\text{Fail to reject $\\mathcal{H}_0$}"
-  ) 
-  colnames(tab) <- c("\\text{Std. mean difference}", "\\text{$t$}", "\\text{df}", "\\text{$p$-value}", "\\text{Test decision}")
-  
-  LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1), 
-                           digits = c(0, 3, 3, if (ttest.res()["df"] - round(ttest.res()["df"]) < 1e-12) 0 else 3, 3, 3)
-  ), 
-  floating                   = FALSE,
-  tabular.environment        = "array",
-  comment                    = FALSE,
-  print.results              = FALSE,
-  sanitize.colnames.function = identity,
-  sanitize.text.function     = identity,
-  include.rownames           = FALSE,
-  add.to.row                 = list(
-    pos     = as.list(c(-1)),
-    command = "\\rowcolor{lightgray}"
-  )
+    paste0("$", round((input$mean1 - input$mean2) / sqrt((((input$n1-1)*(input$sd1^2)+(input$n2-1)*(input$sd2^2)))/(input$n1+input$n2-2)), 3), "$"), 
+    paste0("$", round(ttest.res()["t"], 3), "$"), 
+    paste0("$", round(ttest.res()["df"], 3), "$"), 
+    if (round(ttest.res()["p"], 3) >= .001) paste0("$", round(ttest.res()["p"], 3), "$") else "<.001", 
+    if (ttest.res()["p"] <= input$alpha) "$\\text{Reject }\\mathcal{H}_0$" else "$\\text{Fail to reject }\\mathcal{H}_0$", 
+    stringsAsFactors = FALSE, 
+    check.names = FALSE, 
+    row.names = NULL
   )
   
-  tagList(
-    #withMathJax(),
-    HTML(paste0("$$", LaTeXtab, "$$")),
-    tags$script(HTML(js)),
-    tags$script(
-      async="", 
-      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-    )
-  )
+  colnames(tab) <- c("$\\text{Cohen's }d$", "$t$", "$\\text{df}$", "$p\\text{-value}$", "$\\text{Test decision}$")
   
-})
+  tab %>%
+    knitr::kable("html", escape = FALSE, align = 'c') %>% 
+    row_spec(0, extra_css = "border-bottom: 1px solid; border-top: 2px solid;", background = "#005E3C1A") %>%
+    row_spec(1, extra_css = "border-bottom: 2px solid; border-top: 1px solid;") %>% 
+    # row_spec(0, bold = TRUE, background = "#005E3C1A") %>% 
+    kable_styling(full_width = FALSE)
+  
+  
+  
+  
+  
+  # LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1), 
+  #                          digits = c(0, 3, 3, if (ttest.res()["df"] - round(ttest.res()["df"]) < 1e-12) 0 else 3, 3, 3)
+  # ), 
+  # floating                   = FALSE,
+  # tabular.environment        = "array",
+  # comment                    = FALSE,
+  # print.results              = FALSE,
+  # sanitize.colnames.function = identity,
+  # sanitize.text.function     = identity,
+  # include.rownames           = FALSE,
+  # add.to.row                 = list(
+  #   pos     = as.list(c(-1)),
+  #   command = "\\rowcolor{lightgray}"
+  # )
+  # )
+  # 
+  # tagList(
+  #   #withMathJax(),
+  #   HTML(paste0("$$", LaTeXtab, "$$")),
+  #   tags$script(HTML(js)),
+  #   tags$script(
+  #     async="", 
+  #     src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+  #   )
+  # )
+  
+}
+
+# output$ttest <- renderUI({
+#   tab <- data.frame(
+#     (input$mean1 - input$mean2) / sqrt((((input$n1-1)*(input$sd1^2)+(input$n2-1)*(input$sd2^2)))/(input$n1+input$n2-2)), 
+#     ttest.res()["t"], 
+#     ttest.res()["df"], 
+#     if (round(ttest.res()["p"], 3) >= .001) ttest.res()["p"] else "<.001", 
+#     if (ttest.res()["p"] <= input$alpha) "\\text{Reject $\\mathcal{H}_0$}" else "\\text{Fail to reject $\\mathcal{H}_0$}"
+#   ) 
+#   colnames(tab) <- c("\\text{Std. mean difference}", "\\text{$t$}", "\\text{df}", "\\text{$p$-value}", "\\text{Test decision}")
+#   
+#   LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1), 
+#                            digits = c(0, 3, 3, if (ttest.res()["df"] - round(ttest.res()["df"]) < 1e-12) 0 else 3, 3, 3)
+#   ), 
+#   floating                   = FALSE,
+#   tabular.environment        = "array",
+#   comment                    = FALSE,
+#   print.results              = FALSE,
+#   sanitize.colnames.function = identity,
+#   sanitize.text.function     = identity,
+#   include.rownames           = FALSE,
+#   add.to.row                 = list(
+#     pos     = as.list(c(-1)),
+#     command = "\\rowcolor{lightgray}"
+#   )
+#   )
+#   
+#   tagList(
+#     #withMathJax(),
+#     HTML(paste0("$$", LaTeXtab, "$$")),
+#     tags$script(HTML(js)),
+#     tags$script(
+#       async="", 
+#       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+#     )
+#   )
+#   
+# })
 
 output$ttest.crit <- renderPlot({
   xlimupp <- max(5, ceiling(abs(ttest.res()["t"]))+2)

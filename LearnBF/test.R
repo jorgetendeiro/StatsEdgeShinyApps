@@ -17,3 +17,26 @@ res.BF <- suppressWarnings(switch(prior,
                                   "t.student" = B01(res.t["t"], n1, n2, 
                                                     tstude.prior, location = 0, scale = 1, df = 1)))
 c(BF01 = res.BF, BF10 = 1/res.BF)
+
+
+library(kableExtra)
+df <- data.frame(
+  C1 = 1:2, 
+  C2 = c("a", "a"), 
+  C3 = 3:4, 
+  C4 = 5:6, 
+  C5 = c("b", "b"), 
+  row.names = c("Row 1", "Row 2")
+)
+
+df |> 
+  kable(fomat = "latex") |>
+  add_header_above(c("", "Group 1" = 2, "", "Group 2" = 2), 
+                   extra_css = "border-bottom: 2px solid green;") |>
+  kable_styling(full_width = FALSE) |>
+  column_spec(3, extra_css = "border-bottom: 2px solid;") |> 
+  column_spec(6, extra_css = "border-bottom: 2px solid;") |> 
+  collapse_rows(columns = c(3, 6)) |> 
+  row_spec(0, extra_css = "border-bottom: 2px solid;") |> 
+  row_spec(2, extra_css = "border-top: 1px solid white;") |>
+  row_spec(2, extra_css = "border-bottom: 2px solid;") 

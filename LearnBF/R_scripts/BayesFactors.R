@@ -23,14 +23,14 @@ tstude.prior <- function(delta, location = 0, scale = sqrt(2)/2, df = 1)
     log(scale*sqrt(df*pi)*gamma(df/2))
 }
 
-# p(D|H1), H1: delta != 0 :
+# p(D|H1):
 p.y.alt <- function(t.stat, n1, n2, log.prior.dens, type.H1, point.H1, ...) {
   switch(type.H1, 
          "H1.diff0" = {
            normalize <- integrate(function(delta,...) {exp(log.prior.dens(delta, ...))}, 
                                   lower = -Inf, upper = Inf, ...)[[1]]
-           py        <- integrate(function(delta,t.stat,N,...) {
-             exp(dt(t.stat, n1+n2-2, ncp = delta*sqrt(n1*n2/(n1+n2)), log = TRUE) + 
+           py        <- integrate(function(delta,t.stat,...) {
+             exp(suppressWarnings(dt(t.stat, n1+n2-2, ncp = delta*sqrt(n1*n2/(n1+n2)), log = TRUE)) + 
                    log.prior.dens(delta, ...)) },
              lower = -Inf, upper = Inf, t.stat = t.stat, ...)[[1]]
            py/normalize
@@ -38,8 +38,8 @@ p.y.alt <- function(t.stat, n1, n2, log.prior.dens, type.H1, point.H1, ...) {
          "H1.larger0" = {
            normalize <- integrate(function(delta,...) {exp(log.prior.dens(delta, ...))}, 
                                   lower = 0, upper = Inf, ...)[[1]]
-           py        <- integrate(function(delta,t.stat,N,...) {
-             exp(dt(t.stat, n1+n2-2, ncp = delta*sqrt(n1*n2/(n1+n2)), log = TRUE) + 
+           py        <- integrate(function(delta,t.stat,...) {
+             exp(suppressWarnings(dt(t.stat, n1+n2-2, ncp = delta*sqrt(n1*n2/(n1+n2)), log = TRUE)) + 
                    log.prior.dens(delta, ...)) },
              lower = 0, upper = Inf, t.stat = t.stat, ...)[[1]]
            py/normalize
@@ -47,8 +47,8 @@ p.y.alt <- function(t.stat, n1, n2, log.prior.dens, type.H1, point.H1, ...) {
          "H1.smaller0" = {
            normalize <- integrate(function(delta,...) {exp(log.prior.dens(delta, ...))}, 
                                   lower = -Inf, upper = 0, ...)[[1]]
-           py        <- integrate(function(delta,t.stat,N,...) {
-             exp(dt(t.stat, n1+n2-2, ncp = delta*sqrt(n1*n2/(n1+n2)), log = TRUE) + 
+           py        <- integrate(function(delta,t.stat,...) {
+             exp(suppressWarnings(dt(t.stat, n1+n2-2, ncp = delta*sqrt(n1*n2/(n1+n2)), log = TRUE)) + 
                    log.prior.dens(delta, ...)) },
              lower = -Inf, upper = 0, t.stat = t.stat, ...)[[1]]
            py/normalize
@@ -59,21 +59,43 @@ p.y.alt <- function(t.stat, n1, n2, log.prior.dens, type.H1, point.H1, ...) {
   )
 } 
 
-
-
 B01 <- function(t.stat, n1, n2, log.prior.dens, type.H1, point.H1, ...) {
   dt(t.stat, n1+n2-2) / p.y.alt(t.stat, n1, n2, log.prior.dens, type.H1, point.H1, ...)
 }
 
 
+# p(delta|D, H1):
+post.dlt.H1 <- function(dlt.supp, t.stat, n1, n2, log.prior.dens, type.H1, ...) {
+  switch(type.H1, 
+         "H1.diff0" = {
+           normalize <- integrate(function(delta, ...) exp( suppressWarnings(dt(t.stat, n1+n2-2, ncp = delta*sqrt(n1*n2/(n1+n2)), log = TRUE)) + 
+                                                              log.prior.dens(delta, ...) ), lower = -Inf, upper = Inf)[[1]]
+         }, 
+         "H1.larger0" = {
+           normalize <- integrate(function(delta,...) exp( suppressWarnings(dt(t.stat, n1+n2-2, ncp = delta*sqrt(n1*n2/(n1+n2)), log = TRUE)) + 
+                                                             log.prior.dens(delta, ...) ), lower = 0, upper = Inf)[[1]]
+         }, 
+         "H1.smaller0" = {
+           normalize <- integrate(function(delta,...) exp( suppressWarnings(dt(t.stat, n1+n2-2, ncp = delta*sqrt(n1*n2/(n1+n2)), log = TRUE)) + 
+                                                             log.prior.dens(delta, ...) ), lower = -Inf, upper = 0)[[1]]
+         }, 
+         "H1.point" = {
+           NULL
+         }
+  )
+  py <- sapply(dlt.supp, function(x) exp(suppressWarnings(dt(t.stat, n1+n2-2, ncp = x*sqrt(n1*n2/(n1+n2)), log = TRUE)) + 
+                                           log.prior.dens(x)))
+  py/normalize
+} 
 
-
-
-
-
-
-
-
+# post.dlt.H1(.2, 1.2, 23, 27, cauchy.prior, "H1.diff0")
+# p.y.alt(1.2, 23, 27, cauchy.prior, "H1.diff0")
+# 
+# 
+# t.stat = 2.1
+# n1 = 23
+# n2 = 34
+# log.prior.dens = cauchy.prior
 
 
 

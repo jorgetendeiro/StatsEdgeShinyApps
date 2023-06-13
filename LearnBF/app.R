@@ -9,6 +9,9 @@ library(xtable)
 library(DT)
 library(markdown)
 library(stevemisc)
+library(katex)
+# install devtools in server
+# install kableExtra (now 1.3.4) from Github: devtools::install_github("haozhu233/kableExtra")
 
 # Function computing the t-test from summaries ----
 t.test.summ <- function(m1, m2, sd1, sd2, n1, n2)
@@ -43,11 +46,11 @@ window.MathJax = {
 ui <- fluidPage(
   includeCSS("www/mystyle.css"),
   #!#!#!#!
-  tags$head(
-    tags$script(async = "",
-                src   = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"),
-    tags$script( HTML(js) )
-  ), 
+  # tags$head(
+  #   tags$script(async = "",
+  #               src   = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"),
+  #   tags$script( HTML(js) )
+  # ), 
   #!#!#!#!
   
   # Type LaTeX code, including inline $expressions$:
@@ -134,16 +137,16 @@ ui <- fluidPage(
       h3(strong("Bayesian test")), 
       em("Null and alternative hypotheses:"), 
       fluidRow(
-        column(width = 6, "$\\mathcal{H}_0: \\delta=0$"), 
-        column(width = 6, 
+        column(width = 4, "$\\mathcal{H}_0:\\delta=0$"), 
+        column(width = 8, 
                div(prettyRadioButtons(inputId  = "H1hyp",
-                                      label    = em("$\\mathcal{H}_1$:"), 
+                                      label    = em("$\\mathcal{H}_1$:$\\hspace{1mm}$"), 
                                       choices  = list("$\\delta\\not=0$" = "H1.diff0", 
                                                       "$\\delta>0$" = "H1.larger0", 
                                                       "$\\delta<0$" = "H1.smaller0", 
                                                       "$\\delta=\\delta_1$" = "H1.point"), 
                                       selected = "H1.diff0", 
-                                      inline   = FALSE, 
+                                      inline   = TRUE, 
                                       width    = "100%", 
                                       status   = "success", 
                                       shape    = "round", 
@@ -248,7 +251,7 @@ ui <- fluidPage(
                    column(8)
                  )), 
                  conditionalPanel("input.intro == 'intro.topic2'", plotOutput("ttest.crit")), 
-                 conditionalPanel("input.intro == 'intro.topic2'", uiOutput("ttest")), 
+                 conditionalPanel("input.intro == 'intro.topic2'", br(), br(), tableOutput("ttest")), 
                  conditionalPanel("input.intro == 'intro.topic2'", uiOutput("introduction2b")), 
                  conditionalPanel("input.intro == 'intro.topic3'", uiOutput("introduction3")), 
                  conditionalPanel("input.intro == 'intro.topic4'", uiOutput("introduction4a")), 
@@ -285,9 +288,12 @@ ui <- fluidPage(
                  # uiOutput("BF.df1"), 
                  # br(), br(), 
                  h4("Prior and posterior model probabilities"),
-                 uiOutput("BF.df2"), 
+                 tableOutput("BF.df2"), 
                  br(), br(), 
-                 h4("Interpretation 1"), 
+                 h4("Posterior distribution of $\\delta$ under $\\mathcal{H}_1$"),
+                 plotOutput("BFplot3"),
+                 br(), br(), 
+                 h4("Bayes factor ", HTML("&#8212;"), " Interpretation 1"), 
                  withMathJax(uiOutput("BFint1")), 
                  fluidRow(align = 'center', 
                           column(3), 
@@ -301,10 +307,11 @@ ui <- fluidPage(
                                  tags$div(class = "verticalcenter", uiOutput("BF.formula1"))), 
                           column(3)),
                  br(), br(), 
-                 h4("Interpretation 2"), 
+                 h4("Bayes factor ", HTML("&#8212;"), " Interpretation 2"), 
                  withMathJax(uiOutput("BFint2")), 
                  br(), 
                  fluidRow(uiOutput("BF.formula2"), align = "center"), 
+                 br(), br(), 
                  plotOutput("BFplot2"), 
                  br(), br()
         ),
@@ -552,6 +559,9 @@ server <- function(input, output, session) {
   })
   # To force this input to be available:
   H1pointslide <- reactive({ if (input$H1hyp == 'H1.point') req(input$H1pointslide) })
+  
+  # Cohen's d:
+  cohen.d <- reactive({ (input$mean1 - input$mean2) / sqrt(((input$n1-1) * (input$sd1^2) + (input$n2-1) * (input$sd2^2)) / (input$n1 + input$n2 - 2)) })
   
 }
 
