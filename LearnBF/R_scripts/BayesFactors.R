@@ -66,36 +66,27 @@ B01 <- function(t.stat, n1, n2, log.prior.dens, type.H1, point.H1, ...) {
 
 # p(delta|D, H1):
 post.dlt.H1 <- function(dlt.supp, t.stat, n1, n2, log.prior.dens, type.H1, ...) {
-  switch(type.H1, 
+  switch(type.H1,
          "H1.diff0" = {
-           normalize <- integrate(function(delta, ...) exp( suppressWarnings(dt(t.stat, n1+n2-2, ncp = delta*sqrt(n1*n2/(n1+n2)), log = TRUE)) + 
-                                                              log.prior.dens(delta, ...) ), lower = -Inf, upper = Inf)[[1]]
-         }, 
+           py        <- sapply(dlt.supp, function(x, ...) dnct(t.stat, n1+n2-2, x*sqrt(n1*n2/(n1+n2))) * exp(log.prior.dens(x, ...)))
+           normalize <- integrate(function(delta,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * exp( log.prior.dens(delta, ...) ), lower = -Inf, upper = Inf, subdivisions = 1000, rel.tol = 1e-8)[[1]]
+         },
          "H1.larger0" = {
-           normalize <- integrate(function(delta,...) exp( suppressWarnings(dt(t.stat, n1+n2-2, ncp = delta*sqrt(n1*n2/(n1+n2)), log = TRUE)) + 
-                                                             log.prior.dens(delta, ...) ), lower = 0, upper = Inf)[[1]]
-         }, 
+           py        <- sapply(dlt.supp, function(x, ...) if (x <= 0) 0 else dnct(t.stat, n1+n2-2, x*sqrt(n1*n2/(n1+n2))) * exp(log.prior.dens(x, ...)))
+           normalize <- integrate(function(delta,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * exp( log.prior.dens(delta, ...) ), lower = 0, upper = Inf, subdivisions = 1000, rel.tol = 1e-8)[[1]]
+         },
          "H1.smaller0" = {
-           normalize <- integrate(function(delta,...) exp( suppressWarnings(dt(t.stat, n1+n2-2, ncp = delta*sqrt(n1*n2/(n1+n2)), log = TRUE)) + 
-                                                             log.prior.dens(delta, ...) ), lower = -Inf, upper = 0)[[1]]
-         }, 
+           py        <- sapply(dlt.supp, function(x, ...) if (x >= 0) 0 else dnct(t.stat, n1+n2-2, x*sqrt(n1*n2/(n1+n2))) * exp(log.prior.dens(x, ...)))
+           normalize <- integrate(function(delta,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * exp( log.prior.dens(delta, ...) ), lower = -Inf, upper = 0, subdivisions = 1000, rel.tol = 1e-8)[[1]]
+         },
          "H1.point" = {
            NULL
          }
   )
-  py <- sapply(dlt.supp, function(x) exp(suppressWarnings(dt(t.stat, n1+n2-2, ncp = x*sqrt(n1*n2/(n1+n2)), log = TRUE)) + 
-                                           log.prior.dens(x)))
   py/normalize
-} 
+}
 
-# post.dlt.H1(.2, 1.2, 23, 27, cauchy.prior, "H1.diff0")
-# p.y.alt(1.2, 23, 27, cauchy.prior, "H1.diff0")
-# 
-# 
-# t.stat = 2.1
-# n1 = 23
-# n2 = 34
-# log.prior.dens = cauchy.prior
+
 
 
 

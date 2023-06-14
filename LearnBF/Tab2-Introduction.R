@@ -24,7 +24,7 @@ output$ttest <- function() {
   tab %>%
     knitr::kable("html", escape = FALSE, align = 'c') %>% 
     row_spec(0, extra_css = "border-bottom: 1px solid; border-top: 2px solid;", background = "#005E3C1A") %>%
-    row_spec(1, extra_css = "border-bottom: 2px solid; border-top: 1px solid;") %>% 
+    row_spec(1, extra_css = "border-bottom: 2px solid; padding: 3px;") %>% 
     # row_spec(0, bold = TRUE, background = "#005E3C1A") %>% 
     kable_styling(full_width = FALSE)
   
@@ -533,13 +533,16 @@ output$introduction6 <- renderUI({
 
 output$intro.topic6.plot1 <- renderPlot({
   par(mar = c(4, 5.5, .5, 1))
-  plot(N.supp[1:(input$Ncommon.BF.p/50)], BF.val.it6[1:(input$Ncommon.BF.p/50)], type = "l", las = 1, bty = "n", yaxs = "i", xaxs = "i", 
-       xlim = c(50, 5000), ylim = c(0, 50), col = "#005E3C", lwd = 2,
-       xlab = "", ylab = "", yaxt = "n", xaxt = "n")
-  axis(1, at = seq(0, 5000, by = 1000), las = 1)
-  axis(2, at = seq(0, 50, 10), las = 1)
-  mtext("Sample size per group", 1, 2.5)
-  mtext(expression("BF"["01"] * " (log scale)"), 2, 3)
+  hist(rnorm(1000))
+  # plot(N.supp[1:(input$Ncommon.BF.p/50)], BF.val.it6[1:(input$Ncommon.BF.p/50)])
+  # plot(N.supp[1:(input$Ncommon.BF.p/50)], BF.val.it6[1:(input$Ncommon.BF.p/50)], type = "l", las = 1, bty = "n", yaxs = "i", xaxs = "i", 
+  #      xlim = c(50, 5000), ylim = c(0, 50), 
+  #      col = "#005E3C", lwd = 2,
+  #      xlab = "", ylab = "", yaxt = "n", xaxt = "n")
+  # axis(1, at = seq(0, 5000, by = 1000), las = 1)
+  # axis(2, at = seq(0, 50, 10), las = 1)
+  # mtext("Sample size per group", 1, 2.5)
+  # mtext(expression("BF"["01"] * " (log scale)"), 2, 3)
 })
 
 output$intro.topic6.plot2 <- renderPlot({
@@ -592,14 +595,14 @@ output$intro.topic5.plot1 <- renderPlot({
   polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
   
 })
-  
 
 
 
 
 
 
-  
+
+
 
 
 

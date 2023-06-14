@@ -1,18 +1,11 @@
 
-# KEEP IN MIND tab ----
-
 output$kim.out <- renderUI({
   switch(input$keepinmind, 
          topic1 = {
-           outtext <- paste0("$$\\underbrace{\\frac{p(\\mathcal{H}_", substr(input$BF10.01, 3, 3), ")}{p(\\mathcal{H}_", substr(input$BF10.01, 4, 4), ")}}_\\text{prior odds}\\times BF_{", substr(input$BF10.01, 3, 4), "}=\\underbrace{\\frac{p(\\mathcal{H}_", substr(input$BF10.01, 3, 3), "|D)}{p(\\mathcal{H}_", substr(input$BF10.01, 4, 4), "|D)}}_\\text{posterior odds}$$ The Bayes factor ",  em("updates"), " the prior odds to the posterior odds, in light of the observed data.", br(), "Only if the prior odds are equal to 1 (i.e., if $p(\\mathcal{H}_0) = p(\\mathcal{H}_1) = .50$) do the Bayes factor and the posterior odds coincide.", br(), br(), "See for yourself!", br(), " Try changing the prior probability of either $\\mathcal{H}_0$ or $\\mathcal{H}_1$ using the sliders on the left side menu and see how the Bayes factor and the posterior odds are affected." 
-                             # , if (0 == 1) BF() ### HACK to force 'kim.out.topic1.df1' to be reactive
-                             )
-           # HACK1 <- round(c(BF(), input$priorprob0, input$priorprob1), 0) ### HACK to force 'kim.out.topic1.df1' to be reactive
+           outtext <- paste0("$$\\underbrace{\\frac{p(\\mathcal{H}_", substr(input$BF10.01, 3, 3), ")}{p(\\mathcal{H}_", substr(input$BF10.01, 4, 4), ")}}_\\text{prior odds}\\times BF_{", substr(input$BF10.01, 3, 4), "}=\\underbrace{\\frac{p(\\mathcal{H}_", substr(input$BF10.01, 3, 3), "|D)}{p(\\mathcal{H}_", substr(input$BF10.01, 4, 4), "|D)}}_\\text{posterior odds}$$ The Bayes factor ",  em("updates"), " the prior odds to the posterior odds, in light of the observed data.", br(), "Only if the prior odds are equal to 1 (i.e., if $p(\\mathcal{H}_0) = p(\\mathcal{H}_1) = .50$) do the Bayes factor and the posterior odds coincide.", br(), br(), "See for yourself!", br(), " Try changing the prior probability of either $\\mathcal{H}_0$ or $\\mathcal{H}_1$ using the sliders on the left side menu and see how the Bayes factor and the posterior odds are affected.") 
          }, 
          topic2 = {
-           outtext <- paste0("In order to compute the Bayes factor, prior distributions (", em("priors"), " for short) are required for all parameters. A prior assigns probability to each possible value of the parameter at hand, ", em("before"), " looking at the data. Priors may be chosen with different goals in mind, for example: ", HTML(renderMarkdown(text = "- To reflect current knowledge.\n- To reflect differing scientific perspectives (e.g., skeptical, liberal, or mainstream).\n- To impose constraints (e.g., to preclude negative variances).\n")), "How one should go about priors is not consensual. ", em("Objective"), " Bayesians suggest that relying on ", em("default"), " priors selected on the basis of specific optimal criteria suffices. Other, ", em("subjective"), " Bayesians argue that priors should be more carefully selected depending on the problem at hand.",  br(), br(), "We suggest that using default priors is clearly helpful, but one should first explore those priors to make sure that they are minimally well calibrated. The true fact is that ", em(" The Bayes factor depends on the priors"), ". Thus, it is important to at least: ", HTML(renderMarkdown(text = "- Visualize the priors and judge whether we are comfortable with the prior allocation of probability to the various values of the parameter.\n- Report in full what priors were used while computing the Bayes factor.\n")), br(), "Below you can see the plot of the prior selected on the left side menu, together with some descriptives. You can use this information to have a better idea about how whether the prior is working as you intended. If not, try tweaking the prior's distribution, location, or scale and reassess.", 
-                             # , if (0 == 1) c(BF(), input$priorprob0, input$priorprob1, input$BF10.01, location.c(), scale.c(), location.n(), scale.n(), location.t(), scale.t(), df.t()), ### HACK to force 'kim.out.topic2.df1' to be reactive
-                             br(), br())
+           outtext <- paste0("In order to compute the Bayes factor, prior distributions (", em("priors"), " for short) are required for all parameters. A prior assigns probability to each possible value of the parameter at hand, ", em("before"), " looking at the data. Priors may be chosen with different goals in mind, for example: ", HTML(renderMarkdown(text = "- To reflect current knowledge.\n- To reflect differing scientific perspectives (e.g., skeptical, liberal, or mainstream).\n- To impose constraints (e.g., to preclude negative variances).\n")), "How one should go about priors is not consensual. ", em("Objective"), " Bayesians suggest that relying on ", em("default"), " priors selected on the basis of specific optimal criteria suffices. Other, ", em("subjective"), " Bayesians argue that priors should be more carefully selected depending on the problem at hand.",  br(), br(), "We suggest that using default priors is clearly helpful, but one should first explore those priors to make sure that they are minimally well calibrated. The true fact is that ", em(" The Bayes factor depends on the priors"), ". Thus, it is important to at least: ", HTML(renderMarkdown(text = "- Visualize the priors and judge whether we are comfortable with the prior allocation of probability to the various values of the parameter.\n- Report in full what priors were used while computing the Bayes factor.\n")), br(), "Below you can see the plot of the prior selected on the left side menu, together with some descriptives. You can use this information to have a better idea about how whether the prior is working as you intended. If not, try tweaking the prior's distribution, location, or scale and reassess.", br(), br())
          }, 
          topic3 = {
            outtext <- paste0("From $BF_{", substr(input$BF10.01, 3, 4), "}=", round(BF(), 2), "$ we can conclude that the observed data favor $\\mathcal{H}_", substr(input$BF10.01, 3, 3), "$ over $\\mathcal{H}_", substr(input$BF10.01, 4, 4), "$ by a factor of ", round(BF(), 2), "-to-1 in favor of $\\mathcal{H}_", substr(input$BF10.01, 3, 3), "$. ", br(), "Here the main point is that the evidence provided by the Bayes factor is ", em("relative"), ".", br(), "That is, $\\mathcal{H}_", substr(input$BF10.01, 3, 3), "$ is being explicitly compared to $\\mathcal{H}_", substr(input$BF10.01, 4, 4), "$ and that must be acknowledged.", br(), br(), "Hence, we discourage simpliflied summaries of the type:", br(), "'", em("The results provide evidence "), if (BF() > 1) em("in favor of ") else em("against "), "$\\mathcal{H}_", substr(input$BF10.01, 3, 3), "$' ('against' because $BF_{", substr(input$BF10.01, 3, 4), "}", if (BF() > 1) "\\geq" else "\\leq", "1$).")
@@ -67,37 +60,27 @@ output$kim.out.topic7.part3 <- renderUI({
   )
 })
 
-output$kim.out.topic1.df1 <- renderText({
+output$kim.out.topic1.df1 <- function() {
   tab <- data.frame(
-    paste0("$", input$priorprob0/100, "$"), 
-    paste0("$", input$priorprob1/100, "$"), 
-    paste0("$\\frac{", if (input$BF10.01 == "BF10") input$priorprob1/100 else input$priorprob0/100, "}{", if (input$BF10.01 == "BF10") input$priorprob0/100 else input$priorprob1/100, "}=", round(prior.odds(), 3), "$"), 
-    "", 
+    paste0("$", round(prior.odds(), 3), "$"), 
     paste0("$", round(BF(), 3), "$"), 
-    "", 
     paste0("$", round(post.odds(), 3), "$"), 
     stringsAsFactors = FALSE, 
     check.names = FALSE, 
     row.names = NULL
   )
   
-  colnames(tab) <- c(
-    "$p(\\mathcal{H}_0)$", 
-    "$p(\\mathcal{H}_1)$",
-    "$\\text{Prior odds}$",
-    " ", 
-    paste0("$BF_{", substr(input$BF10.01, 3, 4), "}$"), 
-    " ", 
-    "$\\text{Posterior odds}$"
+  colnames(tab) <- c(paste0("$\\text{Prior odds}$"),
+                     paste0("$BF_{", substr(input$BF10.01, 3, 4), "}$"), 
+                     paste0("$\\text{Posterior odds}$")
   )
   
   tab %>%
     knitr::kable("html", escape = FALSE, align = 'c') %>%
-    add_header_above(c("$\\text{A priori}$" = 3, "", "", "", "$\\text{A posteriori}$" = 1), bold = FALSE, extra_css = "border-bottom: 1px solid black;", line = FALSE, escape = TRUE) %>%
     row_spec(0, extra_css = "border-top: 2px solid; border-bottom: 1px solid;", background = "#005E3C1A") %>%
-    row_spec(1, extra_css = "border-bottom: 2px solid; border-top: 1px solid; padding: 3px;") %>% 
+    row_spec(1, extra_css = "border-bottom: 2px solid; padding: 3px;") %>%
     kable_styling(full_width = FALSE)
-})
+}
 
 output$kim.out.topic2.plot1 <- renderPlot({
   x.supp <- switch(input$prior,
@@ -199,33 +182,31 @@ output$kim.out.topic2.plot1 <- renderPlot({
          fill = c("#DCA55966", "#DCA55940", "#DCA55926"), bty = "n")
 })
 
-output$kim.out.topic2.df1 <- renderText({
-  dist <- switch(input$prior,
-                 "cauchy"    = paste0("$\\text{Cauchy (location = }", location.c(), "\\text{, scale = }", scale.c(), "\\text{)}$"),
-                 "normal"    = paste0("$\\text{Normal (location = }", location.n(), "\\text{, scale = }", scale.n(), "\\text{)}$"),
-                 "t.student" = paste0("$t\\text{-Student (location = }", location.t(), "\\text{, scale = }", scale.t(), "\\text{, df = }", df.t(), "\\text{)}$"))
+output$kim.out.topic2.df1 <- function() {
+  dist <- switch(input$prior, 
+                 "cauchy"    = paste0("$\\text{Cauchy(location = }", location.c(), "\\text{, scale = }", scale.c(), "\\text{)}$"), 
+                 "normal"    = paste0("$\\text{Normal(location = }", location.n(), "\\text{, scale = }", scale.n(), "\\text{)}$"), 
+                 "t.student" = paste0("$\\text{t-Student(location = }", location.t(), "\\text{, scale = }", scale.t(), "\\text{, df = }", df.t(), "\\text{)}$"))
   
   tab <- data.frame(
-    # dist,
-    paste0("$\\frac{", if (input$BF10.01 == "BF10") input$priorprob1/100 else input$priorprob0/100, "}{", if (input$BF10.01 == "BF10") input$priorprob0/100 else input$priorprob1/100, "}=", round(prior.odds(), 3), "$"), 
+    # dist, 
+    paste0("$", round(BF(), 3), "$"), #######################
     paste0("$", round(BF(), 3), "$"), 
     stringsAsFactors = FALSE, 
     check.names = FALSE, 
     row.names = NULL
-  )
+    )
   
-  colnames(tab) <- c(
-    "$\\text{Prior}$", 
-    paste0("$BF_{", substr(input$BF10.01, 3, 4), "}$")
+  colnames(tab) <- c("$\\text{Prior}$", 
+                     paste0("$BF_{", substr(input$BF10.01, 3, 4), "}$")
   )
   
   tab %>%
     knitr::kable("html", escape = FALSE, align = 'c') %>%
-    add_header_above(c("$\\text{garbage}$" = 1, "$\\text{garbage}$" = 1), bold = FALSE, extra_css = "border-bottom: 1px solid black;", line = FALSE, escape = TRUE) %>%
+    kable_styling(full_width = FALSE) %>% 
     row_spec(0, extra_css = "border-top: 2px solid; border-bottom: 1px solid;", background = "#005E3C1A") %>%
-    row_spec(1, extra_css = "border-bottom: 2px solid; border-top: 1px solid; padding: 3px;") %>%
-    kable_styling(full_width = FALSE)
-})
+    row_spec(1, extra_css = "border-bottom: 2px solid; padding: 3px;")
+}
 
 output$kim.out.topic5.part2 <- renderUI({
   outtext <- paste0("Do observe that the Bayes factor keeps changing as the sample sizes change. In fact, since the two group means are different, $BF_{10}$ is expected to increase with no bound as the sample sizes increase.", br(), "Cohen's $d$, however, is constant since it does not depend on the groups sample sizes.", br(), br(), "We can also see this in motion.", br(), "Below are the plots of both $BF_{10}$ and Cohen's $d$ as functions of the sample size, for one particular configuration (Group 1: mean = 0.1, SD = 1; Group 2: mean = 0, SD = 1; standard normal prior under $\\mathcal{H}_0$; equal sample size for both groups).", br(), "Try varying the sample size and see how both the Bayes factor and the effect size vary:", br())
@@ -437,9 +418,9 @@ output$kim.out.topic7.df4 <- renderUI({
   BF.lab2  <- if (BF.tmp <= 3) BF.labs2[1] else if (BF.tmp <= 20) BF.labs2[2] else if (BF.tmp <= 150) BF.labs2[3] else BF.labs2[4]
   BF.labs3 <- c("\\text{Anecdotal}", "\\text{Moderate}", "\\text{Strong}", "\\text{Very strong}", "\\text{Extreme}")
   BF.lab3  <- if (BF.tmp <= 3) BF.labs3[1] else if (BF.tmp <= 10) BF.labs3[2] else if (BF.tmp <= 30) BF.labs3[3] else if (BF.tmp <= 100) BF.labs3[4] else  BF.labs3[5]
-  
+
   tab      <- data.frame(c("\\text{Jeffreys (1961)}", "\\text{Kass and Raftery (1955)}", "\\text{Lee and Wagenmakers (2014)}"), 
-                         c(BF.lab1, BF.lab2, BF.lab3)
+                              c(BF.lab1, BF.lab2, BF.lab3)
   )
   colnames(tab) <- c("\\text{Classification}", paste0("BF_{", substr(input$BF10.01, 3, 4), "} = ", round(BF(), 3)))
   

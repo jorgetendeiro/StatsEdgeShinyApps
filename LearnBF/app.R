@@ -10,6 +10,8 @@ library(DT)
 library(markdown)
 library(stevemisc)
 library(katex)
+library(BH)
+library(Rcpp)
 # install devtools in server
 # install kableExtra (now 1.3.4) from Github: devtools::install_github("haozhu233/kableExtra")
 
@@ -25,8 +27,13 @@ t.test.summ <- function(m1, m2, sd1, sd2, n1, n2)
   df     <- n1 + n2 - 2
   c(t = t, df = df, p = p)
 }
+
 # Load the functions allowing to compute the Bayes factors:
 source("R_scripts/BayesFactors.R")
+
+# Load BOOST's non-central t (better precision and less warnings than R's):
+# https://stackoverflow.com/questions/39183938/rs-t-distribution-says-full-precision-may-not-have-been-achieved
+sourceCpp("www/boost_noncentralt.cpp")
 
 # To edit the LaTeX tables:
 js <- "
@@ -96,12 +103,12 @@ ui <- fluidPage(
                                 width = "100%"), class = "not_bold")
         ), 
         column(4, align = "left", 
-                div(numericInput(inputId = "n1",
-                                 label   = em("$N$:"),
-                                 min     = 5,
-                                 max     = 50,
-                                 value   = 30, 
-                                 width = "100%"), class = "not_bold")
+               div(numericInput(inputId = "n1",
+                                label   = em("$N$:"),
+                                min     = 5,
+                                max     = 50,
+                                value   = 30, 
+                                width = "100%"), class = "not_bold")
         )
       ), 
       h4("Group B"), 
@@ -170,7 +177,7 @@ ui <- fluidPage(
         column(width = 4, uiOutput("prior.param2")), 
         column(width = 4, uiOutput("prior.param3"))
       ), 
-    br(),
+      br(),
       div(prettyRadioButtons(inputId  = "BF10.01",
                              label    = em("Bayes Factor:"), 
                              choices  = list("$BF_{10}$" = "BF10", 
@@ -181,30 +188,30 @@ ui <- fluidPage(
                              status   = "success", 
                              shape    = "round", 
                              fill     = TRUE), class = "not_bold"), 
-    br(), 
-    em("Prior probability:"), 
-    fluidRow(
-      column(width = 6, 
-             setSliderColor(c("#DCA559", "#DCA559"), c(1, 2)),
-             div(sliderInput(inputId = "priorprob0", 
-                             label   = em("$\\mathcal{H}_0$:"), 
-                             min     = 0, 
-                             max     = 100, 
-                             value   = 50, 
-                             post    = "%", 
-                             ticks   = FALSE, 
-                             step    = 5), class = "not_bold")), 
-      column(width = 6, 
-             div(sliderInput(inputId = "priorprob1", 
-                             label   = em("$\\mathcal{H}_1$:"), 
-                             min     = 0, 
-                             max     = 100, 
-                             value   = 50, 
-                             post    = "%", 
-                             ticks   = FALSE, 
-                             step    = 5), class = "not_bold"))
-    ), 
-    br(), 
+      br(), 
+      em("Prior probability:"), 
+      fluidRow(
+        column(width = 6, 
+               setSliderColor(c("#DCA559", "#DCA559"), c(1, 2)),
+               div(sliderInput(inputId = "priorprob0", 
+                               label   = em("$\\mathcal{H}_0$:"), 
+                               min     = 0, 
+                               max     = 100, 
+                               value   = 50, 
+                               post    = "%", 
+                               ticks   = FALSE, 
+                               step    = 5), class = "not_bold")), 
+        column(width = 6, 
+               div(sliderInput(inputId = "priorprob1", 
+                               label   = em("$\\mathcal{H}_1$:"), 
+                               min     = 0, 
+                               max     = 100, 
+                               value   = 50, 
+                               post    = "%", 
+                               ticks   = FALSE, 
+                               step    = 5), class = "not_bold"))
+      ), 
+      br(), 
       width = 4
     ), 
     
@@ -213,7 +220,7 @@ ui <- fluidPage(
       tabsetPanel(
         id = "maintabs", 
         type = "pills",
-        selected = "Bayesian t-test", ##### "Introduction", ##### "Instructions", ##### "Keep in mind", 
+        selected = "Instructions", ##### "Keep in mind",  ##### "Bayesian t-test", ##### "Introduction", 
         tabPanel("Instructions",
                  uiOutput("instructions")
         ),
@@ -256,14 +263,14 @@ ui <- fluidPage(
                  conditionalPanel("input.intro == 'intro.topic3'", uiOutput("introduction3")), 
                  conditionalPanel("input.intro == 'intro.topic4'", uiOutput("introduction4a")), 
                  conditionalPanel("input.intro == 'intro.topic4'", h4(em("Box: How to derive the Bayes factor.")), div(style = "border-style: solid; border-color: #DCA559; padding: 10px; color: gray;",
-                                                                       uiOutput("introduction4b"))), 
+                                                                                                                       uiOutput("introduction4b"))), 
                  conditionalPanel("input.intro == 'intro.topic4'", br(), br()), 
                  conditionalPanel("input.intro == 'intro.topic5'", uiOutput("introduction5a")), 
                  conditionalPanel("input.intro == 'intro.topic5'", plotOutput("intro.topic5.plot1")), 
                  conditionalPanel("input.intro == 'intro.topic5'", br(), br()),
                  conditionalPanel("input.intro == 'intro.topic5'", uiOutput("introduction5b")), 
                  conditionalPanel("input.intro == 'intro.topic5'", h4(em("Box: The marginal likelihood.")), div(style = "border-style: solid; border-color: #DCA559; padding: 10px; color: gray;",
-                                                                                                                       uiOutput("introduction5c"))), 
+                                                                                                                uiOutput("introduction5c"))), 
                  conditionalPanel("input.intro == 'intro.topic5'", br(), br()),
                  conditionalPanel("input.intro == 'intro.topic6'", uiOutput("introduction6")), 
                  conditionalPanel("input.intro == 'intro.topic6'", fluidRow(
@@ -345,9 +352,11 @@ ui <- fluidPage(
                  br(), 
                  h3(strong("Explanation")), 
                  uiOutput("kim.out"), 
-                 conditionalPanel("input.keepinmind == 'topic1'", uiOutput("kim.out.topic1.df1")), 
+                 br(), 
+                 conditionalPanel("input.keepinmind == 'topic1'", htmlOutput("kim.out.topic1.df1")), 
                  conditionalPanel("input.keepinmind == 'topic2'", plotOutput("kim.out.topic2.plot1")), 
-                 conditionalPanel("input.keepinmind == 'topic2'", uiOutput("kim.out.topic2.df1")), 
+                 br(), br(), 
+                 conditionalPanel("input.keepinmind == 'topic2'", htmlOutput("kim.out.topic2.df1")),
                  conditionalPanel("input.keepinmind == 'topic5'", uiOutput("kim.out.topic5.df1")), 
                  conditionalPanel("input.keepinmind == 'topic5'", uiOutput("kim.out.topic5.part2")), 
                  conditionalPanel("input.keepinmind == 'topic5'", fluidRow(

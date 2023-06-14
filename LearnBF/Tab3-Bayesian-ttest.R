@@ -218,7 +218,7 @@ output$BF.df2 <- function() {
     column_spec(4, extra_css = "border-bottom: 2px solid;") %>%  
     column_spec(6, extra_css = "border-bottom: 2px solid;") %>%  
     collapse_rows(columns = c(3, 4, 6)) %>%
-    row_spec(0, extra_css = "border-bottom: 1px solid; ", background = "#005E3C1A") %>%
+    row_spec(0, extra_css = "border-bottom: 1px solid;", background = "#005E3C1A") %>%
     row_spec(1, extra_css = "padding: 3px;") %>% 
     row_spec(2, extra_css = "border-bottom: 2px solid; padding: 3px; border-top: 1px solid white")
 } 
@@ -401,12 +401,22 @@ output$BF.formula2 <- renderUI({
 })
 
 output$BFplot3 <- renderPlot({
+  # To determine the x-axis range, I will consider the peak of the prior (location.c()) and of the posterior (~cohen.d()).
+  # In particular, I will extend the plot of H1:delta>0 to below 0 and H1:delta<0 to above zero in case cohen.d() is in the 'wrong' side of 0, as _I want to always show cohen.d() with a vertical line.
+  # For the spread beyond the range limits of x, I base it on the SD of the prior, since the prior is usually broader than the posterior.
+  
   if (input$H1hyp == "H1.diff0")
   {
+    x.min <- floor(min(location.c(), cohen.d()) - 3.5*scale.c())
+    x.max <- ceiling(max(location.c(), cohen.d()) + 3.5*scale.c())
+    
     x.supp <- switch(input$prior,
-                     "cauchy"    = seq(floor(location.c() - 3.5*scale.c()), ceiling(location.c() + 3.5*scale.c()), length.out = 1024),
-                     "normal"    = seq(floor(location.n() - 3.5*scale.n()), ceiling(location.n() + 3.5*scale.n()), length.out = 1024),
-                     "t.student" = seq(floor(location.t() - 3.5*scale.t()), ceiling(location.t() + 3.5*scale.t()), length.out = 1024))
+                     "cauchy"    = seq(floor  (min(location.c(), cohen.d()) - 3.5*scale.c()), 
+                                       ceiling(max(location.c(), cohen.d()) + 3.5*scale.c()), length.out = 1024),
+                     "normal"    = seq(floor  (min(location.n(), cohen.d()) - 3.5*scale.n()), 
+                                       ceiling(max(location.n(), cohen.d()) + 3.5*scale.n()), length.out = 1024),
+                     "t.student" = seq(floor  (min(location.t(), cohen.d()) - 3.5*scale.t()), 
+                                       ceiling(max(location.t(), cohen.d()) + 3.5*scale.t()), length.out = 1024))
     y      <- switch(input$prior, 
                      "cauchy"    = dcauchy(x.supp, location.c(), scale.c()), 
                      "normal"    = dnorm  (x.supp, location.n(), scale.n()), 
@@ -416,34 +426,40 @@ output$BFplot3 <- renderPlot({
   if (input$H1hyp == "H1.larger0")
   {
     x.supp <- switch(input$prior,
-                     "cauchy"    = seq(0, if (ceiling(location.c() + 3.5*scale.c()) <=1) 3 else  ceiling(location.c() + 3.5*scale.c()), length.out = 1024),
-                     "normal"    = seq(0, if (ceiling(location.n() + 3.5*scale.n()) <=1) 3 else  ceiling(location.n() + 3.5*scale.n()), length.out = 1024),
-                     "t.student" = seq(0, if (ceiling(location.t() + 3.5*scale.t()) <=1) 3 else  ceiling(location.t() + 3.5*scale.t()), length.out = 1024))
+                     "cauchy"    = seq(floor  (min(location.c(), cohen.d()) - 3.5*scale.c()), 
+                                       ceiling(max(location.c(), cohen.d()) + 3.5*scale.c()), length.out = 1024),
+                     "normal"    = seq(floor  (min(location.n(), cohen.d()) - 3.5*scale.n()), 
+                                       ceiling(max(location.n(), cohen.d()) + 3.5*scale.n()), length.out = 1024),
+                     "t.student" = seq(floor  (min(location.t(), cohen.d()) - 3.5*scale.t()), 
+                                       ceiling(max(location.t(), cohen.d()) + 3.5*scale.t()), length.out = 1024))
     y      <- switch(input$prior, 
-                     "cauchy"    = dcauchy(x.supp,         location.c(), scale.c()) / pcauchy(0,         location.c(), scale.c(), lower.tail = FALSE), 
-                     "normal"    = dnorm  (x.supp,         location.n(), scale.n()) / pnorm  (0,         location.n(), scale.n(), lower.tail = FALSE), 
-                     "t.student" = dst    (x.supp, df.t(), location.t(), scale.t()) / (1 - pst    (0, df.t(), location.t(), scale.t())))
+                     "cauchy"    = sapply(x.supp, function(x) if (x <= 0) 0 else dcauchy(x,         location.c(), scale.c()) / pcauchy(0,         location.c(), scale.c(), lower.tail = FALSE)), 
+                     "normal"    = sapply(x.supp, function(x) if (x <= 0) 0 else dnorm  (x,         location.n(), scale.n()) / pnorm  (0,         location.n(), scale.n(), lower.tail = FALSE)), 
+                     "t.student" = sapply(x.supp, function(x) if (x <= 0) 0 else dst    (x, df.t(), location.t(), scale.t()) / (1 - pst    (0, df.t(), location.t(), scale.t()))))
   }
   
   if (input$H1hyp == "H1.smaller0")
   {
     x.supp <- switch(input$prior,
-                     "cauchy"    = seq(if (floor(location.c() - 3.5*scale.c()) >= -1) -3 else floor(location.c() - 3.5*scale.c()), 0, length.out = 1024),
-                     "normal"    = seq(if (floor(location.n() - 3.5*scale.n()) >= -1) -3 else floor(location.n() - 3.5*scale.n()), 0, length.out = 1024),
-                     "t.student" = seq(if (floor(location.t() - 3.5*scale.t()) >= -1) -3 else floor(location.t() - 3.5*scale.t()), 0, length.out = 1024))
+                     "cauchy"    = seq(floor  (min(location.c(), cohen.d()) - 3.5*scale.c()), 
+                                       ceiling(max(location.c(), cohen.d()) + 3.5*scale.c()), length.out = 1024),
+                     "normal"    = seq(floor  (min(location.n(), cohen.d()) - 3.5*scale.n()), 
+                                       ceiling(max(location.n(), cohen.d()) + 3.5*scale.n()), length.out = 1024),
+                     "t.student" = seq(floor  (min(location.t(), cohen.d()) - 3.5*scale.t()), 
+                                       ceiling(max(location.t(), cohen.d()) + 3.5*scale.t()), length.out = 1024))
     y      <- switch(input$prior, 
-                     "cauchy"    = dcauchy(x.supp,         location.c(), scale.c()) / pcauchy(0,         location.c(), scale.c()), 
-                     "normal"    = dnorm  (x.supp,         location.n(), scale.n()) / pnorm  (0,         location.n(), scale.n()), 
-                     "t.student" = dst    (x.supp, df.t(), location.t(), scale.t()) / pst    (0, df.t(), location.t(), scale.t()))
+                     "cauchy"    = sapply(x.supp, function(x) if (x >= 0) 0 else dcauchy(x,         location.c(), scale.c()) / pcauchy(0,         location.c(), scale.c(), lower.tail = TRUE)), 
+                     "normal"    = sapply(x.supp, function(x) if (x >= 0) 0 else dnorm  (x,         location.n(), scale.n()) / pnorm  (0,         location.n(), scale.n(), lower.tail = TRUE)), 
+                     "t.student" = sapply(x.supp, function(x) if (x >= 0) 0 else dst    (x, df.t(), location.t(), scale.t()) / pst    (0, df.t(), location.t(), scale.t())))
   }
-  
-  y.post <- switch(input$prior, 
-                   "cauchy"    = post.dlt.H1(x.supp, ttest.res()["t"], input$n1, input$n2, cauchy.prior, input$H1hyp, location = location.c(), scale = scale.c()), 
-                   "normal"    = post.dlt.H1(x.supp, ttest.res()["t"], input$n1, input$n2, normal.prior, input$H1hyp, location = location.n(), scale = scale.n()), 
-                   "t.student" = post.dlt.H1(x.supp, ttest.res()["t"], input$n1, input$n2, tstude.prior, input$H1hyp, location = location.t(), scale = scale.t()))
   
   if (input$H1hyp != "H1.point")
   {
+    y.post <- switch(input$prior, 
+                     "cauchy"    = post.dlt.H1(x.supp, ttest.res()["t"], input$n1, input$n2, cauchy.prior, input$H1hyp, location = location.c(), scale = scale.c()), 
+                     "normal"    = post.dlt.H1(x.supp, ttest.res()["t"], input$n1, input$n2, normal.prior, input$H1hyp, location = location.n(), scale = scale.n()), 
+                     "t.student" = post.dlt.H1(x.supp, ttest.res()["t"], input$n1, input$n2, tstude.prior, input$H1hyp, location = location.t(), scale = scale.t(), df = df.t()))
+    
     par(mar = c(3.5, 5, .5, .5))
     plot(x.supp, y, xlim = c(min(x.supp), max(x.supp)), ylim = c(0, 1.2*max(y, y.post)), ylab = "", xlab = "", bty = "n",
          las = 1, type = "l", col = "#005E3C", lwd = 1, xaxt = "n", lty = 2,
@@ -452,20 +468,24 @@ output$BFplot3 <- renderPlot({
     axis(1, at = min(x.supp):max(x.supp))
     mtext("Density", 2, 3, cex = 1.5)
     mtext(expression(delta), 1, 2.5, cex = 1.5)
+    abline(v = cohen.d(), lwd = 2)
+    text(paste0("d = ", cohen.d()), x = cohen.d(), y = 1.2*max(y, y.post), cex = 1.5, font=1, pos = if (input$H1hyp != "H1.smaller0") 4 else 2)
     # polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
   } else
   {
     x.supp <- seq(H1pointslide() - 3, H1pointslide() + 3, length.out = 1024)
     par(mar = c(3.5, 5, .5, .5))
-    plot(NULL, xlim = range(x.supp), ylim = c(0, 1.05), ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", 
+    plot(NULL, xlim = c(floor(min(x.supp)), ceiling(max(x.supp))), ylim = c(0, 1.05), ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", 
          cex.axis = 2, main = "", cex.main = 1.5, font.main = 1)
-    axis(1, seq(floor(x.supp), ceiling(x.supp), length.out = 101))
+    axis(1, floor(min(x.supp)):ceiling(max(x.supp)))
     axis(2, c(0, 1), las = 1)
     segments(H1pointslide(), 0, H1pointslide(), 1, lty = 2, col = "gray")
     points(H1pointslide(), 1, pch = 16, cex = 2, col = "#005E3C")
     segments(floor(x.supp), 0, ceiling(x.supp), 0, lty = 1, col = "#005E3C", lwd = 2)
-    points(ceiling(x.supp), 0, pch = 21, cex = 2, bg = "white", col = "#005E3C")
-    mtext(expression(delta), 1, 2.5, at = .95, cex = 1.5)
+    points(H1pointslide(), 0, pch = 21, cex = 2, bg = "white", col = "#005E3C")
+    mtext(expression(delta), 1, 2.5, cex = 1.5)
+    abline(v = cohen.d(), lwd = 2)
+    text(paste0("d = ", cohen.d()), x = cohen.d(), y = 1, cex = 1.5, font=1, pos = if (cohen.d() < H1pointslide()) 2 else 4)
     mtext("Probability", 2, 3, cex = 1.5)
   }
   
