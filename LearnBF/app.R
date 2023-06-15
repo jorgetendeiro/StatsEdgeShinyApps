@@ -352,13 +352,13 @@ ui <- fluidPage(
                  br(), 
                  h3(strong("Explanation")), 
                  uiOutput("kim.out"), 
-                 br(), 
-                 conditionalPanel("input.keepinmind == 'topic1'", htmlOutput("kim.out.topic1.df1")), 
-                 conditionalPanel("input.keepinmind == 'topic2'", plotOutput("kim.out.topic2.plot1")), 
+                 # br(), 
+                 conditionalPanel("input.keepinmind == 'topic1'", br(), htmlOutput("kim.out.topic1.df1")), 
+                 conditionalPanel("input.keepinmind == 'topic2'", br(), plotOutput("kim.out.topic2.plot1")), 
                  br(), br(), 
                  conditionalPanel("input.keepinmind == 'topic2'", htmlOutput("kim.out.topic2.df1")),
-                 conditionalPanel("input.keepinmind == 'topic5'", uiOutput("kim.out.topic5.df1")), 
-                 conditionalPanel("input.keepinmind == 'topic5'", uiOutput("kim.out.topic5.part2")), 
+                 conditionalPanel("input.keepinmind == 'topic5'", htmlOutput("kim.out.topic5.df1")), 
+                 conditionalPanel("input.keepinmind == 'topic5'", uiOutput("kim.out.topic5.part2"), br()), 
                  conditionalPanel("input.keepinmind == 'topic5'", fluidRow(
                    align = "center", 
                    column(3),
@@ -372,27 +372,25 @@ ui <- fluidPage(
                    column(5, align = 'center', plotOutput("kim.out.topic5.plot2")), 
                    column(1))), 
                  conditionalPanel("input.keepinmind == 'topic5'", uiOutput("kim.out.topic5.part3")), 
-                 # conditionalPanel("input.keepinmind == 'topic7'", fluidRow(column(4, uiOutput("kim.out.topic7.df1")),
-                 #                                                           column(4, uiOutput("kim.out.topic7.df2")),
-                 #                                                           column(4, uiOutput("kim.out.topic7.df3")))),
-                 
-                 
-                 conditionalPanel("input.keepinmind == 'topic7'", 
+                 # conditionalPanel("input.keepinmind == 'topic7'", fluidRow(column(4, htmlOutput("kim.out.topic7.df1")),
+                 #                                                           column(4, htmlOutput("kim.out.topic7.df2")),
+                 #                                                           column(4, htmlOutput("kim.out.topic7.df3")))),
+                 conditionalPanel("input.keepinmind == 'topic7'",
                                   fluidRow(
-                                    column(4, selectInput("BFClassTbl", "Choose:", 
-                                                          choices = c("Jeffreys (1961)", 
-                                                                      "Kass and Raftery (1995)", 
-                                                                      "Lee and Wagenmakers (2014)"), 
+                                    column(4, selectInput("BFClassTbl", "Choose:",
+                                                          choices = c("Jeffreys (1961)",
+                                                                      "Kass and Raftery (1995)",
+                                                                      "Lee and Wagenmakers (2014)"),
                                                           selected = "Kass and Raftery (1995)", width = '100%')
-                                    ), 
-                                    column(8, uiOutput("kim.out.topic7.dfchosen"))
+                                    ),
+                                    column(8, htmlOutput("kim.out.topic7.dfchosen"))
                                   )
-                 ), 
+                 ),
                  
                  
-                 conditionalPanel("input.keepinmind == 'topic7'", uiOutput("kim.out.topic7.part2")), 
-                 conditionalPanel("input.keepinmind == 'topic7'", uiOutput("kim.out.topic7.df4")),
-                 conditionalPanel("input.keepinmind == 'topic7'", uiOutput("kim.out.topic7.part3"))
+                 conditionalPanel("input.keepinmind == 'topic7'", uiOutput("kim.out.topic7.part2"), br()), 
+                 conditionalPanel("input.keepinmind == 'topic7'", htmlOutput("kim.out.topic7.df4")),
+                 conditionalPanel("input.keepinmind == 'topic7'", uiOutput("kim.out.topic7.part3"), br())
                  
                  
         ), 
