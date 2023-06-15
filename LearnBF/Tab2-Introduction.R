@@ -60,44 +60,6 @@ output$ttest <- function() {
   
 }
 
-# output$ttest <- renderUI({
-#   tab <- data.frame(
-#     (input$mean1 - input$mean2) / sqrt((((input$n1-1)*(input$sd1^2)+(input$n2-1)*(input$sd2^2)))/(input$n1+input$n2-2)), 
-#     ttest.res()["t"], 
-#     ttest.res()["df"], 
-#     if (round(ttest.res()["p"], 3) >= .001) ttest.res()["p"] else "<.001", 
-#     if (ttest.res()["p"] <= input$alpha) "\\text{Reject $\\mathcal{H}_0$}" else "\\text{Fail to reject $\\mathcal{H}_0$}"
-#   ) 
-#   colnames(tab) <- c("\\text{Std. mean difference}", "\\text{$t$}", "\\text{df}", "\\text{$p$-value}", "\\text{Test decision}")
-#   
-#   LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1), 
-#                            digits = c(0, 3, 3, if (ttest.res()["df"] - round(ttest.res()["df"]) < 1e-12) 0 else 3, 3, 3)
-#   ), 
-#   floating                   = FALSE,
-#   tabular.environment        = "array",
-#   comment                    = FALSE,
-#   print.results              = FALSE,
-#   sanitize.colnames.function = identity,
-#   sanitize.text.function     = identity,
-#   include.rownames           = FALSE,
-#   add.to.row                 = list(
-#     pos     = as.list(c(-1)),
-#     command = "\\rowcolor{lightgray}"
-#   )
-#   )
-#   
-#   tagList(
-#     #withMathJax(),
-#     HTML(paste0("$$", LaTeXtab, "$$")),
-#     tags$script(HTML(js)),
-#     tags$script(
-#       async="", 
-#       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-#     )
-#   )
-#   
-# })
-
 output$ttest.crit <- renderPlot({
   xlimupp <- max(5, ceiling(abs(ttest.res()["t"]))+2)
   par(mar = c(3, 1, 2, 1))
@@ -514,40 +476,27 @@ output$introduction6 <- renderUI({
 
 # Compute things to render the plot in intro.topic 6:
 {# Common sample size:
-  N.supp <- seq(50, 5000, by = 50)
-  
-  # BF and p-value per sample size:
-  BF.val.it6 <- rep(NA, length(N.supp))
-  p.val.it6  <- rep(NA, length(N.supp))
-  for (i in 1:length(N.supp))
-  {
-    group1     <- scale(rnorm(N.supp[i]))
-    group2     <- scale(rnorm(N.supp[i]))
-    # 
-    ttest.tmp     <- t.test(group1, group2)
-    t.tmp         <- ttest.tmp$statistic
-    reactive({ BF.val.it6[i] <- suppressWarnings({ B01(t.tmp, N.supp[i], N.supp[i], normal.prior, input$H1hyp, H1pointslide(), scale = 1) }) })
-    p.val.it6[i]  <- ttest.tmp$p.value
-  }
+  N.supp.it6  <- seq(50, 5000, by = 50)
+  t.vals.it6  <- sapply(N.supp.it6, function(n) t.test.summ(0, 0, 1, 1, n, n)["t"])
+  p.vals.it6  <- sapply(N.supp.it6, function(n) t.test.summ(0, 0, 1, 1, n, n)["p"])
+  BF.vals.it6 <- sapply(1:length(N.supp.it6), function(i) B01(t.vals.it6[i], N.supp.it6[i], N.supp.it6[i], normal.prior, "H1.diff0", 0, scale = 1))
 }
 
 output$intro.topic6.plot1 <- renderPlot({
   par(mar = c(4, 5.5, .5, 1))
-  hist(rnorm(1000))
-  # plot(N.supp[1:(input$Ncommon.BF.p/50)], BF.val.it6[1:(input$Ncommon.BF.p/50)])
-  # plot(N.supp[1:(input$Ncommon.BF.p/50)], BF.val.it6[1:(input$Ncommon.BF.p/50)], type = "l", las = 1, bty = "n", yaxs = "i", xaxs = "i", 
-  #      xlim = c(50, 5000), ylim = c(0, 50), 
-  #      col = "#005E3C", lwd = 2,
-  #      xlab = "", ylab = "", yaxt = "n", xaxt = "n")
-  # axis(1, at = seq(0, 5000, by = 1000), las = 1)
-  # axis(2, at = seq(0, 50, 10), las = 1)
-  # mtext("Sample size per group", 1, 2.5)
-  # mtext(expression("BF"["01"] * " (log scale)"), 2, 3)
+  plot(N.supp[1:(input$Ncommon.BF.p/50)], BF.vals.it6[1:(input$Ncommon.BF.p/50)], type = "l", las = 1, bty = "n", yaxs = "i", xaxs = "i",
+       xlim = c(50, 5000), ylim = c(0, 50),
+       col = "#005E3C", lwd = 2,
+       xlab = "", ylab = "", yaxt = "n", xaxt = "n")
+  axis(1, at = seq(0, 5000, by = 1000), las = 1)
+  axis(2, at = seq(0, 50, 10), las = 1)
+  mtext("Sample size per group", 1, 2.5)
+  mtext(expression("BF"["01"] * " (log scale)"), 2, 3)
 })
 
 output$intro.topic6.plot2 <- renderPlot({
   par(mar = c(4, 5.5, .5, 1))
-  plot(N.supp[1:(input$Ncommon.BF.p/50)], p.val.it6[1:(input$Ncommon.BF.p/50)], type = "l", las = 1, bty = "n", yaxs = "i", xaxs = "i",
+  plot(N.supp[1:(input$Ncommon.BF.p/50)], p.vals.it6[1:(input$Ncommon.BF.p/50)], type = "l", las = 1, bty = "n", yaxs = "i", xaxs = "i",
        xlim = c(50, 5000), ylim = c(0, 1.01), col = "#005E3C", lwd = 2,
        xlab = "", ylab = "", yaxt = "n", xaxt = "n")
   axis(1, at = seq(0, 5000, by = 1000), las = 1)

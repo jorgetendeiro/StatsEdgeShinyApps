@@ -277,7 +277,7 @@ ui <- fluidPage(
                    align = "center", 
                    column(3),
                    column(6, align = "center", sliderInput("Ncommon.BF.p", "Sample size:", min = 50, max = 5000, value = 50, step = 50, 
-                                                           animate = animationOptions( interval = 100 ), width = '100%')), 
+                                                           animate = animationOptions( interval = 100 ), width = '100%', ticks   = FALSE)), 
                    column(3)
                  )), 
                  conditionalPanel("input.intro == 'intro.topic6'", fluidRow(
@@ -363,7 +363,7 @@ ui <- fluidPage(
                    align = "center", 
                    column(3),
                    column(6, align = "center", sliderInput("Ncommon", "Sample size:", min = 50, max = 5000, value = 50, step = 50, 
-                                                           animate = animationOptions( interval = 100 ), width = '100%')), 
+                                                           animate = animationOptions( interval = 100 ), width = '100%', ticks   = FALSE, )), 
                    column(3)
                  )), 
                  conditionalPanel("input.keepinmind == 'topic5'", fluidRow(

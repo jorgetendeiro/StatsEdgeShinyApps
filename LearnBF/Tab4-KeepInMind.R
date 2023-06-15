@@ -300,29 +300,14 @@ output$kim.out.topic5.df1 <- renderUI({
 
 # Compute things to render both plots in topic 5:
 {# Common sample size:
-  N.supp <- seq(50, 5000, by = 50)
-  
-  # BF per sample size:
-  # t.test.summ <- function(m1=.1, m2=0, sd=1, n1, n2)
-  # {
-  #   group1 <- scale(1:n1) * sd + m1
-  #   group2 <- scale(1:n2) * sd + m2
-  #   t.test(x = group1, y = group2)
-  # }
-  BF.val <- rep(NA, length(N.supp))
-  for (i in 1:length(N.supp))
-  {
-    t.tmp     <- t.test.summ(.1, 0, 1, 1, N.supp[i], N.supp[i])["t"]
-    reactive ({ 
-      BF.tmp    <- suppressWarnings({ B01(t.tmp, N.supp[i], N.supp[i], normal.prior, input$H1hyp, H1pointslide(), scale = 1) }) 
-      BF.val[i] <- 1 / BF.tmp()
-    })
-  }
+  N.supp  <- seq(50, 5000, by = 50)
+  t.vals  <- sapply(N.supp, function(n) t.test.summ(.1, 0, 1, 1, n, n)["t"])
+  BF.vals <- sapply(1:length(N.supp), function(i) 1/B01(t.vals[i], N.supp[i], N.supp[i], normal.prior, "H1.diff0", 0, scale = 1))
 }
 
 output$kim.out.topic5.plot1 <- renderPlot({
   par(mar = c(4, 5.5, .5, 1))
-  plot(N.supp[1:(input$Ncommon/50)], BF.val[1:(input$Ncommon/50)], type = "l", log = "y", las = 1, bty = "n", yaxs = "i", xaxs = "i", 
+  plot(N.supp[1:(input$Ncommon/50)], BF.vals[1:(input$Ncommon/50)], type = "l", log = "y", las = 1, bty = "n", yaxs = "i", xaxs = "i", 
        xlim = c(50, 5000), ylim = c(0.1, 10000), col = "#005E3C", lwd = 2, 
        xlab = "", ylab = "", yaxt = "n", xaxt = "n")
   axis(1, at = seq(0, 5000, by = 1000), las = 1)

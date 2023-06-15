@@ -11,73 +11,63 @@
 # Priors:
 cauchy.prior <- function(delta, location = 0, scale = sqrt(2)/2) 
 {
-  dcauchy(delta, location = location, scale = scale, log = TRUE) 
+  dcauchy(delta, location = location, scale = scale) 
 }
 normal.prior <- function(delta, location = 0, scale  = sqrt(2)/2) 
 {
-  dnorm  (delta, mean = location, sd = scale, log = TRUE) 
+  dnorm  (delta, mean = location, sd = scale) 
 }
 tstude.prior <- function(delta, location = 0, scale = sqrt(2)/2, df = 1) 
 {
-  log(gamma((df+1)/2)) - ((df+1)/2) * log((df+((delta-location)/scale)^2)/df) - 
-    log(scale*sqrt(df*pi)*gamma(df/2))
+  gamma((df+1)/2) * ((df+((delta-location)/scale)^2)/df)^(-((df+1)/2)) / (scale*sqrt(df*pi)*gamma(df/2))
 }
 
 # p(D|H1):
-p.y.alt <- function(t.stat, n1, n2, log.prior.dens, type.H1, point.H1, ...) {
+p.y.alt <- function(t.stat, n1, n2, prior.dens, type.H1, point.H1, ...) {
   switch(type.H1, 
          "H1.diff0" = {
-           normalize <- integrate(function(delta,...) {exp(log.prior.dens(delta, ...))}, 
-                                  lower = -Inf, upper = Inf, ...)[[1]]
-           py        <- integrate(function(delta,t.stat,...) {
-             exp(suppressWarnings(dt(t.stat, n1+n2-2, ncp = delta*sqrt(n1*n2/(n1+n2)), log = TRUE)) + 
-                   log.prior.dens(delta, ...)) },
+           normalize <- integrate(function(delta,...) prior.dens(delta, ...), lower = -Inf, upper = Inf, ...)[[1]]
+           py        <- integrate(function(delta,t.stat,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * prior.dens(delta, ...),
              lower = -Inf, upper = Inf, t.stat = t.stat, ...)[[1]]
            py/normalize
          }, 
          "H1.larger0" = {
-           normalize <- integrate(function(delta,...) {exp(log.prior.dens(delta, ...))}, 
-                                  lower = 0, upper = Inf, ...)[[1]]
-           py        <- integrate(function(delta,t.stat,...) {
-             exp(suppressWarnings(dt(t.stat, n1+n2-2, ncp = delta*sqrt(n1*n2/(n1+n2)), log = TRUE)) + 
-                   log.prior.dens(delta, ...)) },
+           normalize <- integrate(function(delta,...) prior.dens(delta, ...), lower = 0, upper = Inf, ...)[[1]]
+           py        <- integrate(function(delta,t.stat,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * prior.dens(delta, ...),
              lower = 0, upper = Inf, t.stat = t.stat, ...)[[1]]
            py/normalize
          }, 
          "H1.smaller0" = {
-           normalize <- integrate(function(delta,...) {exp(log.prior.dens(delta, ...))}, 
-                                  lower = -Inf, upper = 0, ...)[[1]]
-           py        <- integrate(function(delta,t.stat,...) {
-             exp(suppressWarnings(dt(t.stat, n1+n2-2, ncp = delta*sqrt(n1*n2/(n1+n2)), log = TRUE)) + 
-                   log.prior.dens(delta, ...)) },
+           normalize <- integrate(function(delta,...) prior.dens(delta, ...), lower = -Inf, upper = 0, ...)[[1]]
+           py        <- integrate(function(delta,t.stat,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * prior.dens(delta, ...),
              lower = -Inf, upper = 0, t.stat = t.stat, ...)[[1]]
            py/normalize
          }, 
          "H1.point" = {
-           dt(t.stat, n1+n2-2, ncp = point.H1*sqrt(n1*n2/(n1+n2))) ####
+           dnct(t.stat, n1+n2-2, point.H1*sqrt(n1*n2/(n1+n2)))
          }
   )
 } 
 
-B01 <- function(t.stat, n1, n2, log.prior.dens, type.H1, point.H1, ...) {
-  dt(t.stat, n1+n2-2) / p.y.alt(t.stat, n1, n2, log.prior.dens, type.H1, point.H1, ...)
+B01 <- function(t.stat, n1, n2, prior.dens, type.H1, point.H1, ...) {
+  dnct(t.stat, n1+n2-2, 0) / p.y.alt(t.stat, n1, n2, prior.dens, type.H1, point.H1, ...)
 }
 
 
 # p(delta|D, H1):
-post.dlt.H1 <- function(dlt.supp, t.stat, n1, n2, log.prior.dens, type.H1, ...) {
+post.dlt.H1 <- function(dlt.supp, t.stat, n1, n2, prior.dens, type.H1, ...) {
   switch(type.H1,
          "H1.diff0" = {
-           py        <- sapply(dlt.supp, function(x, ...) dnct(t.stat, n1+n2-2, x*sqrt(n1*n2/(n1+n2))) * exp(log.prior.dens(x, ...)))
-           normalize <- integrate(function(delta,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * exp( log.prior.dens(delta, ...) ), lower = -Inf, upper = Inf, subdivisions = 1000, rel.tol = 1e-8)[[1]]
+           py        <- sapply(dlt.supp, function(x, ...) dnct(t.stat, n1+n2-2, x*sqrt(n1*n2/(n1+n2))) * exp(prior.dens(x, ...)))
+           normalize <- integrate(function(delta,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * exp( prior.dens(delta, ...) ), lower = -Inf, upper = Inf, subdivisions = 1000, rel.tol = 1e-8)[[1]]
          },
          "H1.larger0" = {
-           py        <- sapply(dlt.supp, function(x, ...) if (x <= 0) 0 else dnct(t.stat, n1+n2-2, x*sqrt(n1*n2/(n1+n2))) * exp(log.prior.dens(x, ...)))
-           normalize <- integrate(function(delta,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * exp( log.prior.dens(delta, ...) ), lower = 0, upper = Inf, subdivisions = 1000, rel.tol = 1e-8)[[1]]
+           py        <- sapply(dlt.supp, function(x, ...) if (x <= 0) 0 else dnct(t.stat, n1+n2-2, x*sqrt(n1*n2/(n1+n2))) * exp(prior.dens(x, ...)))
+           normalize <- integrate(function(delta,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * exp( prior.dens(delta, ...) ), lower = 0, upper = Inf, subdivisions = 1000, rel.tol = 1e-8)[[1]]
          },
          "H1.smaller0" = {
-           py        <- sapply(dlt.supp, function(x, ...) if (x >= 0) 0 else dnct(t.stat, n1+n2-2, x*sqrt(n1*n2/(n1+n2))) * exp(log.prior.dens(x, ...)))
-           normalize <- integrate(function(delta,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * exp( log.prior.dens(delta, ...) ), lower = -Inf, upper = 0, subdivisions = 1000, rel.tol = 1e-8)[[1]]
+           py        <- sapply(dlt.supp, function(x, ...) if (x >= 0) 0 else dnct(t.stat, n1+n2-2, x*sqrt(n1*n2/(n1+n2))) * exp(prior.dens(x, ...)))
+           normalize <- integrate(function(delta,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * exp( prior.dens(delta, ...) ), lower = -Inf, upper = 0, subdivisions = 1000, rel.tol = 1e-8)[[1]]
          },
          "H1.point" = {
            NULL
