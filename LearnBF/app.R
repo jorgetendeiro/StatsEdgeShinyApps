@@ -33,7 +33,7 @@ source("R_scripts/BayesFactors.R")
 
 # Load BOOST's non-central t (better precision and less warnings than R's):
 # https://stackoverflow.com/questions/39183938/rs-t-distribution-says-full-precision-may-not-have-been-achieved
-sourceCpp("www/boost_noncentralt.cpp")
+sourceCpp("www/boost_noncentralt.cpp", cacheDir = "cache_rcpp/")
 
 # To edit the LaTeX tables:
 js <- "
@@ -87,9 +87,9 @@ ui <- fluidPage(
         column(4, align = "left", 
                div(numericInput(inputId = "mean1",
                                 label   = em("Mean:"),
-                                min     = -10,
-                                max     = 10,
-                                value   = 0, 
+                                min     = -16,      # -10
+                                max     = 16,       # 10
+                                value   = 15.292,   # 0
                                 step    = 0.1, 
                                 width = "100%"), class = "not_bold")
         ), 
@@ -98,7 +98,7 @@ ui <- fluidPage(
                                 label   = em("SD:"),
                                 min     = 0,
                                 max     = NA,
-                                value   = 1, 
+                                value   = 6.376,    # 1
                                 step    = .1, 
                                 width = "100%"), class = "not_bold")
         ), 
@@ -107,7 +107,7 @@ ui <- fluidPage(
                                 label   = em("$N$:"),
                                 min     = 5,
                                 max     = 50,
-                                value   = 30, 
+                                value   = 24,    # 30
                                 width = "100%"), class = "not_bold")
         )
       ), 
@@ -116,9 +116,9 @@ ui <- fluidPage(
         column(4, align = "left", 
                div(numericInput(inputId = "mean2",
                                 label   = em("Mean:"),
-                                min     = -10,
-                                max     = 10,
-                                value   = 0.2, 
+                                min     = -16,       # -10
+                                max     = 16,        # 10
+                                value   = 10.88,     # 0.2
                                 step    = 0.1, 
                                 width = "100%"), class = "not_bold")
         ), 
@@ -127,7 +127,7 @@ ui <- fluidPage(
                                 label   = em("SD:"),
                                 min     = 0,
                                 max     = NA,
-                                value   = 1, 
+                                value   = 4.324,    # 1
                                 step    = .1, 
                                 width = "100%"), class = "not_bold")
         ), 
@@ -136,7 +136,7 @@ ui <- fluidPage(
                                 label   = em("$N$:"),
                                 min     = 5,
                                 max     = 50,
-                                value   = 30, 
+                                value   = 25,    # 30
                                 width = "100%"), class = "not_bold")
         )
       ), 
@@ -220,7 +220,7 @@ ui <- fluidPage(
       tabsetPanel(
         id = "maintabs", 
         type = "pills",
-        selected = "Instructions", ##### "Keep in mind",  ##### "Bayesian t-test", ##### "Introduction", 
+        selected = "Bayesian t-test", ##### "Instructions", ##### "Keep in mind", ##### "Introduction", 
         tabPanel("Instructions",
                  uiOutput("instructions")
         ),

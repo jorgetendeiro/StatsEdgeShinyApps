@@ -211,6 +211,7 @@ kim.out.topic2.df1.reactive <- renderText({
                  "cauchy"    = paste0("$\\text{Cauchy (location = }", location.c(), "\\text{, scale = }", scale.c(), "\\text{)}$"),
                  "normal"    = paste0("$\\text{Normal (location = }", location.n(), "\\text{, scale = }", scale.n(), "\\text{)}$"),
                  "t.student" = paste0("$t\\text{-Student (location = }", location.t(), "\\text{, scale = }", scale.t(), "\\text{, df = }", df.t(), "\\text{)}$"))
+  if (input$H1hyp == "H1.point") dist <- paste0("$\\text{Spike (all probability on }\\delta=", H1pointslide(), ")$")
   
   tab <- data.frame(
     dist,
@@ -221,7 +222,7 @@ kim.out.topic2.df1.reactive <- renderText({
   )
   
   colnames(tab) <- c(
-    "$\\text{Prior}$", 
+    "$\\text{Prior distribution}$", 
     paste0("$BF_{", substr(input$BF10.01, 3, 4), "}$")
   )
   

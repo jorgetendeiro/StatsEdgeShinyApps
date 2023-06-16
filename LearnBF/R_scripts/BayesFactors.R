@@ -22,25 +22,25 @@ tstude.prior <- function(delta, location = 0, scale = sqrt(2)/2, df = 1)
   gamma((df+1)/2) * ((df+((delta-location)/scale)^2)/df)^(-((df+1)/2)) / (scale*sqrt(df*pi)*gamma(df/2))
 }
 
-# p(D|H1):
+# marginal likelihood p(D|H1):
 p.y.alt <- function(t.stat, n1, n2, prior.dens, type.H1, point.H1, ...) {
   switch(type.H1, 
          "H1.diff0" = {
-           normalize <- integrate(function(delta,...) prior.dens(delta, ...), lower = -Inf, upper = Inf, ...)[[1]]
            py        <- integrate(function(delta,t.stat,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * prior.dens(delta, ...),
-             lower = -Inf, upper = Inf, t.stat = t.stat, ...)[[1]]
+                                  lower = -Inf, upper = Inf, t.stat = t.stat, ...)[[1]]
+           normalize <- integrate(function(delta,...) prior.dens(delta, ...), lower = -Inf, upper = Inf, ...)[[1]]
            py/normalize
          }, 
          "H1.larger0" = {
-           normalize <- integrate(function(delta,...) prior.dens(delta, ...), lower = 0, upper = Inf, ...)[[1]]
            py        <- integrate(function(delta,t.stat,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * prior.dens(delta, ...),
-             lower = 0, upper = Inf, t.stat = t.stat, ...)[[1]]
+                                  lower = 0, upper = Inf, t.stat = t.stat, ...)[[1]]
+           normalize <- integrate(function(delta,...) prior.dens(delta, ...), lower = 0, upper = Inf, ...)[[1]]
            py/normalize
          }, 
          "H1.smaller0" = {
-           normalize <- integrate(function(delta,...) prior.dens(delta, ...), lower = -Inf, upper = 0, ...)[[1]]
            py        <- integrate(function(delta,t.stat,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * prior.dens(delta, ...),
-             lower = -Inf, upper = 0, t.stat = t.stat, ...)[[1]]
+                                  lower = -Inf, upper = 0, t.stat = t.stat, ...)[[1]]
+           normalize <- integrate(function(delta,...) prior.dens(delta, ...), lower = -Inf, upper = 0, ...)[[1]]
            py/normalize
          }, 
          "H1.point" = {
@@ -54,26 +54,47 @@ B01 <- function(t.stat, n1, n2, prior.dens, type.H1, point.H1, ...) {
 }
 
 
-# p(delta|D, H1):
-post.dlt.H1 <- function(dlt.supp, t.stat, n1, n2, prior.dens, type.H1, ...) {
-  switch(type.H1,
-         "H1.diff0" = {
-           py        <- sapply(dlt.supp, function(x, ...) dnct(t.stat, n1+n2-2, x*sqrt(n1*n2/(n1+n2))) * exp(prior.dens(x, ...)))
-           normalize <- integrate(function(delta,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * exp( prior.dens(delta, ...) ), lower = -Inf, upper = Inf, subdivisions = 1000, rel.tol = 1e-8)[[1]]
-         },
-         "H1.larger0" = {
-           py        <- sapply(dlt.supp, function(x, ...) if (x <= 0) 0 else dnct(t.stat, n1+n2-2, x*sqrt(n1*n2/(n1+n2))) * exp(prior.dens(x, ...)))
-           normalize <- integrate(function(delta,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * exp( prior.dens(delta, ...) ), lower = 0, upper = Inf, subdivisions = 1000, rel.tol = 1e-8)[[1]]
-         },
-         "H1.smaller0" = {
-           py        <- sapply(dlt.supp, function(x, ...) if (x >= 0) 0 else dnct(t.stat, n1+n2-2, x*sqrt(n1*n2/(n1+n2))) * exp(prior.dens(x, ...)))
-           normalize <- integrate(function(delta,...) dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * exp( prior.dens(delta, ...) ), lower = -Inf, upper = 0, subdivisions = 1000, rel.tol = 1e-8)[[1]]
-         },
-         "H1.point" = {
-           NULL
-         }
-  )
-  py/normalize
+# posterior p(delta|D, H1):
+post.dlt.H1 <- function(t.stat, n1, n2, prior.dens, type.H1, point.H1, dlt.supp, ...) {
+  dlt.supp.ind <- switch(type.H1, 
+                         "H1.diff0"    = 1, 
+                         "H1.larger0"  = (dlt.supp > 0), 
+                         "H1.smaller0" = (dlt.supp < 0), 
+                         "H1.point"    = NULL)
+  delta.supp.ind <- function(delta, type.H1) {
+    switch(type.H1, 
+           "H1.diff0"    = 1, 
+           "H1.larger0"  = (delta > 0), 
+           "H1.smaller0" = (delta < 0), 
+           "H1.point"    = NULL)
+  }
+  integral.range <- switch(type.H1, 
+                           "H1.diff0"    = range(dlt.supp), 
+                           "H1.larger0"  = c(0, max(dlt.supp)), 
+                           "H1.smaller0" = c(min(dlt.supp), 0), 
+                           "H1.point"    = NULL)
+  
+  if (type.H1 != "H1.point")
+  {
+    py        <- dlt.supp.ind * dnct(t.stat, n1+n2-2, dlt.supp*sqrt(n1*n2/(n1+n2))) * prior.dens(dlt.supp, ...)
+    normalize <- integrate(function(delta) delta.supp.ind(delta, type.H1) * dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * prior.dens(delta, ...), lower = -Inf, upper = Inf)[[1]]
+    post      <- py/normalize
+    CI95.LB.f <- function(q)
+    {
+      integrate(function(delta) delta.supp.ind(delta, type.H1) * dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * prior.dens(delta, ...) / normalize, lower = -Inf, upper = q)[[1]] - .025
+    }
+    CI95.LB <- uniroot(CI95.LB.f, integral.range)$root
+    CI95.UB.f <- function(q)
+    {
+      integrate(function(delta) delta.supp.ind(delta, type.H1) * dnct(t.stat, n1+n2-2, delta*sqrt(n1*n2/(n1+n2))) * prior.dens(delta, ...) / normalize, lower = -Inf, upper = q)[[1]] - .975
+    }
+    CI95.UB <- uniroot(CI95.UB.f, integral.range)$root
+  } else
+  {
+    NULL
+  }
+  
+  list(posterior = post, CI95.LB = CI95.LB, CI95.UB = CI95.UB)
 }
 
 
