@@ -43,6 +43,49 @@ post.odds <- reactive({
   prior.odds() * BF()
 })
 
+output$BF.df1B <- function() {
+  dist <- switch(input$prior,
+                 "cauchy"    = paste0("$\\text{Cauchy}", if (input$H1hyp == 'H1.larger0') '^+' else if (input$H1hyp == 'H1.smaller0') '^-', "\\text{ (location = }", location.c(), "\\text{, scale = }", scale.c(), "\\text{)}$"),
+                 "normal"    = paste0("$\\text{Normal}", if (input$H1hyp == 'H1.larger0') '^+' else if (input$H1hyp == 'H1.smaller0') '^-', "\\text{  (location = }", location.n(), "\\text{, scale = }", scale.n(), "\\text{)}$"),
+                 "t.student" = paste0("$t\\text{-Student}", if (input$H1hyp == 'H1.larger0') '^+' else if (input$H1hyp == 'H1.smaller0') '^-', "\\text{  (location = }", location.t(), "\\text{, scale = }", scale.t(), "\\text{, df = }", df.t(), "\\text{)}$"))
+  if (input$H1hyp == "H1.point") dist <- paste0("All probability assigned to ", input$H1pointslide)
+  
+  tab <- data.frame(
+    c(
+      "$\\textbf{Hypotheses}$",
+      "$\\textbf{Prior for }\\delta\\textbf{ under }\\mathcal{H}_1$",
+      "$\\textbf{Observed effect size}$",
+      "$\\textbf{Bayes factor}$",
+      "$\\textbf{95% credible interval for }\\delta\\textbf{ under }\\mathcal{H}_1\\hspace{5mm}$"), 
+    c(
+      paste0("$\\mathcal{H}_0: \\delta=0\\quad\\text{vs}\\quad", 
+             switch(input$H1hyp,
+                    "H1.diff0"    = "\\mathcal{H}_1: \\delta\\not=0$",
+                    "H1.larger0"  = "\\mathcal{H}_1: \\delta>0$",
+                    "H1.smaller0" = "\\mathcal{H}_1: \\delta<0$",
+                    "H1.point"    = paste0("\\mathcal{H}_1: \\delta=", input$H1pointslide, "$"))
+      ), 
+      dist,
+      paste0("$d=", round(cohen.d(), 3), "$"),
+      paste0("$BF_{", substr(input$BF10.01, 3, 4), "}=", formatC(round(BF(), 3), 3, format = "f"), "$"),
+      # paste0("$(", round(y.95CI.LB, 3), ", ", round(y.95CI.UB, 3), ")$"), 
+      paste0("$12$")
+    ), 
+    stringsAsFactors = FALSE, 
+    check.names = FALSE)
+  colnames(tab) <- NULL
+  
+  tab %>%
+    knitr::kable("html", escape = FALSE, align = 'l') %>%
+    # add_header_above(c("$\\text{Summary}$" = 2), bold = FALSE, extra_css = "border-bottom: 1px solid black; padding: 8px;", line = FALSE, escape = TRUE, align = 'l') %>% 
+    # row_spec(0, extra_css = "border-top: 2px solid;", background = "#005E3C1A") %>%
+    row_spec(1, extra_css = "border-top: 2px solid; padding: 3px;") %>%
+    row_spec(2, extra_css = "border-top: 1px solid white; padding: 3px;") %>%
+    row_spec(3, extra_css = "border-top: 1px solid white; padding: 3px;") %>%
+    row_spec(4, extra_css = "border-top: 1px solid white; padding: 3px;") %>%
+    row_spec(5, extra_css = "border-bottom: 2px solid; border-top: 1px solid white; padding: 3px;") %>%
+    kable_styling(full_width = FALSE)
+}
 
 output$BF.df1 <- function() {
   if (input$H1hyp != "H1.point") 
@@ -62,16 +105,13 @@ output$BF.df1 <- function() {
         "", 
         switch(input$prior, 
                "cauchy"    = paste0("$\\text{Cauchy}", if (input$H1hyp == 'H1.larger0') '^+' else if (input$H1hyp == 'H1.smaller0') '^-', "$"), 
-               "normal"    = "$\\text{Normal}$", 
-               "t.student" = "$\\text{$t$-Student}$"),
+               "normal"    = "$\\text{Normal}$"),
         switch(input$prior, 
                "cauchy"    = paste0("$", location.c(), "$"), 
-               "normal"    = paste0("$", location.n(), "$"), 
-               "t.student" = paste0("$", location.t(), "$")), 
+               "normal"    = paste0("$", location.n(), "$")), 
         switch(input$prior, 
                "cauchy"    = paste0("$", scale.c(), "$"), 
-               "normal"    = paste0("$", scale.n(), "$"), 
-               "t.student" = paste0("$", scale.t(), "$")), 
+               "normal"    = paste0("$", scale.n(), "$")), 
         "", 
         paste0("$", round(cohen.d(), 3), "$"),
         "",
@@ -103,18 +143,9 @@ output$BF.df1 <- function() {
                "H1.smaller0" = "$\\delta<0$", 
                "H1.point"    = paste0("$\\delta=", input$H1pointslide, "$")),
         "", 
-        switch(input$prior, 
-               "cauchy"    = paste0("$\\text{Cauchy}", if (input$H1hyp == 'H1.larger0') '^+' else if (input$H1hyp == 'H1.smaller0') '^-', "$"), 
-               "normal"    = "$\\text{Normal}$", 
-               "t.student" = "$\\text{$t$-Student}$"),
-        switch(input$prior, 
-               "cauchy"    = paste0("$", location.c(), "$"), 
-               "normal"    = paste0("$", location.n(), "$"), 
-               "t.student" = paste0("$", location.t(), "$")), 
-        switch(input$prior, 
-               "cauchy"    = paste0("$", scale.c(), "$"), 
-               "normal"    = paste0("$", scale.n(), "$"), 
-               "t.student" = paste0("$", scale.t(), "$")), 
+        "$\\text{$t$-Student}$",
+        paste0("$", location.t(), "$"), 
+        paste0("$", scale.t(), "$"), 
         paste0("$", df.t(), "$"), 
         "", 
         paste0("$", round(cohen.d(), 3), "$"),
@@ -413,8 +444,8 @@ output$BFplot3 <- renderPlot({
     y.output <- reactive({
       switch(input$prior,
              "cauchy"    = post.dlt.H1(dlt.supp = x.supp, t.stat = ttest.res()["t"], n1 = input$n1, n2 = input$n2, prior.dens = cauchy.prior, type.H1 = input$H1hyp, point.H1 = 0, location = location.c(), scale = scale.c()),
-             "normal"    = post.dlt.H1(x.supp, ttest.res()["t"], input$n1, input$n2, normal.prior, input$H1hyp, 0, location = location.n(), scale = scale.n()),
-             "t.student" = post.dlt.H1(x.supp, ttest.res()["t"], input$n1, input$n2, tstude.prior, input$H1hyp, 0, location = location.t(), scale = scale.t(), df = df.t()))
+             "normal"    = post.dlt.H1(dlt.supp = x.supp, t.stat = ttest.res()["t"], n1 = input$n1, n2 = input$n2, prior.dens = normal.prior, type.H1 = input$H1hyp, point.H1 = 0, location = location.n(), scale = scale.n()),
+             "t.student" = post.dlt.H1(dlt.supp = x.supp, t.stat = ttest.res()["t"], n1 = input$n1, n2 = input$n2, prior.dens = tstude.prior, type.H1 = input$H1hyp, point.H1 = 0, location = location.t(), scale = scale.t(), df = df.t()))
     })
     y.post    <- y.output()[[1]]
     y.95CI.LB <- y.output()[[2]]
@@ -430,11 +461,11 @@ output$BFplot3 <- renderPlot({
     mtext("Density", 2, 3, cex = 1.5)
     mtext(expression(delta), 1, 2.5, cex = 1.5)
     abline(v = cohen.d(), lwd = 2, lty = 4, col = "gray")
-    text(paste0("d = ", round(cohen.d(), 3)), x = cohen.d(), y = ceiling(1.2*max(y, y.post)), cex = 1.5, font=1, pos = if (input$H1hyp != "H1.smaller0") 4 else 2)
+    text(paste0("d = ", round(cohen.d(), 3)), x = cohen.d(), y = ceiling(1.2*max(y, y.post)), cex = 1.2, font=1, pos = if (input$H1hyp != "H1.smaller0") 4 else 2)
     segments(y.95CI.LB, 1.10*max(y, y.post), y.95CI.UB, 1.10*max(y, y.post), lwd = 2, col = "#DCA559")
     segments(y.95CI.LB, 1.07*max(y, y.post), y.95CI.LB, 1.13*max(y, y.post), lwd = 2, col = "#DCA559")
     segments(y.95CI.UB, 1.07*max(y, y.post), y.95CI.UB, 1.13*max(y, y.post), lwd = 2, col = "#DCA559")
-    text(paste0("(", round(y.95CI.LB, 3), ", ", round(y.95CI.UB, 3), ")"), x = mean(c(y.95CI.LB, y.95CI.UB)), y = 1.1*max(y, y.post), cex = 1.5, font=1, pos = 3, offset = 1)
+    text(paste0("95% CI = (", round(y.95CI.LB, 3), ", ", round(y.95CI.UB, 3), ")"), x = if (input$H1hyp != "H1.smaller0") y.95CI.UB else y.95CI.LB, y = 1.1*max(y, y.post), cex = 1.2, font=1, pos = if (input$H1hyp != "H1.smaller0") 4 else 2, offset = .5)
     y.95CI.LB.ind <- which.min(abs(x.supp - y.95CI.LB))
     y.95CI.UB.ind <- which.min(abs(x.supp - y.95CI.UB))
     polygon(c(x.supp[y.95CI.LB.ind:y.95CI.UB.ind], rev(x.supp[y.95CI.LB.ind:y.95CI.UB.ind])), 

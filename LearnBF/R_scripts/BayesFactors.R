@@ -94,7 +94,7 @@ post.dlt.H1 <- function(t.stat, n1, n2, prior.dens, type.H1, point.H1, dlt.supp,
     NULL
   }
   
-  list(posterior = post, CI95.LB = CI95.LB, CI95.UB = CI95.UB)
+  if (type.H1 != "H1.point") list(posterior = post, CI95.LB = CI95.LB, CI95.UB = CI95.UB) else NULL
 }
 
 
