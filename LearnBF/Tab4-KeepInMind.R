@@ -112,9 +112,9 @@ output$kim.out.topic2.plot1 <- renderPlot({
                    "normal"    = seq(floor(location.n() - 3.5*scale.n()), ceiling(location.n() + 3.5*scale.n()), length.out = 1024),
                    "t.student" = seq(floor(location.t() - 3.5*scale.t()), ceiling(location.t() + 3.5*scale.t()), length.out = 1024))
   y      <- switch(input$prior, 
-                   "cauchy"    = dcauchy(x.supp, location.c(), scale.c()), 
-                   "normal"    = dnorm  (x.supp, location.n(), scale.n()), 
-                   "t.student" = dst    (x.supp, df.t(), location.t(), scale.t()))
+                   "cauchy"    = cauchy.prior(x.supp, location.c(), scale.c()), 
+                   "normal"    = normal.prior(x.supp, location.n(), scale.n()), 
+                   "t.student" = tstude.prior(x.supp, location.t(), scale.t(), df.t()))
   
   par(mar = c(4.5, 5, 1.5, .5))
   plot(x.supp, y, xlim = c(min(x.supp), max(x.supp)), ylim = c(0, 1.2*max(y)), ylab = "Density", xlab = "Standardized mean difference", bty = "n",
@@ -130,9 +130,9 @@ output$kim.out.topic2.plot1 <- renderPlot({
                        "normal"    = seq(location.n() - 1*scale.n(), location.n() + 1*scale.n(), length.out = 1024),
                        "t.student" = seq(location.t() - 1*scale.t(), location.t() + 1*scale.t(), length.out = 1024))
   y.1SD      <- switch(input$prior, 
-                       "cauchy"    = dcauchy(x.supp.1SD, location.c(), scale.c()), 
-                       "normal"    = dnorm  (x.supp.1SD, location.n(), scale.n()), 
-                       "t.student" = dst    (x.supp.1SD, df.t(), location.t(), scale.t()))
+                       "cauchy"    = cauchy.prior(x.supp.1SD, location.c(), scale.c()), 
+                       "normal"    = normal.prior(x.supp.1SD, location.n(), scale.n()), 
+                       "t.student" = tstude.prior(x.supp.1SD, location.t(), scale.t(), df.t()))
   polygon(c(x.supp.1SD, rev(x.supp.1SD)), c(y.1SD, rep(0, 1024)), col = "#DCA55966", border = NA)
   # 2SD area:
   x.supp.2SD <- switch(input$prior,
@@ -140,18 +140,18 @@ output$kim.out.topic2.plot1 <- renderPlot({
                        "normal"    = seq(location.n() - 2*scale.n(), location.n() - 1*scale.n(), length.out = 1024),
                        "t.student" = seq(location.t() - 2*scale.t(), location.t() - 1*scale.t(), length.out = 1024))
   y.2SD      <- switch(input$prior, 
-                       "cauchy"    = dcauchy(x.supp.2SD, location.c(), scale.c()), 
-                       "normal"    = dnorm  (x.supp.2SD, location.n(), scale.n()), 
-                       "t.student" = dst    (x.supp.2SD, df.t(), location.t(), scale.t()))
+                       "cauchy"    = cauchy.prior(x.supp.2SD, location.c(), scale.c()), 
+                       "normal"    = normal.prior(x.supp.2SD, location.n(), scale.n()), 
+                       "t.student" = tstude.prior(x.supp.2SD, location.t(), scale.t(), df.t()))
   polygon(c(x.supp.2SD, rev(x.supp.2SD)), c(y.2SD, rep(0, 1024)), col = "#DCA55940", border = NA)
   x.supp.2SD <- switch(input$prior,
                        "cauchy"    = seq(location.c() + 1*scale.c(), location.c() + 2*scale.c(), length.out = 1024),
                        "normal"    = seq(location.n() + 1*scale.n(), location.n() + 2*scale.n(), length.out = 1024),
                        "t.student" = seq(location.t() + 1*scale.t(), location.t() + 2*scale.t(), length.out = 1024))
   y.2SD      <- switch(input$prior, 
-                       "cauchy"    = dcauchy(x.supp.2SD, location.c(), scale.c()), 
-                       "normal"    = dnorm  (x.supp.2SD, location.n(), scale.n()), 
-                       "t.student" = dst    (x.supp.2SD, df.t(), location.t(), scale.t()))
+                       "cauchy"    = cauchy.prior(x.supp.2SD, location.c(), scale.c()), 
+                       "normal"    = normal.prior(x.supp.2SD, location.n(), scale.n()), 
+                       "t.student" = tstude.prior(x.supp.2SD, location.t(), scale.t(), df.t()))
   polygon(c(x.supp.2SD, rev(x.supp.2SD)), c(y.2SD, rep(0, 1024)), col = "#DCA55940", border = NA)
   # 3SD area:
   x.supp.3SD <- switch(input$prior,
@@ -159,18 +159,18 @@ output$kim.out.topic2.plot1 <- renderPlot({
                        "normal"    = seq(location.n() - 3*scale.n(), location.n() - 2*scale.n(), length.out = 1024),
                        "t.student" = seq(location.t() - 3*scale.t(), location.t() - 2*scale.t(), length.out = 1024))
   y.3SD      <- switch(input$prior, 
-                       "cauchy"    = dcauchy(x.supp.3SD, location.c(), scale.c()), 
-                       "normal"    = dnorm  (x.supp.3SD, location.n(), scale.n()), 
-                       "t.student" = dst    (x.supp.3SD, df.t(), location.t(), scale.t()))
+                       "cauchy"    = cauchy.prior(x.supp.3SD, location.c(), scale.c()), 
+                       "normal"    = normal.prior(x.supp.3SD, location.n(), scale.n()), 
+                       "t.student" = tstude.prior(x.supp.3SD, location.t(), scale.t(), df.t()))
   polygon(c(x.supp.3SD, rev(x.supp.3SD)), c(y.3SD, rep(0, 1024)), col = "#DCA55926", border = NA)
   x.supp.3SD <- switch(input$prior,
                        "cauchy"    = seq(location.c() + 2*scale.c(), location.c() + 3*scale.c(), length.out = 1024),
                        "normal"    = seq(location.n() + 2*scale.n(), location.n() + 3*scale.n(), length.out = 1024),
                        "t.student" = seq(location.t() + 2*scale.t(), location.t() + 3*scale.t(), length.out = 1024))
   y.3SD      <- switch(input$prior, 
-                       "cauchy"    = dcauchy(x.supp.3SD, location.c(), scale.c()), 
-                       "normal"    = dnorm  (x.supp.3SD, location.n(), scale.n()), 
-                       "t.student" = dst    (x.supp.3SD, df.t(), location.t(), scale.t()))
+                       "cauchy"    = cauchy.prior(x.supp.3SD, location.c(), scale.c()), 
+                       "normal"    = normal.prior(x.supp.3SD, location.n(), scale.n()), 
+                       "t.student" = tstude.prior(x.supp.3SD, location.t(), scale.t(), df.t()))
   polygon(c(x.supp.3SD, rev(x.supp.3SD)), c(y.3SD, rep(0, 1024)), col = "#DCA55926", border = NA)
   # Arrows:
   loc.use <- switch(input$prior,

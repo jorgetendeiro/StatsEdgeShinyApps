@@ -1,16 +1,16 @@
 # Load Shiny ----
 library(shiny)
 library(shinyWidgets)
-library(dplyr)
-library(broom)
+# library(dplyr)
+# library(broom)
 library(kableExtra)
 library(BayesFactor)
 library(xtable)
-library(DT)
+# library(DT)
 library(markdown)
-library(stevemisc)
-library(katex)
-library(BH)
+# library(stevemisc)
+# library(katex)
+# library(BH)
 library(Rcpp)
 # install devtools in server
 # install kableExtra (now 1.3.4) from Github: devtools::install_github("haozhu233/kableExtra")
@@ -33,7 +33,8 @@ source("R_scripts/BayesFactors.R")
 
 # Load BOOST's non-central t (better precision and less warnings than R's):
 # https://stackoverflow.com/questions/39183938/rs-t-distribution-says-full-precision-may-not-have-been-achieved
-sourceCpp("www/boost_noncentralt.cpp", cacheDir = "cache_rcpp/")
+# sourceCpp("www/boost_noncentralt.cpp", cacheDir = "cache_rcpp/")
+sourceCpp("www/boost_noncentralt.cpp")
 
 # To edit the LaTeX tables:
 js <- "
@@ -220,7 +221,7 @@ ui <- fluidPage(
       tabsetPanel(
         id = "maintabs", 
         type = "pills",
-        selected = "Bayesian t-test", ##### "Instructions", ##### "Keep in mind", ##### "Introduction", 
+        selected = "Instructions", ##### "Bayesian t-test", ##### "Keep in mind", ##### "Introduction", 
         tabPanel("Instructions",
                  uiOutput("instructions")
         ),
@@ -291,8 +292,8 @@ ui <- fluidPage(
                  h4("Summary"),
                  br(), 
                  tableOutput("BF.df1B"),
-                 br(), 
-                 tableOutput("BF.df1"),
+                 # br(), 
+                 # tableOutput("BF.df1"),
                  br(), br(), 
                  # h4("Bayes factor and the prior distribution for $\\delta$ under $\\mathcal{H}_1$"), 
                  # uiOutput("BF.df1"), 
@@ -519,7 +520,7 @@ server <- function(input, output, session) {
                       ticks   = FALSE, 
                       step    = 1, 
                       width   = "100%"), class = "not_bold")
-    }
+    } else NULL
   })
   
   # To force these inputs to be available:
@@ -530,6 +531,18 @@ server <- function(input, output, session) {
   location.t <- reactive({ if (input$prior == 't.student') req(input$location.t) })
   scale.t    <- reactive({ if (input$prior == 't.student') req(input$scale.t) })
   df.t       <- reactive({ if (input$prior == 't.student') req(input$df.t) })
+  location   <- reactive({ switch(input$prior, 
+                                  'cauchy'    = req(input$location.c), 
+                                  'normal'    = req(input$location.n), 
+                                  't.student' = req(input$location.t)) })
+  scale      <- reactive({ switch(input$prior, 
+                                  'cauchy'    = req(input$scale.c), 
+                                  'normal'    = req(input$scale.n), 
+                                  't.student' = req(input$scale.t)) })
+  df         <- reactive({ switch(input$prior, 
+                                  'cauchy'    = NULL, 
+                                  'normal'    = NULL, 
+                                  't.student' = req(input$df.t)) })
   
   # Hyperlinks to tabs:
   observeEvent(input$intro.tab2a, {

@@ -100,5 +100,3 @@ post.dlt.H1 <- function(t.stat, n1, n2, prior.dens, type.H1, point.H1, dlt.supp,
 
 
 
-
-

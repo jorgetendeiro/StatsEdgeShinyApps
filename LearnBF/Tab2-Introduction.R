@@ -526,10 +526,10 @@ output$intro.topic5.plot1 <- renderPlot({
                    "cauchy"    = seq(floor(location.c() - 3.5*scale.c()), ceiling(location.c() + 3.5*scale.c()), length.out = 1024),
                    "normal"    = seq(floor(location.n() - 3.5*scale.n()), ceiling(location.n() + 3.5*scale.n()), length.out = 1024),
                    "t.student" = seq(floor(location.t() - 3.5*scale.t()), ceiling(location.t() + 3.5*scale.t()), length.out = 1024))
-  y      <- switch(input$prior, 
-                   "cauchy"    = dcauchy(x.supp, location.c(), scale.c()), 
-                   "normal"    = dnorm  (x.supp, location.n(), scale.n()), 
-                   "t.student" = dst    (x.supp, df.t(), location.t(), scale.t()))
+  y      <- switch(input$prior,
+                   "cauchy"    = cauchy.prior(x.supp, location.c(), scale.c()),
+                   "normal"    = normal.prior(x.supp, location.n(), scale.n()),
+                   "t.student" = tstude.prior(x.supp, location.t(), scale.t(), df.t()))
   
   par(mar = c(2, 4, 1.5, .5))
   plot(x.supp, y, xlim = c(min(x.supp), max(x.supp)), ylim = c(0, 1.2*max(y)), ylab = "", xlab = "", bty = "n",
