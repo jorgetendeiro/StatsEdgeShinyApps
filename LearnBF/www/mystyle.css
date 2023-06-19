@@ -44,6 +44,9 @@ div.MathJax_Display{
     border-bottom: 1px solid #DCA559;
     background: #DCA559;
 }
+.irs--shiny .irs-shadow {
+    background: rgba(255, 0, 0, 0);
+}
 
 /* Animation play button */
 a {
@@ -54,3 +57,11 @@ a:hover, a:focus {
     color: #DCA559CC;
     text-decoration: underline;
 }
+
+/*  Navbar color selected button */
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
+    background-color: #DCA55966;
+}
+.navbar-brand{width: 120%; padding: 5px 0px 0px 10px} body {padding-top: 30px;}
+/* .navbar-default {background-color: #005E3C1A;} */
+

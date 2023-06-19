@@ -107,100 +107,53 @@ output$kim.out.topic1.df1 <- renderUI({
 })
 
 output$kim.out.topic2.plot1 <- renderPlot({
-  x.supp <- switch(input$prior,
-                   "cauchy"    = seq(floor(location.c() - 3.5*scale.c()), ceiling(location.c() + 3.5*scale.c()), length.out = 1024),
-                   "normal"    = seq(floor(location.n() - 3.5*scale.n()), ceiling(location.n() + 3.5*scale.n()), length.out = 1024),
-                   "t.student" = seq(floor(location.t() - 3.5*scale.t()), ceiling(location.t() + 3.5*scale.t()), length.out = 1024))
-  y      <- switch(input$prior, 
-                   "cauchy"    = cauchy.prior(x.supp, location.c(), scale.c()), 
-                   "normal"    = normal.prior(x.supp, location.n(), scale.n()), 
-                   "t.student" = tstude.prior(x.supp, location.t(), scale.t(), df.t()))
+  x.supp <- seq(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()), length.out = 1024)
+  y      <- prior(x.supp)
   
   par(mar = c(4.5, 5, 1.5, .5))
   plot(x.supp, y, xlim = c(min(x.supp), max(x.supp)), ylim = c(0, 1.2*max(y)), ylab = "Density", xlab = "Standardized mean difference", bty = "n",
        las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", yaxs = "i", 
        main = switch(input$prior,
-                     "cauchy"    = paste0("Cauchy (location = ", location.c(), ", scale = ", scale.c(), ")"),
-                     "normal"    = paste0("Normal (mean = ", location.n(), ", SD = ", scale.n(), ")"),
-                     "t.student" = paste0("Student t (location = ", location.t(), ", scale = ", scale.t(), ", df = ", df.t(), ")")))
+                     "cauchy"    = paste0("Cauchy (location = ", location(), ", scale = ", scale(), ")"),
+                     "normal"    = paste0("Normal (mean = ", location(), ", SD = ", scale(), ")"),
+                     "t.student" = paste0("Student t (location = ", location(), ", scale = ", scale(), ", df = ", df(), ")")))
   axis(1, at = min(x.supp):max(x.supp))
   # 1SD area:
-  x.supp.1SD <- switch(input$prior,
-                       "cauchy"    = seq(location.c() - 1*scale.c(), location.c() + 1*scale.c(), length.out = 1024),
-                       "normal"    = seq(location.n() - 1*scale.n(), location.n() + 1*scale.n(), length.out = 1024),
-                       "t.student" = seq(location.t() - 1*scale.t(), location.t() + 1*scale.t(), length.out = 1024))
-  y.1SD      <- switch(input$prior, 
-                       "cauchy"    = cauchy.prior(x.supp.1SD, location.c(), scale.c()), 
-                       "normal"    = normal.prior(x.supp.1SD, location.n(), scale.n()), 
-                       "t.student" = tstude.prior(x.supp.1SD, location.t(), scale.t(), df.t()))
+  x.supp.1SD <- seq(location() - 1*scale(), location() + 1*scale(), length.out = 1024)
+  y.1SD      <- prior(x.supp.1SD)
   polygon(c(x.supp.1SD, rev(x.supp.1SD)), c(y.1SD, rep(0, 1024)), col = "#DCA55966", border = NA)
   # 2SD area:
-  x.supp.2SD <- switch(input$prior,
-                       "cauchy"    = seq(location.c() - 2*scale.c(), location.c() - 1*scale.c(), length.out = 1024),
-                       "normal"    = seq(location.n() - 2*scale.n(), location.n() - 1*scale.n(), length.out = 1024),
-                       "t.student" = seq(location.t() - 2*scale.t(), location.t() - 1*scale.t(), length.out = 1024))
-  y.2SD      <- switch(input$prior, 
-                       "cauchy"    = cauchy.prior(x.supp.2SD, location.c(), scale.c()), 
-                       "normal"    = normal.prior(x.supp.2SD, location.n(), scale.n()), 
-                       "t.student" = tstude.prior(x.supp.2SD, location.t(), scale.t(), df.t()))
+  x.supp.2SD <- seq(location() - 2*scale(), location() - 1*scale(), length.out = 1024)
+  y.2SD      <- prior(x.supp.2SD)
   polygon(c(x.supp.2SD, rev(x.supp.2SD)), c(y.2SD, rep(0, 1024)), col = "#DCA55940", border = NA)
-  x.supp.2SD <- switch(input$prior,
-                       "cauchy"    = seq(location.c() + 1*scale.c(), location.c() + 2*scale.c(), length.out = 1024),
-                       "normal"    = seq(location.n() + 1*scale.n(), location.n() + 2*scale.n(), length.out = 1024),
-                       "t.student" = seq(location.t() + 1*scale.t(), location.t() + 2*scale.t(), length.out = 1024))
-  y.2SD      <- switch(input$prior, 
-                       "cauchy"    = cauchy.prior(x.supp.2SD, location.c(), scale.c()), 
-                       "normal"    = normal.prior(x.supp.2SD, location.n(), scale.n()), 
-                       "t.student" = tstude.prior(x.supp.2SD, location.t(), scale.t(), df.t()))
+  x.supp.2SD <- seq(location() + 1*scale(), location() + 2*scale(), length.out = 1024)
+  y.2SD      <- prior(x.supp.2SD)
   polygon(c(x.supp.2SD, rev(x.supp.2SD)), c(y.2SD, rep(0, 1024)), col = "#DCA55940", border = NA)
   # 3SD area:
-  x.supp.3SD <- switch(input$prior,
-                       "cauchy"    = seq(location.c() - 3*scale.c(), location.c() - 2*scale.c(), length.out = 1024),
-                       "normal"    = seq(location.n() - 3*scale.n(), location.n() - 2*scale.n(), length.out = 1024),
-                       "t.student" = seq(location.t() - 3*scale.t(), location.t() - 2*scale.t(), length.out = 1024))
-  y.3SD      <- switch(input$prior, 
-                       "cauchy"    = cauchy.prior(x.supp.3SD, location.c(), scale.c()), 
-                       "normal"    = normal.prior(x.supp.3SD, location.n(), scale.n()), 
-                       "t.student" = tstude.prior(x.supp.3SD, location.t(), scale.t(), df.t()))
-  polygon(c(x.supp.3SD, rev(x.supp.3SD)), c(y.3SD, rep(0, 1024)), col = "#DCA55926", border = NA)
-  x.supp.3SD <- switch(input$prior,
-                       "cauchy"    = seq(location.c() + 2*scale.c(), location.c() + 3*scale.c(), length.out = 1024),
-                       "normal"    = seq(location.n() + 2*scale.n(), location.n() + 3*scale.n(), length.out = 1024),
-                       "t.student" = seq(location.t() + 2*scale.t(), location.t() + 3*scale.t(), length.out = 1024))
-  y.3SD      <- switch(input$prior, 
-                       "cauchy"    = cauchy.prior(x.supp.3SD, location.c(), scale.c()), 
-                       "normal"    = normal.prior(x.supp.3SD, location.n(), scale.n()), 
-                       "t.student" = tstude.prior(x.supp.3SD, location.t(), scale.t(), df.t()))
-  polygon(c(x.supp.3SD, rev(x.supp.3SD)), c(y.3SD, rep(0, 1024)), col = "#DCA55926", border = NA)
+  x.supp.3SD <- seq(location() - 3*scale(), location() - 2*scale(), length.out = 1024)
+  y.3SD      <- prior(x.supp.3SD)
+  polygon(c(x.supp.3SD, rev(x.supp.3SD)), c(y.3SD, rep(0, 1024)), col = "#DCA55940", border = NA)
+  x.supp.3SD <- seq(location() + 2*scale(), location() + 3*scale(), length.out = 1024)
+  y.3SD      <- prior(x.supp.3SD)
+  polygon(c(x.supp.3SD, rev(x.supp.3SD)), c(y.3SD, rep(0, 1024)), col = "#DCA55940", border = NA)
   # Arrows:
-  loc.use <- switch(input$prior,
-                    "cauchy"    = location.c(),
-                    "normal"    = location.n(),
-                    "t.student" = location.t())
-  scl.use <- switch(input$prior,
-                    "cauchy"    = scale.c(),
-                    "normal"    = scale.n(),
-                    "t.student" = scale.t())
-  pct.use <- switch(input$prior,
-                    "cauchy"    = pcauchy(location.c() + (1:3) * scale.c(), location.c(), scale.c())         - pcauchy(location.c() - (1:3) * scale.c(), location.c(), scale.c()),
-                    "normal"    = pnorm  (location.n() + (1:3) * scale.n(), location.n(), scale.n())         - pnorm  (location.n() - (1:3) * scale.n(), location.n(), scale.n()),
-                    "t.student" = pst    (location.t() + (1:3) * scale.t(), df.t(), location.t(), scale.t()) - pst    (location.t() - (1:3) * scale.t(), df.t(), location.t(), scale.t()))
-  arrows(loc.use - 1*scl.use, .8*max(y), loc.use + 1*scl.use, .8*max(y), code = 3,
+  pct.use <- sapply(1:3, function(n) integrate(function(delta) prior(delta), lower = location() - n * scale(), upper = location() + n * scale())[[1]])
+  arrows(location() - 1*scale(), .8*max(y), location() + 1*scale(), .8*max(y), code = 3,
          length = .15, angle = 30, lwd = 1, col = "#005E3C")
-  segments(loc.use - 1*scl.use, 0, loc.use - 1*scl.use, .8*max(y), col = "#DCA55966", lwd = 2)
-  segments(loc.use + 1*scl.use, 0, loc.use + 1*scl.use, .8*max(y), col = "#DCA55966", lwd = 2)
-  arrows(loc.use - 2*scl.use, .5*max(y), loc.use + 2*scl.use, .5*max(y), code = 3,
+  segments(location() - 1*scale(), 0, location() - 1*scale(), .8*max(y), col = "#DCA55966", lwd = 2)
+  segments(location() + 1*scale(), 0, location() + 1*scale(), .8*max(y), col = "#DCA55966", lwd = 2)
+  arrows(location() - 2*scale(), .5*max(y), location() + 2*scale(), .5*max(y), code = 3,
          length = .15, angle = 30, lwd = 1, col = "#005E3C")
-  segments(loc.use - 2*scl.use, 0, loc.use - 2*scl.use, .5*max(y), col = "#DCA55940", lwd = 2)
-  segments(loc.use + 2*scl.use, 0, loc.use + 2*scl.use, .5*max(y), col = "#DCA55940", lwd = 2)
-  arrows(loc.use - 3*scl.use, .2*max(y), loc.use + 3*scl.use, .2*max(y), code = 3,
+  segments(location() - 2*scale(), 0, location() - 2*scale(), .5*max(y), col = "#DCA55940", lwd = 2)
+  segments(location() + 2*scale(), 0, location() + 2*scale(), .5*max(y), col = "#DCA55940", lwd = 2)
+  arrows(location() - 3*scale(), .2*max(y), location() + 3*scale(), .2*max(y), code = 3,
          length = .15, angle = 30, lwd = 1, col = "#005E3C")
-  segments(loc.use - 3*scl.use, 0, loc.use - 3*scl.use, .2*max(y), col = "#DCA55926", lwd = 2)
-  segments(loc.use + 3*scl.use, 0, loc.use + 3*scl.use, .2*max(y), col = "#DCA55926", lwd = 2)
+  segments(location() - 3*scale(), 0, location() - 3*scale(), .2*max(y), col = "#DCA55926", lwd = 2)
+  segments(location() + 3*scale(), 0, location() + 3*scale(), .2*max(y), col = "#DCA55926", lwd = 2)
   # Text:
-  text(x = loc.use, y = .8*max(y), paste0(round(100*pct.use[1], 1), "%"), pos = 3)
-  text(x = loc.use, y = .5*max(y), paste0(round(100*pct.use[2], 1), "%"), pos = 3)
-  text(x = loc.use, y = .2*max(y), paste0(round(100*pct.use[3], 1), "%"), pos = 3)
+  text(x = location(), y = .8*max(y), paste0(round(100*pct.use[1], 1), "%"), pos = 3)
+  text(x = location(), y = .5*max(y), paste0(round(100*pct.use[2], 1), "%"), pos = 3)
+  text(x = location(), y = .2*max(y), paste0(round(100*pct.use[3], 1), "%"), pos = 3)
   # Legend:
   legend("topright", legend = c("location \u00B1 1\u00D7 scale", "location \u00B1 2\u00D7 scale", "location \u00B1 3\u00D7 scale"), 
          fill = c("#DCA55966", "#DCA55940", "#DCA55926"), bty = "n")
@@ -208,10 +161,10 @@ output$kim.out.topic2.plot1 <- renderPlot({
 
 kim.out.topic2.df1.reactive <- renderText({
   dist <- switch(input$prior,
-                 "cauchy"    = paste0("$\\text{Cauchy (location = }", location.c(), "\\text{, scale = }", scale.c(), "\\text{)}$"),
-                 "normal"    = paste0("$\\text{Normal (location = }", location.n(), "\\text{, scale = }", scale.n(), "\\text{)}$"),
-                 "t.student" = paste0("$t\\text{-Student (location = }", location.t(), "\\text{, scale = }", scale.t(), "\\text{, df = }", df.t(), "\\text{)}$"))
-  if (input$H1hyp == "H1.point") dist <- paste0("$\\text{Spike (all probability on }\\delta=", H1pointslide(), ")$")
+                 "cauchy"    = paste0("$\\text{Cauchy (location = }", location(), "\\text{, scale = }", scale(), "\\text{)}$"),
+                 "normal"    = paste0("$\\text{Normal (location = }", location(), "\\text{, scale = }", scale(), "\\text{)}$"),
+                 "t.student" = paste0("$t\\text{-Student (location = }", location(), "\\text{, scale = }", scale(), "\\text{, df = }", df(), "\\text{)}$"))
+  if (input$H1hyp == "H1.point") dist <- paste0("$\\text{Spike (all probability on }\\delta=", input$H1pointslide, ")$")
   
   tab <- data.frame(
     dist,

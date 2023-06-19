@@ -5,9 +5,9 @@
 prior <- function(delta)
 {
   switch(input$prior, 
-         "cauchy"    = cauchy.prior(delta, location.c(), scale.c()), 
-         "normal"    = normal.prior(delta, location.n(), scale.n()), 
-         "t.student" = tstude.prior(delta, location.t(), scale.t(), df.t()))
+         "cauchy"    = cauchy.prior(delta, location(), scale()), 
+         "normal"    = normal.prior(delta, location(), scale()), 
+         "t.student" = tstude.prior(delta, location(), scale(), df()))
 }
 
 # Prior, posterior, and 95% credible interval:
@@ -23,17 +23,17 @@ prior.posterior.outputs <- reactive({
   if (input$H1hyp == "H1.larger0")
   {
     y      <- switch(input$prior, 
-                     "cauchy"    = (x.supp > 0) * prior(x.supp) / pcauchy(0, location.c(), scale.c(), lower.tail = FALSE), 
-                     "normal"    = (x.supp > 0) * prior(x.supp) / pnorm  (0, location.n(), scale.n(), lower.tail = FALSE), 
-                     "t.student" = (x.supp > 0) * prior(x.supp) / (1 - pt((0 - location.t())/scale.t(), df.t())))
+                     "cauchy"    = (x.supp > 0) * prior(x.supp) / pcauchy(0, location(), scale(), lower.tail = FALSE), 
+                     "normal"    = (x.supp > 0) * prior(x.supp) / pnorm  (0, location(), scale(), lower.tail = FALSE), 
+                     "t.student" = (x.supp > 0) * prior(x.supp) / (1 - pt((0 - location())/scale(), df())))
   }
   
   if (input$H1hyp == "H1.smaller0")
   {
     y      <- switch(input$prior, 
-                     "cauchy"    = (x.supp < 0) * prior(x.supp) / pcauchy(0,         location.c(), scale.c(), lower.tail = TRUE), 
-                     "normal"    = (x.supp < 0) * prior(x.supp) / pnorm  (0,         location.n(), scale.n(), lower.tail = TRUE), 
-                     "t.student" = (x.supp < 0) * prior(x.supp) / pt((0 - location.t())/scale.t(), df.t()))
+                     "cauchy"    = (x.supp < 0) * prior(x.supp) / pcauchy(0,         location(), scale(), lower.tail = TRUE), 
+                     "normal"    = (x.supp < 0) * prior(x.supp) / pnorm  (0,         location(), scale(), lower.tail = TRUE), 
+                     "t.student" = (x.supp < 0) * prior(x.supp) / pt((0 - location())/scale(), df()))
   }
 
   y.output <- post.dlt.H1(dlt.supp = x.supp, t.stat = ttest.res()["t"], n1 = input$n1, n2 = input$n2, prior.dens = prior, type.H1 = input$H1hyp, point.H1 = 0)
@@ -46,7 +46,7 @@ prior.posterior.outputs <- reactive({
 
 # Bayes factor:
 BF <- reactive({
-  BF.tmp <- B01(ttest.res()["t"], input$n1, input$n2, prior, input$H1hyp, H1pointslide())
+  BF.tmp <- B01(ttest.res()["t"], input$n1, input$n2, prior, input$H1hyp, input$H1pointslide)
   if (input$BF10.01 == "BF10") BF.tmp <- 1 / BF.tmp
   BF.tmp
 })
@@ -76,9 +76,9 @@ post.odds <- reactive({
 
 output$BF.df1B <- function() {
   dist <- switch(input$prior,
-                 "cauchy"    = paste0("$\\text{Cauchy}", if (input$H1hyp == 'H1.larger0') '^+' else if (input$H1hyp == 'H1.smaller0') '^-', "\\text{ (location = }", location.c(), "\\text{, scale = }", scale.c(), "\\text{)}$"),
-                 "normal"    = paste0("$\\text{Normal}", if (input$H1hyp == 'H1.larger0') '^+' else if (input$H1hyp == 'H1.smaller0') '^-', "\\text{  (location = }", location.n(), "\\text{, scale = }", scale.n(), "\\text{)}$"),
-                 "t.student" = paste0("$t\\text{-Student}", if (input$H1hyp == 'H1.larger0') '^+' else if (input$H1hyp == 'H1.smaller0') '^-', "\\text{  (location = }", location.t(), "\\text{, scale = }", scale.t(), "\\text{, df = }", df.t(), "\\text{)}$"))
+                 "cauchy"    = paste0("$\\text{Cauchy}", if (input$H1hyp == 'H1.larger0') '^+' else if (input$H1hyp == 'H1.smaller0') '^-', "\\text{ (location = }", location(), "\\text{, scale = }", scale(), "\\text{)}$"),
+                 "normal"    = paste0("$\\text{Normal}", if (input$H1hyp == 'H1.larger0') '^+' else if (input$H1hyp == 'H1.smaller0') '^-', "\\text{  (location = }", location(), "\\text{, scale = }", scale(), "\\text{)}$"),
+                 "t.student" = paste0("$t\\text{-Student}", if (input$H1hyp == 'H1.larger0') '^+' else if (input$H1hyp == 'H1.smaller0') '^-', "\\text{  (location = }", location(), "\\text{, scale = }", scale(), "\\text{, df = }", df(), "\\text{)}$"))
   if (input$H1hyp == "H1.point") dist <- paste0("All probability assigned to ", input$H1pointslide)
   
   tab <- data.frame(
@@ -321,19 +321,19 @@ output$BFplot3 <- renderPlot({
            inset=c(0,1), xpd = TRUE, horiz = TRUE, bty = "n", seg.len = 4)
   } else
   {
-    x.supp <- seq(H1pointslide() - 3, H1pointslide() + 3, length.out = 1024)
+    x.supp <- seq(input$H1pointslide - 3, input$H1pointslide + 3, length.out = 1024)
     par(mar = c(3.5, 5, 2, .5))
     plot(NULL, xlim = c(floor(min(x.supp)), ceiling(max(x.supp))), ylim = c(0, 1.05), ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", 
          cex.axis = 2, main = "", cex.main = 1.5, font.main = 1)
     axis(1, floor(min(x.supp)):ceiling(max(x.supp)))
     axis(2, c(0, 1), las = 1)
-    segments(H1pointslide(), 0, H1pointslide(), 1, lty = 2, col = "gray")
-    points(H1pointslide(), 1, pch = 16, cex = 2, col = "#005E3C")
+    segments(input$H1pointslide, 0, input$H1pointslide, 1, lty = 2, col = "gray")
+    points(input$H1pointslide, 1, pch = 16, cex = 2, col = "#005E3C")
     segments(floor(x.supp), 0, ceiling(x.supp), 0, lty = 1, col = "#005E3C", lwd = 2)
-    points(H1pointslide(), 0, pch = 21, cex = 2, bg = "white", col = "#005E3C")
+    points(input$H1pointslide, 0, pch = 21, cex = 2, bg = "white", col = "#005E3C")
     mtext(expression("Effect size " * delta), 1, 2.5, cex = 1.2)
     abline(v = cohen.d(), lwd = 2, lty = 4, col = "gray")
-    text(paste0("d = ", round(cohen.d(), 3)), x = cohen.d(), y = 1, cex = 1.5, font=1, pos = if (cohen.d() < H1pointslide()) 2 else 4)
+    text(paste0("d = ", round(cohen.d(), 3)), x = cohen.d(), y = 1, cex = 1.5, font=1, pos = if (cohen.d() < input$H1pointslide) 2 else 4)
     mtext("Probability", 2, 3, cex = 1.2)
   }
   

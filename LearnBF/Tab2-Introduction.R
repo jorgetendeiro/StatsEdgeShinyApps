@@ -3,66 +3,85 @@
 
 # Run t-test:
 ttest.res <- reactive({
-  t.test.summ(input$mean1, input$mean2, input$sd1, input$sd2, input$n1, input$n2)
+  t.test.summ(input$mean1, input$mean2, input$sd1, input$sd2, input$n1, input$n2, input$H1hyp.cls)
 })
 
 # t-test result:
-output$ttest <- function() {
+# ttest.reactive <- renderText({
+#   tab <- data.frame(
+#     paste0("$", round((input$mean1 - input$mean2) / sqrt((((input$n1-1)*(input$sd1^2)+(input$n2-1)*(input$sd2^2)))/(input$n1+input$n2-2)), 3), "$"), 
+#     paste0("$", round(ttest.res()["t"], 3), "$"), 
+#     paste0("$", round(ttest.res()["df"], 3), "$"), 
+#     if (round(ttest.res()["p"], 3) >= .001) paste0("$", round(ttest.res()["p"], 3), "$") else "<.001", 
+#     if (ttest.res()["p"] <= input$alpha) "$\\text{Reject }\\mathcal{H}_0$" else "$\\text{Fail to reject }\\mathcal{H}_0$", 
+#     stringsAsFactors = FALSE, 
+#     check.names = FALSE, 
+#     row.names = NULL
+#   )
+#   
+#   colnames(tab) <- c("$\\text{Cohen's }d$", 
+#                      "$t$", 
+#                      "$\\text{df}$", 
+#                      "$p\\text{-value}$", 
+#                      "$\\text{Test decision}$"
+#   )
+#   
+#   tab %>%
+#     knitr::kable("html", escape = FALSE, align = 'c') %>% 
+#     row_spec(0, extra_css = "border-bottom: 1px solid; border-top: 2px solid;", background = "#005E3C1A") %>%
+#     row_spec(1, extra_css = "border-bottom: 2px solid; padding: 3px;") %>%  
+#     kable_styling(full_width = FALSE)
+# })
+# output$ttest <- renderUI({
+#   tagList(
+#     #withMathJax(),
+#     HTML(ttest.reactive()),
+#     tags$script(HTML(js)),
+#     tags$script(
+#       async="",
+#       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+#     )
+#   )
+# })
+
+output$ttestB <- function() {
   tab <- data.frame(
-    paste0("$", round((input$mean1 - input$mean2) / sqrt((((input$n1-1)*(input$sd1^2)+(input$n2-1)*(input$sd2^2)))/(input$n1+input$n2-2)), 3), "$"), 
-    paste0("$", round(ttest.res()["t"], 3), "$"), 
-    paste0("$", round(ttest.res()["df"], 3), "$"), 
-    if (round(ttest.res()["p"], 3) >= .001) paste0("$", round(ttest.res()["p"], 3), "$") else "<.001", 
-    if (ttest.res()["p"] <= input$alpha) "$\\text{Reject }\\mathcal{H}_0$" else "$\\text{Fail to reject }\\mathcal{H}_0$", 
+    c(
+      "$\\textbf{Hypotheses}$",
+      "$\\textbf{Sampling distribution}\\hspace{5mm}$",
+      "$\\textbf{Observed effect size}$", 
+      "$\\textbf{Test statistic}$", 
+      "$p\\textbf{-value}$"
+    ), 
+    c(
+      paste0("$\\mathcal{H}_0: \\delta=0\\quad\\text{vs}\\quad", 
+             switch(input$H1hyp.cls,
+                    "H1.diff0"    = "\\mathcal{H}_1: \\delta\\not=0$",
+                    "H1.larger0"  = "\\mathcal{H}_1: \\delta>0$",
+                    "H1.smaller0" = "\\mathcal{H}_1: \\delta<0$")
+      ), 
+      paste0("$t\\text{-Student (df = }", ttest.res()["df"], "\\text{)}$"), 
+      paste0("$d=", round(cohen.d(), 3), "$"), 
+      paste0("$t=", round(ttest.res()["t"], 3), "$"), 
+      if (round(ttest.res()["p"], 3) >= .001) paste0("$p=", round(ttest.res()["p"], 3), "$") else "p<.001"
+    ), 
     stringsAsFactors = FALSE, 
-    check.names = FALSE, 
-    row.names = NULL
-  )
-  
-  colnames(tab) <- c("$\\text{Cohen's }d$", "$t$", "$\\text{df}$", "$p\\text{-value}$", "$\\text{Test decision}$")
+    check.names = FALSE)
+  colnames(tab) <- NULL
   
   tab %>%
-    knitr::kable("html", escape = FALSE, align = 'c') %>% 
-    row_spec(0, extra_css = "border-bottom: 1px solid; border-top: 2px solid;", background = "#005E3C1A") %>%
-    row_spec(1, extra_css = "border-bottom: 2px solid; padding: 3px;") %>% 
-    # row_spec(0, bold = TRUE, background = "#005E3C1A") %>% 
+    knitr::kable("html", escape = FALSE, align = 'l') %>%
+    row_spec(1, extra_css = "border-top: 2px solid; padding: 3px;") %>%
+    row_spec(2, extra_css = "border-top: 1px solid white; padding: 3px;") %>%
+    row_spec(3, extra_css = "border-top: 1px solid white; padding: 3px;") %>%
+    row_spec(4, extra_css = "border-top: 1px solid white; padding: 3px;") %>%
+    row_spec(5, extra_css = "border-bottom: 2px solid; border-top: 1px solid white; padding: 3px;", background = "#005E3C1A") %>%
     kable_styling(full_width = FALSE)
-  
-  
-  
-  
-  
-  # LaTeXtab <- print(xtable(tab, align = rep("c", ncol(tab)+1), 
-  #                          digits = c(0, 3, 3, if (ttest.res()["df"] - round(ttest.res()["df"]) < 1e-12) 0 else 3, 3, 3)
-  # ), 
-  # floating                   = FALSE,
-  # tabular.environment        = "array",
-  # comment                    = FALSE,
-  # print.results              = FALSE,
-  # sanitize.colnames.function = identity,
-  # sanitize.text.function     = identity,
-  # include.rownames           = FALSE,
-  # add.to.row                 = list(
-  #   pos     = as.list(c(-1)),
-  #   command = "\\rowcolor{lightgray}"
-  # )
-  # )
-  # 
-  # tagList(
-  #   #withMathJax(),
-  #   HTML(paste0("$$", LaTeXtab, "$$")),
-  #   tags$script(HTML(js)),
-  #   tags$script(
-  #     async="", 
-  #     src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-  #   )
-  # )
-  
 }
 
 output$ttest.crit <- renderPlot({
   xlimupp <- max(5, ceiling(abs(ttest.res()["t"]))+2)
-  par(mar = c(3, 1, 2, 1))
+  par(mar = c(3, 1, 3, 1), xpd = TRUE)
   curve(dt(x, ttest.res()["df"]), from = -xlimupp, to = xlimupp, n = 1024, 
         ylim = c(0, 1.1 * dt(0, ttest.res()["df"])), 
         bty = "n", yaxt = "n", ylab = "", lwd = 2, xaxt = "n", xlab = "", yaxs = "i", 
@@ -70,43 +89,83 @@ output$ttest.crit <- renderPlot({
         col = "#005E3C")
   axis(1, seq(-xlimupp, xlimupp, 1))
   mtext("Test statistic", 1, 2)
-  x.supp.crit <- seq(qt(1-input$alpha/2, ttest.res()["df"]), xlimupp, length.out = 101)
-  polygon(x = c(x.supp.crit, rev(x.supp.crit)),
-          y = c(rep(1.*dt(0, ttest.res()["df"]), 101), rep(0, 101)),
-          col = "#FF000005", border = NA)
-  polygon(x = c(-x.supp.crit, rev(-x.supp.crit)),
-          y = c(rep(1.*dt(0, ttest.res()["df"]), 101), rep(0, 101)),
-          col = "#FF000005", border = NA)
-  polygon(x = c(x.supp.crit, rev(x.supp.crit)), 
-          y = c(dt(x.supp.crit, ttest.res()["df"]), rep(0, 101)), 
-          col = "#FF00004D", border = NA)
-  polygon(x = c(-x.supp.crit, rev(-x.supp.crit)), 
-          y = c(dt(-x.supp.crit, ttest.res()["df"]), rep(0, 101)), 
-          col = "#FF00004D", border = NA)
-  x.supp <- seq(abs(ttest.res()["t"]), xlimupp, length.out = 101)
-  polygon(x = c(x.supp, rev(x.supp)), 
-          y = c(dt(x.supp, ttest.res()["df"]), rep(0, 101)), 
-          col = "#DCA55966", border = NA, density = 10, lwd = 4)
-  polygon(x = c(-x.supp, rev(-x.supp)), 
-          y = c(dt(-x.supp, ttest.res()["df"]), rep(0, 101)), 
-          col = "#DCA55966", border = NA, density = 10, lwd = 4)
-  abline(v = ttest.res()["t"], lwd = 2, col = "#DCA559")
+  switch(input$H1hyp.cls, 
+         "H1.diff0" = 
+           {
+             x.supp.crit <- seq(qt(1-input$alpha/2, ttest.res()["df"]), xlimupp, length.out = 101)
+             # polygon(x = c(x.supp.crit, rev(x.supp.crit)),
+             #         y = c(rep(1.*dt(0, ttest.res()["df"]), 101), rep(0, 101)),
+             #         col = "#FF000005", border = NA)
+             # polygon(x = c(-x.supp.crit, rev(-x.supp.crit)),
+             #         y = c(rep(1.*dt(0, ttest.res()["df"]), 101), rep(0, 101)),
+             #         col = "#FF000005", border = NA)
+             polygon(x = c(x.supp.crit, rev(x.supp.crit)), 
+                     y = c(dt(x.supp.crit, ttest.res()["df"]), rep(0, 101)), 
+                     col = "#FF000033", border = NA)
+             polygon(x = c(-x.supp.crit, rev(-x.supp.crit)),
+                     y = c(dt(-x.supp.crit, ttest.res()["df"]), rep(0, 101)),
+                     col = "#FF000033", border = NA)
+             segments(-xlimupp, 0, qt(input$alpha/2, ttest.res()["df"]), 0, lwd = 4, col = "#FF0000")
+             segments(qt(1-input$alpha/2, ttest.res()["df"]), 0, xlimupp, 0, lwd = 4, col = "#FF0000")
+             x.supp <- seq(abs(ttest.res()["t"]), xlimupp, length.out = 101)
+             polygon(x = c(x.supp, rev(x.supp)), 
+                     y = c(dt(x.supp, ttest.res()["df"]), rep(0, 101)), 
+                     col = "#DCA55966", border = NA, density = 10, lwd = 4)
+             polygon(x = c(-x.supp, rev(-x.supp)), 
+                     y = c(dt(-x.supp, ttest.res()["df"]), rep(0, 101)), 
+                     col = "#DCA55966", border = NA, density = 10, lwd = 4)
+           }, 
+         "H1.smaller0" = 
+           {
+             x.supp.crit <- seq(-xlimupp, qt(input$alpha, ttest.res()["df"]), length.out = 101)
+             # polygon(x = c(x.supp.crit, rev(x.supp.crit)),
+             #        y = c(rep(1.*dt(0, ttest.res()["df"]), 101), rep(0, 101)),
+             #        col = "#FF000005", border = NA)
+             polygon(x = c(x.supp.crit, rev(x.supp.crit)), 
+                     y = c(dt(x.supp.crit, ttest.res()["df"]), rep(0, 101)), 
+                     col = "#FF000033", border = NA)
+             segments(-xlimupp, 0, qt(input$alpha, ttest.res()["df"]), 0, lwd = 4, col = "#FF0000")
+             x.supp <- seq(-xlimupp, ttest.res()["t"], length.out = 101)
+             polygon(x = c(x.supp, rev(x.supp)), 
+                     y = c(dt(x.supp, ttest.res()["df"]), rep(0, 101)), 
+                     col = "#DCA55966", border = NA, density = 10, lwd = 4)
+           }, 
+         "H1.larger0" = 
+           {
+             x.supp.crit <- seq(qt(1-input$alpha, ttest.res()["df"]), xlimupp, length.out = 101)
+             # polygon(x = c(x.supp.crit, rev(x.supp.crit)),
+             #         y = c(rep(1.*dt(0, ttest.res()["df"]), 101), rep(0, 101)),
+             #         col = "#FF000005", border = NA)
+             polygon(x = c(x.supp.crit, rev(x.supp.crit)), 
+                     y = c(dt(x.supp.crit, ttest.res()["df"]), rep(0, 101)), 
+                     col = "#FF000033", border = NA)
+             segments(qt(1-input$alpha, ttest.res()["df"]), 0, xlimupp, 0, lwd = 4, col = "#FF0000")
+             x.supp <- seq(ttest.res()["t"], xlimupp, length.out = 101)
+             polygon(x = c(x.supp, rev(x.supp)), 
+                     y = c(dt(x.supp, ttest.res()["df"]), rep(0, 101)), 
+                     col = "#DCA55966", border = NA, density = 10, lwd = 4)
+           }, 
+  )
+  segments(ttest.res()["t"], 0, ttest.res()["t"], 1.1 * dt(0, ttest.res()["df"]), lwd = 2, col = "#DCA559")
   text(ttest.res()["t"], 1.05*dt(0, ttest.res()["df"]), paste0("t = ", round(ttest.res()["t"], 3)), cex = 1.4, pos = if (ttest.res()["t"] < 0) 2 else 4)
-  text(if (ttest.res()["t"] < 0) xlimupp else -xlimupp, 1.05*dt(0, ttest.res()["df"]), paste0("Critical region (probability = ", input$alpha, ")"), 
-       pos = if (ttest.res()["t"] < 0) 2 else 4, cex = 1.4, col = "#F00000")
+  text(if (ttest.res()["t"] < 0) xlimupp else -xlimupp, 1.05*dt(0, ttest.res()["df"]), paste0("Critical region (probability = ", input$alpha, ")"), pos = if (ttest.res()["t"] < 0) 2 else 4, cex = 1.4, col = "#F00000")
 })
 
 output$introduction1 <- renderUI({
   outtext <- paste0(
-    "Null hypothesis significance testing (NHST in short) is one of the most popular tools currently in use in science for performing statistical inference (ref).", 
+    "Null hypothesis significance testing (NHST in short) is one of the most popular tools currently in use in science for performing statistical inference.", 
     br(), 
     "Concepts such as the null hypothesis ($\\mathcal{H}_0$) and the alternative hypothesis ($\\mathcal{H}_1$), type I and II error rates, significance level, the $p$-value, 'reject' or 'fail to reject' $\\mathcal{H}_0$, all became common buzz words in science.", 
     br(), 
     "We use them all the time in our research and we pretty much feel obliged to include them in our scientific reports.", 
     br(), br(), 
-    "Being this as it may be, it has been widely established that NHST and the $p$-value are poorly understood by practitioners (refs).", 
+    "Being this as it may be, it has been widely established that NHST and the $p$-value are poorly understood by practitioners", 
     br(), 
-    "This has led to various developments to try to mitigate the problem. The ", em("Bayes factor"), " can be considered one such development.", 
+    "(e.g., Belia et al., 2005; Falk and Greenbaum, 1995; Goodman, 2008; Greenland et al., 2016; Haller and Kraus, 2002; Hoekstra et al., 2014; Oakes, 1986).", 
+    br(), br(), 
+    "This has led to various developments to try to mitigate the problem.", 
+    br(), 
+    "The ", em("Bayes factor"), " can be considered one such development.", 
     br(), br(), 
     h4("Null hypothesis test used"), 
     "We focus on one particular hypothesis testing scenario: The ", 
@@ -124,12 +183,31 @@ output$introduction1 <- renderUI({
     "The hypotheses being tested are given by $$\\mathcal{H}_0: \\mu_A = \\mu_B \\qquad\\text{ versus }\\qquad \\mathcal{H}_1: \\mu_A \\not= \\mu_B,$$ or, equivalently, $$\\mathcal{H}_0: \\underset{\\mu_D}{\\underbrace{\\mu_A-\\mu_B}}=0 \\quad \\text{ versus } \\quad \\mathcal{H}_1: \\underset{\\mu_D}{\\underbrace{\\mu_A-\\mu_B}}\\not=0.$$ For the Bayesian independent samples $t$-test used in this app, the parameter being tested is actually a ", em("standardized effect size"), " defined as $\\delta=\\frac{\\mu_D}{\\sigma}$ (Rouder et al., 2009).", 
     br(), 
     "The hypotheses being tested then become: $$\\mathcal{H}_0: \\delta=0 \\quad \\text{ versus } \\quad \\mathcal{H}_1: \\delta\\not=0.$$", 
-    br(), br()
+    br(), br(), 
+    h4("References"), 
+    div(style = "color: gray;", 
+        icon("file-lines"), " Belia, S., Fidler, F., Williams, J., & Cumming, G. (2005). Researchers Misunderstand Confidence Intervals and Standard Error Bars. ", em("Psychological Methods"), ", ", em("10"), "(4), 389–396. ", a("https://doi.org/10.1037/1082-989X.10.4.389", href="https://doi.org/10.1037/1082-989X.10.4.389", target="_blank"),
+        br(), 
+        icon("file-lines"), " Falk, R., & Greenbaum, C. W. (1995). Significance Tests Die Hard: The Amazing Persistence of a Probabilistic Misconception. ", em("Theory & Psychology"), ", ", em("5"), "(1), 75–98. ", a("https://doi.org/10.1177/0959354395051004", href=" https://doi.org/10.1177/0959354395051004", target="_blank"), 
+        br(), 
+        icon("file-lines"), " Goodman, S. (2008). A Dirty Dozen: Twelve P-Value Misconceptions. ",  em("Seminars in Hematology"), ", ", em("45"), "(3), 135–140. ",  a("https://doi.org/10.1053/j.seminhematol.2008.04.003", href="https://doi.org/10.1053/j.seminhematol.2008.04.003", target="_blank"), 
+        br(), 
+        icon("file-lines"), " Greenland, S., Senn, S. J., Rothman, K. J., Carlin, J. B., Poole, C., Goodman, S. N., & Altman, D. G. (2016). Statistical tests, P values, confidence intervals, and power: A guide to misinterpretations. ", em("European Journal of Epidemiology"), ", ", em("31"), "(4), 337–350. ", a("https://doi.org/10.1007/s10654-016-0149-3", href="https://doi.org/10.1007/s10654-016-0149-3", target="_blank"), 
+        br(), 
+        icon("file-lines"), " Haller, H., & Kraus, S. (2002). Misinterpretations of significance: A problem students share with their teachers? ",  em("Methods of Psychological Research"), ", ", em("7"), "(1), 1–20. ", a("https://psycnet.apa.org/record/2002-14044-001", href="https://psycnet.apa.org/record/2002-14044-001", target="_blank"), 
+        br(), 
+        icon("file-lines"), " Hoekstra, R., Morey, R. D., Rouder, J. N., & Wagenmakers, E.-J. (2014). Robust misinterpretation of confidence intervals. ", em("Psychonomic Bulletin & Review"), ", ", em("21"), "(5), 1157–1164. ", a("https://doi.org/10.3758/s13423-013-0572-3", href="https://doi.org/10.3758/s13423-013-0572-3", target="_blank"), 
+        br(), 
+        icon("file-lines"), " Oakes, M. W. (1986). ", em("Statistical inference: A commentary for the social and behavioural sciences."), "John Wiley & Sons.", 
+        br(), 
+        icon("file-lines"), " Rouder, J. N., Speckman, P. L., Sun, D., & Morey, R. D. (2009). Bayesian t tests for accepting and rejecting the null hypothesis. ", em("Psychonomic Bulletin & Review"), ", ", em("16"), "(2), 225–237. ", a("https://doi.org/10.3758/PBR.16.2.225", href="https://doi.org/10.3758/PBR.16.2.225", target="_blank")
+    )
   )
   
   tagList(h3(strong("Background")), 
           br(), 
           HTML(outtext), 
+          br(), br(), 
           tags$script(HTML(js)), 
           tags$script(
             async="",
@@ -145,18 +223,16 @@ output$introduction2a <- renderUI({
     br(), 
     "But we'll need some data!", 
     br(), br(), 
-    "Go to the left-side menu, section ", strong("Descriptives"), ".", 
+    "Go to the left-side menu, ", strong("Descriptives"), ".", 
     br(), 
-    "Choose the mean and sample size for each group, and the common standard deviation.", 
+    "Choose the mean, standard deviation, and sample size for each group.", 
     br(), br(), 
     "Below is the outcome from running a frequentist two-sided independent samples $t$-test.", 
     br(), 
     "You can also manipulate the test's significance level and see how that affects the test's decision."
   )
   
-  tagList(h3(strong("Null hypothesis significance testing (NHST)")), 
-          br(),  
-          HTML(outtext), 
+  tagList(HTML(outtext), 
           br(), br(), 
           tags$script(HTML(js)), 
           tags$script(
@@ -168,15 +244,17 @@ output$introduction2a <- renderUI({
 
 output$introduction2b <- renderUI({
   outtext <- paste0(
-    h4("Interpretation"), 
-    "The green curve in the plot above shows the ", em("sampling distribution"), " of the test statistic $t$. This is the distribution of all possible values of $t$ under repeated sampling, assuming that $\\mathcal{H}_0$ were indeed true.", 
+    h4("Interpretation"),
+    "The green curve in the plot above shows the ", em("sampling distribution"), " of the test statistic $t$.", 
     br(), 
-    "The ", em("critical region"), " (red color) consists of all the values of $t$ that would lead to rejecting $\\mathcal{H}_0$ at $\\alpha=", round(100*(input$alpha), 3), "\\%$ significance level. The probability of $t$ belonging to the critical region, under repeated sampling under $\\mathcal{H}_0$, is precisely equal to $\\alpha$.", 
-    br(), 
-    "Finally, the $p$-", em("value"), " (brown color) is the probability of observing a value of $t$ at least as extreme as the one we did observe, assuming $\\mathcal{H}_0$ is true. Since we are running a two-tailed test, both the lower and the upper tail of the sampling distribution are considered.", 
+    "This is the distribution of all possible values of $t$ under repeated sampling, assuming that $\\mathcal{H}_0$ were indeed true.",
     br(), br(), 
-    "In significance testing, we decide to reject $\\mathcal{H}_0$ when the $p$-value is smaller than $\\alpha$ (the result is 'statistically significant') and we fail to reject $\\mathcal{H}_0$ otherwise (the result is not statistically significant).", 
-    br(), 
+    "The ", em("critical region"), " (red color) consists of all the values of $t$ that would lead to rejecting $\\mathcal{H}_0$ at $\\alpha=", round(100*(input$alpha), 3), "\\%$ significance level. The probability of $t$ belonging to the critical region, under repeated sampling under $\\mathcal{H}_0$, is precisely equal to $\\alpha$.",
+    br(), br(), 
+    "Finally, the $p$-", em("value"), " (brown color) is the probability of observing a value of $t$ at least as extreme as the one we did observe, assuming $\\mathcal{H}_0$ is true.",
+    br(), br(),
+    "In significance testing, we decide to reject $\\mathcal{H}_0$ when the $p$-value is smaller than $\\alpha$ (the result is 'statistically significant') and we fail to reject $\\mathcal{H}_0$ otherwise (the result is not statistically significant).",
+    br(),
     "In this case, the test result is ",
     if (ttest.res()["p"] > input$alpha) "not ",
     "statistically significant at $", round(100*(input$alpha), 3), "\\%$ significance level ($t = ",
@@ -184,36 +262,38 @@ output$introduction2b <- renderUI({
     "$, df $ = ",
     if (ttest.res()["df"] - round(ttest.res()["df"]) < 1e-12) round(ttest.res()["df"], 0) else round(ttest.res()["df"], 3), "$, $p ",
     if (round(ttest.res()["p"], 3) <= .001) "< .001" else paste0("=", round(ttest.res()["p"], 3)),
-    "$).", 
-    br(), br(), 
-    em("Conclusion: "), 
-    br(), 
+    "$).",
+    br(), br(),
+    em("Conclusion: "),
+    br(),
     "We ",
     if (round(ttest.res()["p"], 3) > input$alpha) "fail to ",
     "reject the null hypothesis that the population group means are equal to each other.",
-    br(), br(), 
-    h4("Misconceptions"), 
-    "There are a lot of misconceptions related to NHST in general and to the $p$-value in particular.", 
-    br(), br(), 
-    "Just to mention a few examples (for an extended list see Goodman, 2008; Greenland et al., 2016), do observe that the following interpretations of the $p$-value are ", em("all incorrect:"), 
-    br(), br(), 
-    HTML(renderMarkdown(text = "1. The probability of \\$\\mathcal{H}_0\\$ being true is equal to \\$p\\$.\n 1. The probability of \\$\\mathcal{H}_1\\$ being true is equal to \\$(1-p)\\$.\n 1. A non-significant test result implies that \\$\\mathcal{H}_0\\$ is true.\n 1. A significant test result implies that \\$\\mathcal{H}_1\\$ is false.\n 1. A non-significant test result implies that the effect size is small.\n 1. A significant test result implies that the effect size is large.\n 1. The probability that a significant test result is a false positive is equal to \\$\\alpha\\$.")), 
-    "The main conclusion here is that NHST and its $p$-value are rather elusive and hard to understand concepts.", 
-    br(), 
-    "This is really problematic since most science relies on hypothesis testing.", 
-    br(), 
-    "And this has motivated statisticians to search for patches and valid alternatives to the $p$-value.", 
-    br(), br(), 
-    "One such alternative is, precisely, the ", em("Bayes factor"), ".", br(), br(), 
-    h4("References"), 
-    "Goodman, S. (2008). A Dirty Dozen: Twelve P-Value Misconceptions. ", em("Seminars in Hematology"), ", ", em("45"), " (3), 135–140. ", a("https://doi.org/10.1053/j.seminhematol.2008.04.003", href="https://doi.org/10.1053/j.seminhematol.2008.04.003", target="_blank"), 
-    br(), 
-    "Greenland, S., Senn, S. J., Rothman, K. J., Carlin, J. B., Poole, C., Goodman, S. N., & Altman, D. G. (2016). Statistical tests, P values, confidence intervals, and power: A guide to misinterpretations. ", em("European Journal of Epidemiology"), ", ", em("31"), " (4), 337–350. ", a("https://doi.org/10.1007/s10654-016-0149-3", href="https://doi.org/10.1007/s10654-016-0149-3", target="_blank")
+    br(), br(),
+    h4("Misconceptions"),
+    "There are a lot of misconceptions related to NHST in general and to the $p$-value in particular.",
+    br(), br(),
+    "Just to mention a few examples (for an extended list see Goodman, 2008; Greenland et al., 2016), do observe that the following interpretations of the $p$-value are ", em("all incorrect:"),
+    br(), br(),
+    HTML(renderMarkdown(text = "1. The probability of \\$\\mathcal{H}_0\\$ being true is equal to \\$p\\$.\n 1. The probability of \\$\\mathcal{H}_1\\$ being true is equal to \\$(1-p)\\$.\n 1. A non-significant test result implies that \\$\\mathcal{H}_0\\$ is true.\n 1. A significant test result implies that \\$\\mathcal{H}_1\\$ is false.\n 1. A non-significant test result implies that the effect size is small.\n 1. A significant test result implies that the effect size is large.\n 1. The probability that a significant test result is a false positive is equal to \\$\\alpha\\$.")),
+    "The main conclusion here is that NHST and its $p$-value are rather elusive and hard to understand concepts.",
+    br(),
+    "This is really problematic since most science relies on hypothesis testing.",
+    br(),
+    "And this has motivated statisticians to search for patches and valid alternatives to the $p$-value.",
+    br(), br(),
+    "One such alternative is, precisely, the ", em("Bayes factor"), ".", br(), br(),
+    h4("References"),
+    div(style = "color: gray;", 
+        icon("file-lines"), " Goodman, S. (2008). A Dirty Dozen: Twelve P-Value Misconceptions. ", em("Seminars in Hematology"), ", ", em("45"), " (3), 135–140. ", a("https://doi.org/10.1053/j.seminhematol.2008.04.003", href="https://doi.org/10.1053/j.seminhematol.2008.04.003", target="_blank"),
+        br(),
+        icon("file-lines"), " Greenland, S., Senn, S. J., Rothman, K. J., Carlin, J. B., Poole, C., Goodman, S. N., & Altman, D. G. (2016). Statistical tests, P values, confidence intervals, and power: A guide to misinterpretations. ", em("European Journal of Epidemiology"), ", ", em("31"), " (4), 337–350. ", a("https://doi.org/10.1007/s10654-016-0149-3", href="https://doi.org/10.1007/s10654-016-0149-3", target="_blank")
+    )
   )
   
   tagList(br(),
-          HTML(outtext), 
-          br(), br(), 
+          HTML(outtext),
+          br(), br(),
           tags$script(HTML(js)),
           tags$script(
             async="",
@@ -523,13 +603,13 @@ output$intro.topic5.plot1 <- renderPlot({
   
   # Right plot:
   x.supp <- switch(input$prior,
-                   "cauchy"    = seq(floor(location.c() - 3.5*scale.c()), ceiling(location.c() + 3.5*scale.c()), length.out = 1024),
-                   "normal"    = seq(floor(location.n() - 3.5*scale.n()), ceiling(location.n() + 3.5*scale.n()), length.out = 1024),
-                   "t.student" = seq(floor(location.t() - 3.5*scale.t()), ceiling(location.t() + 3.5*scale.t()), length.out = 1024))
+                   "cauchy"    = seq(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()), length.out = 1024),
+                   "normal"    = seq(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()), length.out = 1024),
+                   "t.student" = seq(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()), length.out = 1024))
   y      <- switch(input$prior,
-                   "cauchy"    = cauchy.prior(x.supp, location.c(), scale.c()),
-                   "normal"    = normal.prior(x.supp, location.n(), scale.n()),
-                   "t.student" = tstude.prior(x.supp, location.t(), scale.t(), df.t()))
+                   "cauchy"    = cauchy.prior(x.supp, location(), scale()),
+                   "normal"    = normal.prior(x.supp, location(), scale()),
+                   "t.student" = tstude.prior(x.supp, location(), scale(), df()))
   
   par(mar = c(2, 4, 1.5, .5))
   plot(x.supp, y, xlim = c(min(x.supp), max(x.supp)), ylim = c(0, 1.2*max(y)), ylab = "", xlab = "", bty = "n",
