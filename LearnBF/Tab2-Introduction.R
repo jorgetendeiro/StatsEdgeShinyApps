@@ -6,43 +6,30 @@ ttest.res <- reactive({
   t.test.summ(input$mean1, input$mean2, input$sd1, input$sd2, input$n1, input$n2, input$H1hyp.cls)
 })
 
-# t-test result:
-# ttest.reactive <- renderText({
-#   tab <- data.frame(
-#     paste0("$", round((input$mean1 - input$mean2) / sqrt((((input$n1-1)*(input$sd1^2)+(input$n2-1)*(input$sd2^2)))/(input$n1+input$n2-2)), 3), "$"), 
-#     paste0("$", round(ttest.res()["t"], 3), "$"), 
-#     paste0("$", round(ttest.res()["df"], 3), "$"), 
-#     if (round(ttest.res()["p"], 3) >= .001) paste0("$", round(ttest.res()["p"], 3), "$") else "<.001", 
-#     if (ttest.res()["p"] <= input$alpha) "$\\text{Reject }\\mathcal{H}_0$" else "$\\text{Fail to reject }\\mathcal{H}_0$", 
-#     stringsAsFactors = FALSE, 
-#     check.names = FALSE, 
-#     row.names = NULL
-#   )
-#   
-#   colnames(tab) <- c("$\\text{Cohen's }d$", 
-#                      "$t$", 
-#                      "$\\text{df}$", 
-#                      "$p\\text{-value}$", 
-#                      "$\\text{Test decision}$"
-#   )
-#   
-#   tab %>%
-#     knitr::kable("html", escape = FALSE, align = 'c') %>% 
-#     row_spec(0, extra_css = "border-bottom: 1px solid; border-top: 2px solid;", background = "#005E3C1A") %>%
-#     row_spec(1, extra_css = "border-bottom: 2px solid; padding: 3px;") %>%  
-#     kable_styling(full_width = FALSE)
-# })
-# output$ttest <- renderUI({
-#   tagList(
-#     #withMathJax(),
-#     HTML(ttest.reactive()),
-#     tags$script(HTML(js)),
-#     tags$script(
-#       async="",
-#       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-#     )
-#   )
-# })
+# Left panel, H0 depending on the chosen H1, classic:
+output$H1hyp.cls <- renderUI({ switch(input$H1hyp.cls, 
+                                      "H1.diff0"    = "$\\mathcal{H}_0:\\delta=0$", 
+                                      "H1.larger0"  = "$\\mathcal{H}_0:\\delta\\leq 0$", 
+                                      "H1.smaller0" = "$\\mathcal{H}_0:\\delta\\geq 0$") })
+
+# Left panel, H0 depending on the chosen H1, Bayes:
+H1hyp.bys.reactive <- renderText({ switch(input$H1hyp.bys, 
+                                      "H1.diff0"    = "$\\mathcal{H}_0:\\delta=0$", 
+                                      "H1.larger0"  = "$\\mathcal{H}_0:\\delta\\leq 0$", 
+                                      "H1.smaller0" = "$\\mathcal{H}_0:\\delta\\geq 0$", 
+                                      "H1.point"    = "$\\mathcal{H}_0:\\delta=0$") })
+output$H1hyp.bys <- renderUI({
+  tagList(
+    #withMathJax(),
+    HTML(H1hyp.bys.reactive()),
+    tags$script(HTML(js)),
+    tags$script(
+      async="",
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    )
+  )
+})
+
 
 output$ttestB <- function() {
   tab <- data.frame(
@@ -54,7 +41,10 @@ output$ttestB <- function() {
       "$p\\textbf{-value}$"
     ), 
     c(
-      paste0("$\\mathcal{H}_0: \\delta=0\\quad\\text{vs}\\quad", 
+      paste0(switch(input$H1hyp.cls,
+                    "H1.diff0"    = "$\\mathcal{H}_0: \\delta=0\\quad\\text{vs}\\quad",
+                    "H1.larger0"  = "$\\mathcal{H}_0: \\delta\\leq 0\\quad\\text{vs}\\quad",
+                    "H1.smaller0" = "$\\mathcal{H}_0: \\delta\\geq 0\\quad\\text{vs}\\quad"), 
              switch(input$H1hyp.cls,
                     "H1.diff0"    = "\\mathcal{H}_1: \\delta\\not=0$",
                     "H1.larger0"  = "\\mathcal{H}_1: \\delta>0$",
@@ -63,7 +53,7 @@ output$ttestB <- function() {
       paste0("$t\\text{-Student (df = }", ttest.res()["df"], "\\text{)}$"), 
       paste0("$d=", round(cohen.d(), 3), "$"), 
       paste0("$t=", round(ttest.res()["t"], 3), "$"), 
-      if (round(ttest.res()["p"], 3) >= .001) paste0("$p=", round(ttest.res()["p"], 3), "$") else "p<.001"
+      if (round(ttest.res()["p"], 3) >= .001) paste0("$p=", round(ttest.res()["p"], 3), "$") else "$p<.001$"
     ), 
     stringsAsFactors = FALSE, 
     check.names = FALSE)
@@ -81,11 +71,11 @@ output$ttestB <- function() {
 
 output$ttest.crit <- renderPlot({
   xlimupp <- max(5, ceiling(abs(ttest.res()["t"]))+2)
-  par(mar = c(3, 1, 3, 1), xpd = TRUE)
+  par(mar = c(3, 1, 5, 1), xpd = TRUE)
   curve(dt(x, ttest.res()["df"]), from = -xlimupp, to = xlimupp, n = 1024, 
         ylim = c(0, 1.1 * dt(0, ttest.res()["df"])), 
         bty = "n", yaxt = "n", ylab = "", lwd = 2, xaxt = "n", xlab = "", yaxs = "i", 
-        main = paste0("Sampling distribution assuming H0 is true = Student's t (", round(ttest.res()["df"], 3), ")"), 
+        main = paste0("t-Student (df = ", round(ttest.res()["df"], 3), ")"), 
         col = "#005E3C")
   axis(1, seq(-xlimupp, xlimupp, 1))
   mtext("Test statistic", 1, 2)
@@ -148,10 +138,13 @@ output$ttest.crit <- renderPlot({
   )
   segments(ttest.res()["t"], 0, ttest.res()["t"], 1.1 * dt(0, ttest.res()["df"]), lwd = 2, col = "#DCA559")
   text(ttest.res()["t"], 1.05*dt(0, ttest.res()["df"]), paste0("t = ", round(ttest.res()["t"], 3)), cex = 1.4, pos = if (ttest.res()["t"] < 0) 2 else 4)
-  text(if (ttest.res()["t"] < 0) xlimupp else -xlimupp, 1.05*dt(0, ttest.res()["df"]), paste0("Critical region (probability = ", input$alpha, ")"), pos = if (ttest.res()["t"] < 0) 2 else 4, cex = 1.4, col = "#F00000")
+  # text(if (ttest.res()["t"] < 0) xlimupp else -xlimupp, 1.05*dt(0, ttest.res()["df"]), paste0("Critical region (probability = ", input$alpha, ")"), pos = if (ttest.res()["t"] < 0) 2 else 4, cex = 1.4, col = "#F00000")
+  # legend:
+  legend("bottomleft", paste0("Critical region (probability = ", input$alpha, ")"), pch = 15, col = "#FF000033", 
+         inset=c(0,1), xpd = TRUE, horiz = TRUE, bty = "n", seg.len = 4, pt.cex = 3)
 })
 
-output$introduction1 <- renderUI({
+output$introduction1a <- renderUI({
   outtext <- paste0(
     "Null hypothesis significance testing (NHST in short) is one of the most popular tools currently in use in science for performing statistical inference.", 
     br(), 
@@ -167,22 +160,46 @@ output$introduction1 <- renderUI({
     br(), 
     "The ", em("Bayes factor"), " can be considered one such development.", 
     br(), br(), 
-    h4("Null hypothesis test used"), 
+    h4("Null hypothesis tests used"), 
     "We focus on one particular hypothesis testing scenario: The ", 
     em("two-sided independent samples $t$-test with equal variances assumed"), 
     ".", 
     br(), 
     "The idea is to use a very simple and familiar testing setting, so that we can allocate most of our attention on the Bayes factor itself.", 
     br(), 
-    "All general guidelines discussed for this test extend to about all other Bayes factors currently available.", 
-    br(), br(), 
+    "All general guidelines discussed for this test extend to about all other Bayes factors currently available."
+  )
+  
+  tagList(h3(strong("Background")), 
+          br(), 
+          HTML(outtext), 
+          br(), br(), 
+          tags$script(HTML(js)), 
+          tags$script(
+            async="",
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+          )
+  )
+})
+
+output$introduction1b <- renderUI({
+  outtext <- paste0(
     "Thus, suppose we have two groups, say, A and B.", 
-    br(), 
+    br(), br(), 
     "It is assumed that the population associated to each group is normally distributed, with mean $\\mu_A$ (group A) and $\\mu_B$ (group B), and that the population standard deviation is the same for both groups (say, $\\sigma$).", 
+    br(), br(), 
+    "The hypotheses of the ", em("two-tailed"), " test are defined by $$\\mathcal{H}_0: \\mu_A = \\mu_B\\quad\\text{ versus }\\quad \\mathcal{H}_1: \\mu_A \\not= \\mu_B.$$ The null hypothesis in this test is a point value (of 0 in this case).", 
     br(), 
-    "The hypotheses being tested are given by $$\\mathcal{H}_0: \\mu_A = \\mu_B \\qquad\\text{ versus }\\qquad \\mathcal{H}_1: \\mu_A \\not= \\mu_B,$$ or, equivalently, $$\\mathcal{H}_0: \\underset{\\mu_D}{\\underbrace{\\mu_A-\\mu_B}}=0 \\quad \\text{ versus } \\quad \\mathcal{H}_1: \\underset{\\mu_D}{\\underbrace{\\mu_A-\\mu_B}}\\not=0.$$ For the Bayesian independent samples $t$-test used in this app, the parameter being tested is actually a ", em("standardized effect size"), " defined as $\\delta=\\frac{\\mu_D}{\\sigma}$ (Rouder et al., 2009).", 
+    "For this reason we often refer to such a test as a ", em("null hypothesis test."), 
+    br(), br(), 
+    em("One-tailed"), " tests are defined as follows: $$\\begin{eqnarray*}\\mathcal{H}_0: \\mu_A \\leq \\mu_B &\\quad\\text{ versus }\\quad \\mathcal{H}_1: \\mu_A > \\mu_B\\\\ \\hphantom{\\mathcal{H}_0: \\mu_A \\leq \\mu_B} &\\quad\\text{ and }\\quad \\hphantom{\\mathcal{H}_1: \\mu_A > \\mu_B}\\\\ \\mathcal{H}_0: \\mu_A \\geq \\mu_B &\\quad\\text{ versus }\\quad \\mathcal{H}_1: \\mu_A < \\mu_B.\\end{eqnarray*}$$", 
     br(), 
-    "The hypotheses being tested then become: $$\\mathcal{H}_0: \\delta=0 \\quad \\text{ versus } \\quad \\mathcal{H}_1: \\delta\\not=0.$$", 
+    "Equivalently, defining $\\mu_D=(\\mu_A-\\mu_B)$, the same tests can be reexpressed in terms of parameter $\\mu_D$", 
+    br(), 
+    "(for example, the two-tailed test becomes $\\mathcal{H}_0: \\mu_D = 0 \\text{ versus } \\mathcal{H}_1: \\mu_D \\not= 0.$)", 
+    br(), br(), 
+    h4("Hypotheses in Bayesian testing"), 
+    "For the Bayesian independent samples $t$-test used in this app, the parameter being tested is actually a ", em("standardized effect size"), " defined as $\\delta=\\frac{\\mu_D}{\\sigma}$ (Rouder et al., 2009). The hypotheses being tested are: $$\\begin{eqnarray*}\\mathcal{H}_0: \\delta=0 &\\quad\\text{ versus }\\quad \\mathcal{H}_1: \\delta\\not=0,\\\\ \\mathcal{H}_0: \\delta\\leq 0 &\\quad\\text{ versus }\\quad \\mathcal{H}_1: \\delta>0,\\\\ \\mathcal{H}_0: \\delta\\geq 0 &\\quad\\text{ versus }\\quad \\mathcal{H}_1: \\delta<0.\\end{eqnarray*}$$ We will also be able to test a ", em("point alternative hypothesis"), ", so the following test is also available in the Bayesian module: $$\\mathcal{H}_0: \\delta=0\\quad\\text{ versus }\\quad \\mathcal{H}_1: \\delta=\\delta_1,$$ where $\\delta_1$ is a real number.", 
     br(), br(), 
     h4("References"), 
     div(style = "color: gray;", 
@@ -204,8 +221,7 @@ output$introduction1 <- renderUI({
     )
   )
   
-  tagList(h3(strong("Background")), 
-          br(), 
+  tagList(br(), 
           HTML(outtext), 
           br(), br(), 
           tags$script(HTML(js)), 
@@ -214,6 +230,24 @@ output$introduction1 <- renderUI({
             src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
           )
   )
+})
+
+output$intro.topic1.plot1 <- renderPlot({
+  x <- seq(-5, 5, by = .01)
+  par(mar = c(4, .5, .5, .5), xpd = TRUE)
+  plot(NULL, xlim = c(-5, 5), ylim = c(0, 1.10*dnorm(0)), ylab="", xlab="", main = "", bty = "n", xaxt = "n", yaxt = "n", yaxs = "i")
+  polygon(c(x, rev(x)), c(dnorm(x, -1, 1), rep(0, length(x))), col = "#005E3C1A", border = NA)
+  polygon(c(x, rev(x)), c(dnorm(x,  1, 1), rep(0, length(x))), col = "#DCA5591A", border = NA)
+  points(x, dnorm(x, -1, 1), type = "l", col = "#005E3C", lwd = 1)
+  points(x, dnorm(x,  1, 1), type = "l", col = "#DCA559", lwd = 1)
+  segments(-1, 0, -1, 1.05*dnorm(0), col = "#005E3C", lwd = 2, lty = 2)
+  segments( 1, 0,  1, 1.05*dnorm(0), col = "#DCA559", lwd = 2, lty = 2)
+  arrows(-1, 1.05*dnorm(0), 1, 1.05*dnorm(0), length = .2, lwd = 2, code = 3)
+  axis(1, at = c(-5, -1, 1, 5), labels = c("", expression(mu["  A"]), expression(mu["  B"]), ""), las = 1, cex.axis = 1.5)
+  text(0, 1.05*dnorm(0), "??", pos = 3, cex = 1.5)
+  text(-2, .6*dnorm(0), "Group A", pos = 2, cex = 1.5)
+  text( 2, .6*dnorm(0), "Group B", pos = 4, cex = 1.5)
+  
 })
 
 output$introduction2a <- renderUI({
@@ -268,7 +302,12 @@ output$introduction2b <- renderUI({
     br(),
     "We ",
     if (round(ttest.res()["p"], 3) > input$alpha) "fail to ",
-    "reject the null hypothesis that the population group means are equal to each other.",
+    "reject the null hypothesis which states that the population mean of group A is ", 
+    switch(input$H1hyp.cls,
+           "H1.diff0"    = "equal to",
+           "H1.larger0"  = "at most as large as",
+           "H1.smaller0" = "at least as large as"), 
+    " the population mean of group B.",
     br(), br(),
     h4("Misconceptions"),
     "There are a lot of misconceptions related to NHST in general and to the $p$-value in particular.",
@@ -354,7 +393,7 @@ output$introduction4a <- renderUI({
     "It can be shown (see the Box below for details) that the following formula holds:", 
     br(), 
     "$$\\underset{\\text{prior odds}}{\\underbrace{\\frac{p(\\mathcal{H}_0)}{p(\\mathcal{H}_1)}}} \\times \\textcolor{#DCA559}{\\underset{BF_{01}}{\\underbrace{\\frac{p(D|\\mathcal{H}_0)}{p(D|\\mathcal{H}_1)}}}} = \\underset{\\text{posterior odds}}{\\underbrace{\\frac{p(\\mathcal{H}_0|D)}{p(\\mathcal{H}_1|D)}}}.$$
-      This formula recovers expressing the Bayes factor as a ratio of two marginal likelihoods.", 
+      This formula recovers the Bayes factor formula from Definition 1.", 
     br(), 
     "But now the Bayes factor can also be interpreted as ", em("the factor updating the prior odds into the posterior odds."), 
     br(), br(), 
@@ -402,18 +441,26 @@ output$introduction4a <- renderUI({
 
 output$introduction4b <- renderUI({
   outtext <- paste0(
-    "The Bayes factor can be derived from the ", tagList("", a("Bayes theorem", href="https://en.wikipedia.org/wiki/Bayes%27_theorem", target="_blank")), ", $$\\overset{\\text{posterior}}{\\overbrace{p(\\mathcal{H}_i|D)}} = \\frac{\\overset{\\text{prior}}{\\overbrace{p(\\mathcal{H}_i)}}\\ \\overset{\\text{marginal likelihood}}{\\overbrace{p(D|\\mathcal{H}_i)}}}{\\underset{\\text{evidence}}{\\underbrace{p(D)}}}, \\text{ for } i=0, 1.$$ Before proceeding, we need to assume that $\\mathcal{H}_0$ and $\\mathcal{H}_1$ are the only hypotheses of interest.", 
-    br(), 
-    "In this sense, we act as if $\\mathcal{H}_0$ and $\\mathcal{H}_1$ reflect the only two models that could have generated the observed data.", 
+    "Let us, for the time being only, focus on two specific hypotheses $\\mathcal{H}_0$ and $\\mathcal{H}_1$. This is not to say that we expect that one of them is ", em("true"), " (and worse, that we intend to use a hypotheses test to sort this out!). In fact, about ", em("always"), " we expect that both hypotheses will be false (recall George Box's adage stating that all model are wrong...). Now this may sound confusing: If the hypotheses are ", em("complementary"), " (e.g., $\\mathcal{H}_0:\\delta=0$ versus $\\mathcal{H}_1:\\delta\\not=0$), how can ", em("both"), " be wrong? The problem is that a hypothesis is typically not completely defined by simply specifying the parameter values being tested; one must further specify ", em("all"), " conditions of the test. For example, the independent samples $t$-test assumes that both populations are normally distributed. Now, how can we ever ", em("establish"), " that? The answer is: We cannot, never. Furthermore, in Bayesian statistics we must also specify prior distributions for all parameters. In case you ask yourself 'Which prior distribution is true in the population?', then you are bound to be disappointed: There is no such thing. There are no ", em("true"), " prior distributions. Prior distributions are a means for us to express how uncertain we are about the value of a parameter. Were we omnipotent we would have no such doubts. In other words: Prior distributions, as much as assumptions like normality and equal group variances, are abstractions imposed by the analyst (= you) that really reflect how much we do not know. Such assumptions cannot really be ", em("established"), " or ", em("proven"), " beyond a shadow of a doubt. We can ", em("test"), " for such things, but we must be modest about the inferences we can draw from such tests.", 
     br(), br(), 
+    "And that brings us back to $\\mathcal{H}_0$ and $\\mathcal{H}_1$. Again, we don't really thing that either is true. However, we may expect one of the two to outperform the other, in a ", em("predictive"), " sense: The observed data may be more likely under one hypothesis in comparison to the other. In this sense, there is value in hypotheses testing.", 
+    br(), br(), 
+    "Thus, and for the time being only, let us entertain $\\mathcal{H}_0$ and $\\mathcal{H}_1$ as two very interesting hypotheses that could have generated the observed data. The term 'htpothesis' is probably better replaced by the term 'model'. What we are testing against each other is two models. Each model specifies the possible parameter values being considered, the distribution of the data conditional on those parameters (i.e., known as the likelihood function, like the normality in the case of the $t$-test), and all prior distributions (one per parameter).", 
+    br(), br(), 
+    "The Bayes factor can be derived from the ", tagList("", a("Bayes theorem", href="https://en.wikipedia.org/wiki/Bayes%27_theorem", target="_blank")), ", $$\\overset{\\text{posterior}}{\\overbrace{p(\\mathcal{H}_i|D)}} = \\frac{\\overset{\\text{prior}}{\\overbrace{p(\\mathcal{H}_i)}}\\ \\overset{\\text{marginal likelihood}}{\\overbrace{p(D|\\mathcal{H}_i)}}}{\\underset{\\text{evidence}}{\\underbrace{p(D)}}}, \\text{ for } i=0, 1.$$", 
+    br(), 
     "Let's decode what we can see in Bayes theorem:", 
     br(), br(), 
     HTML(renderMarkdown(text = paste0("- \\$p(\\mathcal{H}_0)\\$ and \\$p(\\mathcal{H}_1)\\$ are the so-called _prior probabilities_ of \\$\\mathcal{H}_0\\$ and \\$\\mathcal{H}_1\\$, respectively.<br> These probabilities reflect our initial belief on either hypothesis, before we consider the observed data.<br>Because \\$\\mathcal{H}_0\\$ and \\$\\mathcal{H}_1\\$ are the only hypotheses of interest, these prior probabilities are complementary, that is, they sum to 1: \\$p(\\mathcal{H}_0)+p(\\mathcal{H}_1)=1\\$.<br><br>\n - \\$p(D|\\mathcal{H}_0)\\$ and \\$p(D|\\mathcal{H}_1)\\$ are the _marginal likelihoods_ of the data under either hypothesis.<br> These values reflect the probability of the observed data under either hypothesis.<br><br>\n - \\$p(D)\\$ is known as the _evidence_. It represents the probability of the observed data across both hypotheses.<br> It is just a normalizing constant.<br><br>\n - Finally, \\$p(\\mathcal{H}_0|D)\\$ and \\$p(\\mathcal{H}_1|D)\\$ are the so-called _posterior probabilities_ of \\$\\mathcal{H}_0\\$ and \\$\\mathcal{H}_1\\$, respectively.<br> These probabilities reflect our belief on either hypothesis, _after_ we consider the observed data.<br> Also these probabilities sum to 1: \\$p(\\mathcal{H}_0|D)+p(\\mathcal{H}_1|D)=1\\$."))), 
     br(), 
-    "Let's derive the Bayes factor from the Bayes theorem.", 
+    "Now we derive the Bayes factor from the Bayes theorem.", 
     br(), 
-    "Dividing the equations member by member when $i=0$ and $i=1$ we have that 
-      $$\\frac{p(\\mathcal{H}_0|D)}{p(\\mathcal{H}_1|D)} = \\frac{p(\\mathcal{H}_0)p(D|\\mathcal{H}_0) \\bigg/ p(D)}{p(\\mathcal{H}_1)p(D|\\mathcal{H}_1) \\bigg/ p(D)}.$$ Do note that $p(D)$ is the same for both hypotheses (namely, $p(D)=p(\\mathcal{H}_0)p(D|\\mathcal{H}_0) + p(\\mathcal{H}_1)p(D|\\mathcal{H}_1)$; this is due to the ", tagList("", a("law of total probability", href="https://en.wikipedia.org/wiki/Law_of_total_probability", target="_blank")), "). We can therefore drop the two $p(D)$ terms in the equation above. Simplifying and rearranging the remaining terms finally leads to 
+    "Consider two equations from the formula above, one when $i=0$ and other when $i=1$.", 
+    br(), 
+    "Dividing the equations member by member we have that 
+      $$\\frac{p(\\mathcal{H}_0|D)}{p(\\mathcal{H}_1|D)} = \\frac{p(\\mathcal{H}_0)p(D|\\mathcal{H}_0) \\bigg/ p(D)}{p(\\mathcal{H}_1)p(D|\\mathcal{H}_1) \\bigg/ p(D)}.$$ Do note that $p(D)$ is the same for both hypotheses (namely, $p(D)=p(\\mathcal{H}_0)p(D|\\mathcal{H}_0) + p(\\mathcal{H}_1)p(D|\\mathcal{H}_1)$; this is due to the ", tagList("", a("law of total probability", href="https://en.wikipedia.org/wiki/Law_of_total_probability", target="_blank")), ").", 
+    br(), 
+    "We can therefore drop the two $p(D)$ terms in the equation above. Simplifying and rearranging the remaining terms finally leads to 
       $$\\underset{\\text{prior odds}}{\\underbrace{\\frac{p(\\mathcal{H}_0)}{p(\\mathcal{H}_1)}}} \\times \\textcolor{#DCA559}{\\underset{BF_{01}}{\\underbrace{\\frac{p(D|\\mathcal{H}_0)}{p(D|\\mathcal{H}_1)}}}} = \\underset{\\text{posterior odds}}{\\underbrace{\\frac{p(\\mathcal{H}_0|D)}{p(\\mathcal{H}_1|D)}}}.$$"
   )
   
@@ -428,11 +475,11 @@ output$introduction4b <- renderUI({
 
 output$introduction5a <- renderUI({
   outtext <- paste0(
-    "The formula to compute either probability of the Bayes factor, $p(D|\\mathcal{H}_i)$ for $i=0, 1$, is not simple (see Box below for the technical details).", 
+    "The formula to compute either probability of the Bayes factor, $p(D|\\mathcal{H}_i)$ for $i=0, 1$, is not simple (see the Box below for the technical details).", 
     br(), 
     "It involves two steps:", 
     br(), br(), 
-    HTML(renderMarkdown(text = "1. We need to choose a <font color=\"#DCA559\"><b>prior distribution</b></font> for each parameter (here we have two parameters: The standardized effect size \\$\\delta\\$ and the common groups standard deviation \\$\\sigma\\$).<br> A prior distribution allocates probability to each possible parameter value, irrespective of what the observed data are.<br> This may be done taking various things into account, for example: Current knowledge, differing scientific perspectives (e.g., skeptical or liberal), or known parameter constraints (e.g., avoid negative variance values 0).<br><br>\n 2. For each hypothesis, we need to compute a weighted sum of the probability of the observed data at each combination of parameter values.<br> The weights are determined by the prior distributions.")), 
+    HTML(renderMarkdown(text = "1. We need to choose a <font color=\"#DCA559\"><b>prior distribution</b></font> for each parameter (here we have two parameters: The standardized effect size \\$\\delta\\$ and the common groups standard deviation \\$\\sigma\\$).<br> A prior distribution allocates probability to each possible parameter value, irrespective of what the observed data are.<br> This may be done taking various things into account, for example: Current knowledge, differing scientific perspectives (e.g., skeptical or liberal), or known parameter constraints (e.g., avoid negative variance values \\$0\\$).<br><br>\n 2. For each hypothesis, we need to compute a weighted sum of the probability of the observed data at each combination of parameter values.<br> The weights are determined by the prior distributions.")), 
     "The quantity $p(D|\\mathcal{H}_i)$ is known as the ", em("marginal likelihood"), " of the observed data under $\\mathcal{H}_i$.", 
     br(), 
     "'Marginal' means 'across all possible parameter values', with weights given by the prior distributions.", 
@@ -441,18 +488,22 @@ output$introduction5a <- renderUI({
     br(), 
     "Prior distributions are used directly in the computation of the Bayes factor.", 
     br(), 
-    "Different prior distributions ultimately instantiate different hypotheses, and this will lead to different Bayes factor values.", 
+    "Different prior distributions ultimately instantiate different hypotheses (even of the set of parameter values being tested remains the same!), and this will lead to different Bayes factor values.", 
     br(), br(), 
-    "For this reason, it does not suffice to simply say that something like \"$\\mathcal{H}_1$ is the hypothesis that $\\delta\\not=0$\".", 
+    "For this reason, it does not suffice to simply say something like \"$\\mathcal{H}_1$ is the hypothesis that $\\delta\\not=0$\".", 
     br(), 
     "We must further specify, and report, how likely we think each value under $\\mathcal{H}_1$ may be.",
     br(), 
     "In other words, we ", em("must choose"), " prior distributions.",
     br(), br(), 
     h4("Default priors"), 
-    "Choosing a prior distribution for each parameter is not trivial. As explained above, we may take different things into account when choosing a prior",
+    "Choosing a prior distribution for each parameter is not trivial. As explained above, we may take different things into account when choosing a prior.",
     br(), br(), 
-    "To make things easier, most software packages suggest seemingly sensible <font color=\"#DCA559\"><b>default priors</b></font>. Such priors are chosen by taking some idealized properties into consideration (often mathematical reasons). Whether such priors match the requirements of the researcher for each performed test is of course unknown. Only the researcher may be able to answer to such a question.", 
+    "To make things easier, most software packages suggest seemingly sensible <font color=\"#DCA559\"><b>default priors</b></font>.", 
+    br(), 
+    "Such priors are chosen by taking some idealized properties into consideration (often mathematical reasons).", 
+    br(), 
+    "Whether such priors match the requirements of the researcher for each performed test is of course unknown. Only the researcher may be able to answer such a question.", 
     br(), br(), 
     "We strongly advice that researchers consider the priors they are using. At a bare minimum, vizualizing the priors can be extremely insightful. We will do so below.",
     br(), 
@@ -589,39 +640,127 @@ output$intro.topic5.plot1 <- renderPlot({
   layout(matrix(c(1, 2), 1, 2, byrow = TRUE))
   
   # Left plot:
-  par(mar = c(2, 4, 1.5, .5))
-  plot(NULL, xlim = c(0, 1), ylim = c(0, 1.05), ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", 
-       cex.axis = 2, main = expression("Prior for " * delta * "  under " * H[0]), cex.main = 1.5, font.main = 1)
-  axis(1, c(0, .5, 1), c("", "0", ""))
-  axis(2, c(0, 1), las = 1)
-  segments(.5, 0, .5, 1, lty = 2, col = "gray")
-  points(.5, 1, pch = 16, cex = 2, col = "#005E3C")
-  segments(0, 0, 1, 0, lty = 1, col = "#005E3C", lwd = 2)
-  points(.5, 0, pch = 21, cex = 2, bg = "white", col = "#005E3C")
-  mtext(expression(delta), 1, 1, at = .95, cex = 1.5)
-  mtext("Probability", 2, 2, cex = 1.5)
+  if (input$H1hyp %in% c("H1.diff0", "H1.point"))
+  {
+    par(mar = c(4, 4, 1.5, .5))
+    plot(NULL, xlim = c(-2, 2), ylim = c(0, 1.05), ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", 
+         cex.axis = 2, main = expression("Prior for " * delta * "  under " * H[0]), cex.main = 1.5, font.main = 1)
+    axis(1, c(-2, 0, 2), c("", "0", ""))
+    axis(2, c(0, 1), las = 1)
+    segments(0, 0, 0, 1, lty = 2, col = "gray")
+    points(0, 1, pch = 16, cex = 2, col = "#005E3C")
+    segments(-2, 0, 2, 0, lty = 1, col = "#005E3C", lwd = 2)
+    points(0, 0, pch = 21, cex = 2, bg = "white", col = "#005E3C")
+    mtext(expression(delta), 1, 2.5, cex = 1.5)
+    mtext("Probability", 2, 2, cex = 1.5)
+  } else if (input$H1hyp == "H1.larger0")
+  {
+    x.supp <- seq(floor(location() - 3.5*scale()), 0, length.out = 1024)
+    y      <- prior(x.supp) / .5
+    y.max  <- max(prior(c(-x.supp, x.supp)) / .5 )
+    
+    par(mar = c(2, 4.5, 1.5, .5))
+    plot(x.supp, y, xlim = c(min(x.supp), 0), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
+         las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", 
+         cex.main = 1.5, font.main = 1, 
+         main = switch(input$prior,
+                       "cauchy"    = expression("Prior for " * delta * "  under " * H[0] * " (Cauchy-)"),
+                       "normal"    = expression("Prior for " * delta * "  under " * H[0] * " (Normal-)"),
+                       "t.student" = expression("Prior for " * delta * "  under " * H[0] * " (" * italic(t) * "-Student-)")))
+    axis(1, at = min(x.supp):0)
+    mtext("Density", 2, 3, cex = 1.5)
+    polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
+  } else 
+  {
+    x.supp <- seq(0, floor(location() + 3.5*scale()), length.out = 1024)
+    y      <- prior(x.supp) / .5
+    y.max  <- max(prior(c(-x.supp, x.supp)) / .5 )
+    
+    par(mar = c(2, 4.5, 1.5, .5))
+    plot(x.supp, y, xlim = c(0, max(x.supp)), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
+         las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", 
+         cex.main = 1.5, font.main = 1, 
+         main = switch(input$prior,
+                       "cauchy"    = expression("Prior for " * delta * "  under " * H[0] * " (Cauchy+)"),
+                       "normal"    = expression("Prior for " * delta * "  under " * H[0] * " (Normal+)"),
+                       "t.student" = expression("Prior for " * delta * "  under " * H[0] * " (" * italic(t) * "-Student+)")))
+    axis(1, at = 0:max(x.supp))
+    mtext("Density", 2, 3, cex = 1.5)
+    polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
+  }
   
   # Right plot:
-  x.supp <- switch(input$prior,
-                   "cauchy"    = seq(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()), length.out = 1024),
-                   "normal"    = seq(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()), length.out = 1024),
-                   "t.student" = seq(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()), length.out = 1024))
-  y      <- switch(input$prior,
-                   "cauchy"    = cauchy.prior(x.supp, location(), scale()),
-                   "normal"    = normal.prior(x.supp, location(), scale()),
-                   "t.student" = tstude.prior(x.supp, location(), scale(), df()))
-  
-  par(mar = c(2, 4, 1.5, .5))
-  plot(x.supp, y, xlim = c(min(x.supp), max(x.supp)), ylim = c(0, 1.2*max(y)), ylab = "", xlab = "", bty = "n",
-       las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", 
-       cex.main = 1.5, font.main = 1, 
-       main = switch(input$prior,
-                     "cauchy"    = expression("Prior for " * delta * "  under " * H[1] * " (Cauchy)"),
-                     "normal"    = expression("Prior for " * delta * "  under " * H[1] * " (Normal)"),
-                     "t.student" = expression("Prior for " * delta * "  under " * H[1] * " (" * italic(t) * "-Student)")))
-  axis(1, at = min(x.supp):max(x.supp))
-  mtext("Density", 2, 3, cex = 1.5)
-  polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
+  if (input$H1hyp == "H1.point")
+  {
+    par(mar = c(4, 4, 1.5, .5))
+    plot(NULL, xlim = c(-2, 2), ylim = c(0, 1.05), ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", 
+         cex.axis = 2, main = expression("Prior for " * delta * "  under " * H[1]), cex.main = 1.5, font.main = 1)
+    axis(1, c(-2, input$H1pointslide, 2), c("", input$H1pointslide, ""))
+    axis(2, c(0, 1), las = 1)
+    segments(input$H1pointslide, 0, input$H1pointslide, 1, lty = 2, col = "gray")
+    points(input$H1pointslide, 1, pch = 16, cex = 2, col = "#005E3C")
+    segments(-2, 0, 2, 0, lty = 1, col = "#005E3C", lwd = 2)
+    points(input$H1pointslide, 0, pch = 21, cex = 2, bg = "white", col = "#005E3C")
+    mtext(expression(delta), 1, 2.5, cex = 1.5)
+    mtext("Probability", 2, 2, cex = 1.5)
+  } else if (input$H1hyp == "H1.diff0")
+  {
+    
+    x.supp <- switch(input$prior,
+                     "cauchy"    = seq(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()), length.out = 1024),
+                     "normal"    = seq(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()), length.out = 1024),
+                     "t.student" = seq(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()), length.out = 1024))
+    y      <- switch(input$prior,
+                     "cauchy"    = cauchy.prior(x.supp, location(), scale()),
+                     "normal"    = normal.prior(x.supp, location(), scale()),
+                     "t.student" = tstude.prior(x.supp, location(), scale(), df()))
+    
+    par(mar = c(2, 4.5, 1.5, .5))
+    plot(x.supp, y, xlim = c(min(x.supp), max(x.supp)), ylim = c(0, 1.2*max(y)), ylab = "", xlab = "", bty = "n",
+         las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", 
+         cex.main = 1.5, font.main = 1, 
+         main = switch(input$prior,
+                       "cauchy"    = expression("Prior for " * delta * "  under " * H[1] * " (Cauchy)"),
+                       "normal"    = expression("Prior for " * delta * "  under " * H[1] * " (Normal)"),
+                       "t.student" = expression("Prior for " * delta * "  under " * H[1] * " (" * italic(t) * "-Student)")))
+    axis(1, at = min(x.supp):max(x.supp))
+    mtext("Density", 2, 3, cex = 1.5)
+    polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
+  } else if (input$H1hyp == "H1.smaller0")
+  {
+    x.supp <- seq(floor(location() - 3.5*scale()), 0, length.out = 1024)
+    y      <- prior(x.supp) / .5
+    y.max  <- max(prior(c(-x.supp, x.supp)) / .5 )
+    
+    par(mar = c(2, 4.5, 1.5, .5))
+    plot(x.supp, y, xlim = c(min(x.supp), 0), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
+         las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", 
+         cex.main = 1.5, font.main = 1, 
+         main = switch(input$prior,
+                       "cauchy"    = expression("Prior for " * delta * "  under " * H[1] * " (Cauchy-)"),
+                       "normal"    = expression("Prior for " * delta * "  under " * H[1] * " (Normal-)"),
+                       "t.student" = expression("Prior for " * delta * "  under " * H[1] * " (" * italic(t) * "-Student-)")))
+    axis(1, at = min(x.supp):0)
+    mtext("Density", 2, 3, cex = 1.5)
+    polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
+  } else 
+  {
+    x.supp <- seq(0, floor(location() + 3.5*scale()), length.out = 1024)
+    y      <- prior(x.supp) / .5
+    y.max  <- max(prior(c(-x.supp, x.supp)) / .5 )
+    
+    par(mar = c(2, 4.5, 1.5, .5))
+    plot(x.supp, y, xlim = c(0, max(x.supp)), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
+         las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", 
+         cex.main = 1.5, font.main = 1, 
+         main = switch(input$prior,
+                       "cauchy"    = expression("Prior for " * delta * "  under " * H[1] * " (Cauchy+)"),
+                       "normal"    = expression("Prior for " * delta * "  under " * H[1] * " (Normal+)"),
+                       "t.student" = expression("Prior for " * delta * "  under " * H[1] * " (" * italic(t) * "-Student+)")))
+    axis(1, at = 0:max(x.supp))
+    mtext("Density", 2, 3, cex = 1.5)
+    polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
+  }
   
 })
 

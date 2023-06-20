@@ -122,7 +122,10 @@ ui <- fluidPage(
                )
              ), 
              br(), 
-             conditionalPanel("input.intro == 'intro.topic1'", uiOutput("introduction1")), 
+             conditionalPanel("input.intro == 'intro.topic1'", 
+                              uiOutput("introduction1a"), 
+                              plotOutput("intro.topic1.plot1"), 
+                              uiOutput("introduction1b")), 
              conditionalPanel("input.intro == 'intro.topic2'",
                               h3(strong("Null hypothesis significance testing (NHST)")), 
                               sidebarLayout(
@@ -191,10 +194,10 @@ ui <- fluidPage(
                                   h3(strong("Classical test")),
                                   em("Null and alternative hypotheses:"),
                                   fluidRow(
-                                    column(width = 4, "$\\mathcal{H}_0:\\delta=0$"),
+                                    column(width = 4, uiOutput("H1hyp.cls")),
                                     column(width = 8,
                                            div(prettyRadioButtons(inputId  = "H1hyp.cls",
-                                                                  label    = em("$\\mathcal{H}_1$:$\\hspace{1mm}$"),
+                                                                  label    = em("$\\mathcal{H}_1:\\hspace{1mm}$"),
                                                                   choices  = list("$\\delta\\not=0$" = "H1.diff0",
                                                                                   "$\\delta>0$" = "H1.larger0",
                                                                                   "$\\delta<0$" = "H1.smaller0"),
@@ -225,7 +228,6 @@ ui <- fluidPage(
                                                            width = '100%'), class = "not_bold")), 
                                     column(8)
                                   ), 
-                                  br(), 
                                   plotOutput("ttest.crit"), 
                                   br(), br(), 
                                   # tableOutput("ttest"), 
@@ -240,14 +242,145 @@ ui <- fluidPage(
              conditionalPanel("input.intro == 'intro.topic4'", h4(em("Box: How to derive the Bayes factor.")), div(style = "border-style: solid; border-color: #DCA559; padding: 10px; color: gray;",
                                                                                                                    uiOutput("introduction4b"))), 
              conditionalPanel("input.intro == 'intro.topic4'", br(), br()), 
-             conditionalPanel("input.intro == 'intro.topic5'", uiOutput("introduction5a")), 
-             conditionalPanel("input.intro == 'intro.topic5'", plotOutput("intro.topic5.plot1")), 
-             conditionalPanel("input.intro == 'intro.topic5'", br(), br()),
-             conditionalPanel("input.intro == 'intro.topic5'", uiOutput("introduction5b")), 
-             conditionalPanel("input.intro == 'intro.topic5'", h4(em("Box: The marginal likelihood.")), div(style = "border-style: solid; border-color: #DCA559; padding: 10px; color: gray;",
-                                                                                                            uiOutput("introduction5c"))), 
-             conditionalPanel("input.intro == 'intro.topic5'", br(), br()),
-             conditionalPanel("input.intro == 'intro.topic6'", uiOutput("introduction6")), 
+             conditionalPanel("input.intro == 'intro.topic5'", 
+                              uiOutput("introduction5a"), 
+                              
+                              sidebarLayout(
+                                sidebarPanel(
+                                  h3(strong("Bayesian test")),
+                                  em("Null and alternative hypotheses:"),
+                                  fluidRow(
+                                    column(width = 4, uiOutput("H1hyp.bys")),
+                                    column(width = 8,
+                                           div(prettyRadioButtons(inputId  = "H1hyp.bys",
+                                                                  label    = em("$\\mathcal{H}_1$:$\\hspace{1mm}$"),
+                                                                  choices  = list("$\\delta\\not=0$" = "H1.diff0",
+                                                                                  "$\\delta>0$" = "H1.larger0",
+                                                                                  "$\\delta<0$" = "H1.smaller0",
+                                                                                  "$\\delta=\\delta_1$" = "H1.point"),
+                                                                  selected = "H1.diff0",
+                                                                  inline   = TRUE,
+                                                                  width    = "100%",
+                                                                  status   = "success",
+                                                                  shape    = "round",
+                                                                  fill     = TRUE
+                                           ), class = "not_bold"),
+                                           conditionalPanel("input.H1hyp == 'H1.point'",
+                                                            div(sliderInput(inputId = "H1pointslide.bys", 
+                                                                            label   = NULL, 
+                                                                            min     = -2, 
+                                                                            max     = 2, 
+                                                                            value   = .2, 
+                                                                            ticks   = FALSE, 
+                                                                            step    = .1, 
+                                                                            width   = "100%"), class = "not_bold"))
+                                    )
+                                  ),
+                                  br(),
+                                  conditionalPanel("input.H1hyp != 'H1.point'", 
+                                                   div(prettyRadioButtons(inputId  = "prior.bys",
+                                                                          label    = em("Prior for $\\delta$ under $\\mathcal{H}_1$:"),
+                                                                          choices  = list("Cauchy" = "cauchy", "Normal" = "normal", "$t$-Student" = "t.student"),
+                                                                          selected = "cauchy",
+                                                                          inline   = TRUE,
+                                                                          width    = "100%",
+                                                                          status   = "success",
+                                                                          shape    = "round",
+                                                                          fill     = TRUE
+                                                   ), class = "not_bold"), 
+                                                   fluidRow(
+                                                     column(width = 4,
+                                                            conditionalPanel("input.prior == 'cauchy'",
+                                                                             div(sliderInput(inputId = "location.c.bys",
+                                                                                             label   = em("Location:"),
+                                                                                             min     = -3,
+                                                                                             max     = 3,
+                                                                                             value   = 0,
+                                                                                             ticks   = FALSE,
+                                                                                             step    = 0.1,
+                                                                                             width   = "100%"), class = "not_bold")),
+                                                            conditionalPanel("input.prior == 'normal'",
+                                                                             div(sliderInput(inputId = "location.n.bys",
+                                                                                             label   = em("Location:"),
+                                                                                             min     = -3,
+                                                                                             max     = 3,
+                                                                                             value   = 0,
+                                                                                             ticks   = FALSE,
+                                                                                             step    = 0.1,
+                                                                                             width   = "100%"), class = "not_bold")),
+                                                            conditionalPanel("input.prior == 't.student'",
+                                                                             div(sliderInput(inputId = "location.t.bys",
+                                                                                             label   = em("Location:"),
+                                                                                             min     = -3,
+                                                                                             max     = 3,
+                                                                                             value   = 0,
+                                                                                             ticks   = FALSE,
+                                                                                             step    = 0.1,
+                                                                                             width   = "100%"), class = "not_bold"))
+                                                     ),
+                                                     column(width = 4,
+                                                            # uiOutput("prior.param2")
+                                                            conditionalPanel("input.prior == 'cauchy'",
+                                                                             div(sliderInput(inputId = "scale.c.bys",
+                                                                                             label   = em("Scale:"),
+                                                                                             min     = .1,
+                                                                                             max     = 2,
+                                                                                             value   = .707,
+                                                                                             ticks   = FALSE,
+                                                                                             step    = 0.1,
+                                                                                             width   = "100%"), class = "not_bold")),
+                                                            conditionalPanel("input.prior == 'normal'",
+                                                                             div(sliderInput(inputId = "scale.n.bys",
+                                                                                             label   = em("Scale:"),
+                                                                                             min     = .1,
+                                                                                             max     = 2,
+                                                                                             value   = 1,
+                                                                                             ticks   = FALSE,
+                                                                                             step    = 0.1,
+                                                                                             width   = "100%"), class = "not_bold")),
+                                                            conditionalPanel("input.prior == 't.student'",
+                                                                             div(sliderInput(inputId = "scale.t.bys",
+                                                                                             label   = em("Scale:"),
+                                                                                             min     = .1,
+                                                                                             max     = 2,
+                                                                                             value   = 1,
+                                                                                             ticks   = FALSE,
+                                                                                             step    = 0.1,
+                                                                                             width   = "100%"), class = "not_bold"))
+                                                     ),
+                                                     column(width = 4,
+                                                            # uiOutput("prior.param3")
+                                                            conditionalPanel("input.prior == 't.student'",
+                                                                             div(sliderInput(inputId = "df.t.bys",
+                                                                                             label   = em("df:"),
+                                                                                             min     = 1,
+                                                                                             max     = 100,
+                                                                                             value   = 1,
+                                                                                             ticks   = FALSE,
+                                                                                             step    = 1,
+                                                                                             width   = "100%"), class = "not_bold"))
+                                                     )
+                                                   ), 
+                                                   br(),
+                                  ), 
+                                  width = 4
+                                ),
+                                
+                                mainPanel(
+                                  plotOutput("intro.topic5.plot1"), 
+                                  width=8
+                                )
+                              ), 
+                              
+                              br(), br(),
+                              uiOutput("introduction5b"), 
+                              h4(em("Box: The marginal likelihood.")), 
+                              div(style = "border-style: solid; border-color: #DCA559; padding: 10px; color: gray;",
+                                  uiOutput("introduction5c")), 
+                              br(), br()
+             ),
+             conditionalPanel("input.intro == 'intro.topic6'", uiOutput("introduction6")
+             ), 
              conditionalPanel("input.intro == 'intro.topic6'", fluidRow(
                align = "center", 
                column(3),
@@ -345,103 +478,105 @@ ui <- fluidPage(
                                                  fill     = TRUE
                           ), class = "not_bold"),
                           # uiOutput("H1point")
-                          div(conditionalPanel("input.H1hyp == 'H1.point'",
-                                               sliderInput(inputId = "H1pointslide", 
+                          conditionalPanel("input.H1hyp == 'H1.point'",
+                                           div(sliderInput(inputId = "H1pointslide", 
                                                            label   = NULL, 
                                                            min     = -2, 
                                                            max     = 2, 
                                                            value   = .2, 
                                                            ticks   = FALSE, 
                                                            step    = .1, 
-                                                           width   = "100%")), class = "not_bold")
-                   )
-                 ),
-                 br(),
-                 div(prettyRadioButtons(inputId  = "prior",
-                                        label    = em("Prior for $\\delta$ under $\\mathcal{H}_1$:"),
-                                        choices  = list("Cauchy" = "cauchy", "Normal" = "normal", "$t$-Student" = "t.student"),
-                                        selected = "cauchy",
-                                        inline   = TRUE,
-                                        width    = "100%",
-                                        status   = "success",
-                                        shape    = "round",
-                                        fill     = TRUE
-                 ), class = "not_bold"),
-                 fluidRow(
-                   column(width = 4,
-                          # uiOutput("prior.param1")
-                          conditionalPanel("input.prior == 'cauchy'",
-                                           div(sliderInput(inputId = "location.c",
-                                                           label   = em("Location:"),
-                                                           min     = -3,
-                                                           max     = 3,
-                                                           value   = 0,
-                                                           ticks   = FALSE,
-                                                           step    = 0.1,
-                                                           width   = "100%"), class = "not_bold")),
-                          conditionalPanel("input.prior == 'normal'",
-                                           div(sliderInput(inputId = "location.n",
-                                                           label   = em("Location:"),
-                                                           min     = -3,
-                                                           max     = 3,
-                                                           value   = 0,
-                                                           ticks   = FALSE,
-                                                           step    = 0.1,
-                                                           width   = "100%"), class = "not_bold")),
-                          conditionalPanel("input.prior == 't.student'",
-                                           div(sliderInput(inputId = "location.t",
-                                                           label   = em("Location:"),
-                                                           min     = -3,
-                                                           max     = 3,
-                                                           value   = 0,
-                                                           ticks   = FALSE,
-                                                           step    = 0.1,
-                                                           width   = "100%"), class = "not_bold"))
-                   ),
-                   column(width = 4,
-                          # uiOutput("prior.param2")
-                          conditionalPanel("input.prior == 'cauchy'",
-                                           div(sliderInput(inputId = "scale.c",
-                                                           label   = em("Scale:"),
-                                                           min     = .1,
-                                                           max     = 2,
-                                                           value   = .707,
-                                                           ticks   = FALSE,
-                                                           step    = 0.1,
-                                                           width   = "100%"), class = "not_bold")),
-                          conditionalPanel("input.prior == 'normal'",
-                                           div(sliderInput(inputId = "scale.n",
-                                                           label   = em("Scale:"),
-                                                           min     = .1,
-                                                           max     = 2,
-                                                           value   = 1,
-                                                           ticks   = FALSE,
-                                                           step    = 0.1,
-                                                           width   = "100%"), class = "not_bold")),
-                          conditionalPanel("input.prior == 't.student'",
-                                           div(sliderInput(inputId = "scale.t",
-                                                           label   = em("Scale:"),
-                                                           min     = .1,
-                                                           max     = 2,
-                                                           value   = 1,
-                                                           ticks   = FALSE,
-                                                           step    = 0.1,
-                                                           width   = "100%"), class = "not_bold"))
-                   ),
-                   column(width = 4,
-                          # uiOutput("prior.param3")
-                          conditionalPanel("input.prior == 't.student'",
-                                           div(sliderInput(inputId = "df.t",
-                                                           label   = em("df:"),
-                                                           min     = 1,
-                                                           max     = 100,
-                                                           value   = 1,
-                                                           ticks   = FALSE,
-                                                           step    = 1,
                                                            width   = "100%"), class = "not_bold"))
                    )
                  ),
                  br(),
+                 conditionalPanel("input.H1hyp != 'H1.point'", 
+                                  div(prettyRadioButtons(inputId  = "prior",
+                                                         label    = em("Prior for $\\delta$ under $\\mathcal{H}_1$:"),
+                                                         choices  = list("Cauchy" = "cauchy", "Normal" = "normal", "$t$-Student" = "t.student"),
+                                                         selected = "cauchy",
+                                                         inline   = TRUE,
+                                                         width    = "100%",
+                                                         status   = "success",
+                                                         shape    = "round",
+                                                         fill     = TRUE
+                                  ), class = "not_bold"), 
+                                  fluidRow(
+                                    column(width = 4,
+                                           # uiOutput("prior.param1")
+                                           conditionalPanel("input.prior == 'cauchy'",
+                                                            div(sliderInput(inputId = "location.c",
+                                                                            label   = em("Location:"),
+                                                                            min     = -3,
+                                                                            max     = 3,
+                                                                            value   = 0,
+                                                                            ticks   = FALSE,
+                                                                            step    = 0.1,
+                                                                            width   = "100%"), class = "not_bold")),
+                                           conditionalPanel("input.prior == 'normal'",
+                                                            div(sliderInput(inputId = "location.n",
+                                                                            label   = em("Location:"),
+                                                                            min     = -3,
+                                                                            max     = 3,
+                                                                            value   = 0,
+                                                                            ticks   = FALSE,
+                                                                            step    = 0.1,
+                                                                            width   = "100%"), class = "not_bold")),
+                                           conditionalPanel("input.prior == 't.student'",
+                                                            div(sliderInput(inputId = "location.t",
+                                                                            label   = em("Location:"),
+                                                                            min     = -3,
+                                                                            max     = 3,
+                                                                            value   = 0,
+                                                                            ticks   = FALSE,
+                                                                            step    = 0.1,
+                                                                            width   = "100%"), class = "not_bold"))
+                                    ),
+                                    column(width = 4,
+                                           # uiOutput("prior.param2")
+                                           conditionalPanel("input.prior == 'cauchy'",
+                                                            div(sliderInput(inputId = "scale.c",
+                                                                            label   = em("Scale:"),
+                                                                            min     = .1,
+                                                                            max     = 2,
+                                                                            value   = .707,
+                                                                            ticks   = FALSE,
+                                                                            step    = 0.1,
+                                                                            width   = "100%"), class = "not_bold")),
+                                           conditionalPanel("input.prior == 'normal'",
+                                                            div(sliderInput(inputId = "scale.n",
+                                                                            label   = em("Scale:"),
+                                                                            min     = .1,
+                                                                            max     = 2,
+                                                                            value   = 1,
+                                                                            ticks   = FALSE,
+                                                                            step    = 0.1,
+                                                                            width   = "100%"), class = "not_bold")),
+                                           conditionalPanel("input.prior == 't.student'",
+                                                            div(sliderInput(inputId = "scale.t",
+                                                                            label   = em("Scale:"),
+                                                                            min     = .1,
+                                                                            max     = 2,
+                                                                            value   = 1,
+                                                                            ticks   = FALSE,
+                                                                            step    = 0.1,
+                                                                            width   = "100%"), class = "not_bold"))
+                                    ),
+                                    column(width = 4,
+                                           # uiOutput("prior.param3")
+                                           conditionalPanel("input.prior == 't.student'",
+                                                            div(sliderInput(inputId = "df.t",
+                                                                            label   = em("df:"),
+                                                                            min     = 1,
+                                                                            max     = 100,
+                                                                            value   = 1,
+                                                                            ticks   = FALSE,
+                                                                            step    = 1,
+                                                                            width   = "100%"), class = "not_bold"))
+                                    )
+                                  ), 
+                                  br(),
+                 ),
                  div(prettyRadioButtons(inputId  = "BF10.01",
                                         label    = em("Bayes Factor:"),
                                         choices  = list("$BF_{10}$" = "BF10",
@@ -604,103 +739,105 @@ ui <- fluidPage(
                                                  fill     = TRUE
                           ), class = "not_bold"),
                           # uiOutput("H1point.tab4")
-                          div(conditionalPanel("input.H1hyp == 'H1.point'",
-                                               sliderInput(inputId = "H1pointslide.tab4", 
+                          conditionalPanel("input.H1hyp == 'H1.point'",
+                                           div(sliderInput(inputId = "H1pointslide.tab4", 
                                                            label   = NULL, 
                                                            min     = -2, 
                                                            max     = 2, 
                                                            value   = .2, 
                                                            ticks   = FALSE, 
                                                            step    = .1, 
-                                                           width   = "100%")), class = "not_bold")
-                   )
-                 ),
-                 br(),
-                 div(prettyRadioButtons(inputId  = "prior.tab4",
-                                        label    = em("Prior for $\\delta$ under $\\mathcal{H}_1$:"),
-                                        choices  = list("Cauchy" = "cauchy", "Normal" = "normal", "$t$-Student" = "t.student"),
-                                        selected = "cauchy",
-                                        inline   = TRUE,
-                                        width    = "100%",
-                                        status   = "success",
-                                        shape    = "round",
-                                        fill     = TRUE
-                 ), class = "not_bold"),
-                 fluidRow(
-                   column(width = 4, 
-                          # uiOutput("prior.param1.tab4")
-                          conditionalPanel("input.prior == 'cauchy'", 
-                                           div(sliderInput(inputId = "location.c.tab4", 
-                                                           label   = em("Location:"), 
-                                                           min     = -3, 
-                                                           max     = 3, 
-                                                           value   = 0, 
-                                                           ticks   = FALSE, 
-                                                           step    = 0.1, 
-                                                           width   = "100%"), class = "not_bold")), 
-                          conditionalPanel("input.prior == 'normal'", 
-                                           div(sliderInput(inputId = "location.n.tab4", 
-                                                           label   = em("Location:"), 
-                                                           min     = -3, 
-                                                           max     = 3, 
-                                                           value   = 0, 
-                                                           ticks   = FALSE, 
-                                                           step    = 0.1, 
-                                                           width   = "100%"), class = "not_bold")), 
-                          conditionalPanel("input.prior == 't.student'", 
-                                           div(sliderInput(inputId = "location.t.tab4", 
-                                                           label   = em("Location:"), 
-                                                           min     = -3, 
-                                                           max     = 3, 
-                                                           value   = 0, 
-                                                           ticks   = FALSE, 
-                                                           step    = 0.1, 
-                                                           width   = "100%"), class = "not_bold"))
-                   ),
-                   column(width = 4, 
-                          # uiOutput("prior.param2.tab4")
-                          conditionalPanel("input.prior == 'cauchy'", 
-                                           div(sliderInput(inputId = "scale.c.tab4", 
-                                                           label   = em("Scale:"), 
-                                                           min     = .1, 
-                                                           max     = 2, 
-                                                           value   = .707, 
-                                                           ticks   = FALSE, 
-                                                           step    = 0.1, 
-                                                           width   = "100%"), class = "not_bold")), 
-                          conditionalPanel("input.prior == 'normal'", 
-                                           div(sliderInput(inputId = "scale.n.tab4", 
-                                                           label   = em("Scale:"), 
-                                                           min     = .1, 
-                                                           max     = 2, 
-                                                           value   = 1, 
-                                                           ticks   = FALSE, 
-                                                           step    = 0.1, 
-                                                           width   = "100%"), class = "not_bold")), 
-                          conditionalPanel("input.prior == 't.student'", 
-                                           div(sliderInput(inputId = "scale.t.tab4", 
-                                                           label   = em("Scale:"), 
-                                                           min     = .1, 
-                                                           max     = 2, 
-                                                           value   = 1, 
-                                                           ticks   = FALSE, 
-                                                           step    = 0.1, 
-                                                           width   = "100%"), class = "not_bold"))
-                   ),
-                   column(width = 4, 
-                          # uiOutput("prior.param3.tab4")
-                          conditionalPanel("input.prior == 't.student'", 
-                                           div(sliderInput(inputId = "df.t.tab4", 
-                                                           label   = em("df:"), 
-                                                           min     = 1, 
-                                                           max     = 100, 
-                                                           value   = 1, 
-                                                           ticks   = FALSE, 
-                                                           step    = 1, 
                                                            width   = "100%"), class = "not_bold"))
                    )
                  ),
                  br(),
+                 conditionalPanel("input.H1hyp != 'H1.point'", 
+                                  div(prettyRadioButtons(inputId  = "prior.tab4",
+                                                         label    = em("Prior for $\\delta$ under $\\mathcal{H}_1$:"),
+                                                         choices  = list("Cauchy" = "cauchy", "Normal" = "normal", "$t$-Student" = "t.student"),
+                                                         selected = "cauchy",
+                                                         inline   = TRUE,
+                                                         width    = "100%",
+                                                         status   = "success",
+                                                         shape    = "round",
+                                                         fill     = TRUE
+                                  ), class = "not_bold"),
+                                  fluidRow(
+                                    column(width = 4, 
+                                           # uiOutput("prior.param1.tab4")
+                                           conditionalPanel("input.prior == 'cauchy'", 
+                                                            div(sliderInput(inputId = "location.c.tab4", 
+                                                                            label   = em("Location:"), 
+                                                                            min     = -3, 
+                                                                            max     = 3, 
+                                                                            value   = 0, 
+                                                                            ticks   = FALSE, 
+                                                                            step    = 0.1, 
+                                                                            width   = "100%"), class = "not_bold")), 
+                                           conditionalPanel("input.prior == 'normal'", 
+                                                            div(sliderInput(inputId = "location.n.tab4", 
+                                                                            label   = em("Location:"), 
+                                                                            min     = -3, 
+                                                                            max     = 3, 
+                                                                            value   = 0, 
+                                                                            ticks   = FALSE, 
+                                                                            step    = 0.1, 
+                                                                            width   = "100%"), class = "not_bold")), 
+                                           conditionalPanel("input.prior == 't.student'", 
+                                                            div(sliderInput(inputId = "location.t.tab4", 
+                                                                            label   = em("Location:"), 
+                                                                            min     = -3, 
+                                                                            max     = 3, 
+                                                                            value   = 0, 
+                                                                            ticks   = FALSE, 
+                                                                            step    = 0.1, 
+                                                                            width   = "100%"), class = "not_bold"))
+                                    ),
+                                    column(width = 4, 
+                                           # uiOutput("prior.param2.tab4")
+                                           conditionalPanel("input.prior == 'cauchy'", 
+                                                            div(sliderInput(inputId = "scale.c.tab4", 
+                                                                            label   = em("Scale:"), 
+                                                                            min     = .1, 
+                                                                            max     = 2, 
+                                                                            value   = .707, 
+                                                                            ticks   = FALSE, 
+                                                                            step    = 0.1, 
+                                                                            width   = "100%"), class = "not_bold")), 
+                                           conditionalPanel("input.prior == 'normal'", 
+                                                            div(sliderInput(inputId = "scale.n.tab4", 
+                                                                            label   = em("Scale:"), 
+                                                                            min     = .1, 
+                                                                            max     = 2, 
+                                                                            value   = 1, 
+                                                                            ticks   = FALSE, 
+                                                                            step    = 0.1, 
+                                                                            width   = "100%"), class = "not_bold")), 
+                                           conditionalPanel("input.prior == 't.student'", 
+                                                            div(sliderInput(inputId = "scale.t.tab4", 
+                                                                            label   = em("Scale:"), 
+                                                                            min     = .1, 
+                                                                            max     = 2, 
+                                                                            value   = 1, 
+                                                                            ticks   = FALSE, 
+                                                                            step    = 0.1, 
+                                                                            width   = "100%"), class = "not_bold"))
+                                    ),
+                                    column(width = 4, 
+                                           # uiOutput("prior.param3.tab4")
+                                           conditionalPanel("input.prior == 't.student'", 
+                                                            div(sliderInput(inputId = "df.t.tab4", 
+                                                                            label   = em("df:"), 
+                                                                            min     = 1, 
+                                                                            max     = 100, 
+                                                                            value   = 1, 
+                                                                            ticks   = FALSE, 
+                                                                            step    = 1, 
+                                                                            width   = "100%"), class = "not_bold"))
+                                    )
+                                  ),
+                                  br()
+                 ),
                  div(prettyRadioButtons(inputId  = "BF10.01.tab4",
                                         label    = em("Bayes Factor:"),
                                         choices  = list("$BF_{10}$" = "BF10",
@@ -927,12 +1064,24 @@ server <- function(input, output, session) {
     updateNumericInput(session, 'BF10.01.tab4',      value = input$BF10.01)
     updateNumericInput(session, 'priorprob0.tab4',   value = input$priorprob0)
     # updateNumericInput(session, 'priorprob1.tab4',   value = input$priorprob1) # avoid infinite loop
+    # Intro, classical test:
     updateNumericInput(session, 'mean1.tab2',        value = input$mean1)
     updateNumericInput(session, 'sd1.tab2',          value = input$sd1)
     updateNumericInput(session, 'n1.tab2',           value = input$n1)
     updateNumericInput(session, 'mean2.tab2',        value = input$mean2)
     updateNumericInput(session, 'sd2.tab2',          value = input$sd2)
     updateNumericInput(session, 'n2.tab2',           value = input$n2)
+    # Intro, Bayes test:
+    updateNumericInput(session, 'H1hyp.bys',        value = input$H1hyp)
+    updateNumericInput(session, 'H1pointslide.bys', value = input$H1pointslide)
+    updateNumericInput(session, 'prior.bys',        value = input$prior)
+    updateNumericInput(session, 'location.c.bys',   value = input$location.c)
+    updateNumericInput(session, 'location.n.bys',   value = input$location.n)
+    updateNumericInput(session, 'location.t.bys',   value = input$location.t)
+    updateNumericInput(session, 'scale.c.bys',      value = input$scale.c)
+    updateNumericInput(session, 'scale.n.bys',      value = input$scale.n)
+    updateNumericInput(session, 'scale.t.bys',      value = input$scale.t)
+    updateNumericInput(session, 'df.t.bys',         value = input$df.t)
   })
   observe({
     req(input$mean1.tab4)
@@ -954,13 +1103,6 @@ server <- function(input, output, session) {
     updateNumericInput(session, 'df.t',         value = input$df.t.tab4)
     updateNumericInput(session, 'BF10.01',      value = input$BF10.01.tab4)
     updateNumericInput(session, 'priorprob0',   value = input$priorprob0.tab4)
-    # updateNumericInput(session, 'priorprob1',   value = input$priorprob1.tab4) # avoid infinite loop
-    updateNumericInput(session, 'mean1.tab2',   value = input$mean1.tab4)
-    updateNumericInput(session, 'sd1.tab2',     value = input$sd1.tab4)
-    updateNumericInput(session, 'n1.tab2',      value = input$n1.tab4)
-    updateNumericInput(session, 'mean2.tab2',   value = input$mean2.tab4)
-    updateNumericInput(session, 'sd2.tab2',     value = input$sd2.tab4)
-    updateNumericInput(session, 'n2.tab2',      value = input$n2.tab4)
   })
   observe({
     req(input$mean1.tab2)
@@ -970,12 +1112,19 @@ server <- function(input, output, session) {
     updateNumericInput(session, 'mean2',        value = input$mean2.tab2)
     updateNumericInput(session, 'sd2',          value = input$sd2.tab2)
     updateNumericInput(session, 'n2',           value = input$n2.tab2)
-    updateNumericInput(session, 'mean1.tab4',   value = input$mean1.tab2)
-    updateNumericInput(session, 'sd1.tab4',     value = input$sd1.tab2)
-    updateNumericInput(session, 'n1.tab4',      value = input$n1.tab2)
-    updateNumericInput(session, 'mean2.tab4',   value = input$mean2.tab2)
-    updateNumericInput(session, 'sd2.tab4',     value = input$sd2.tab2)
-    updateNumericInput(session, 'n2.tab4',      value = input$n2.tab2)
+  })
+  observe({
+    req(input$H1hyp.bys)
+    updateNumericInput(session, 'H1hyp',        value = input$H1hyp.bys)
+    updateNumericInput(session, 'H1pointslide', value = input$H1pointslide.bys)
+    updateNumericInput(session, 'prior',        value = input$prior.bys)
+    updateNumericInput(session, 'location.c',   value = input$location.c.bys)
+    updateNumericInput(session, 'location.n',   value = input$location.n.bys)
+    updateNumericInput(session, 'location.t',   value = input$location.t.bys)
+    updateNumericInput(session, 'scale.c',      value = input$scale.c.bys)
+    updateNumericInput(session, 'scale.n',      value = input$scale.n.bys)
+    updateNumericInput(session, 'scale.t',      value = input$scale.t.bys)
+    updateNumericInput(session, 'df.t',         value = input$df.t.bys)
   })
   
 }
