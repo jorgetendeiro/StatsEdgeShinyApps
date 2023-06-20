@@ -244,7 +244,6 @@ ui <- fluidPage(
              conditionalPanel("input.intro == 'intro.topic4'", br(), br()), 
              conditionalPanel("input.intro == 'intro.topic5'", 
                               uiOutput("introduction5a"), 
-                              
                               sidebarLayout(
                                 sidebarPanel(
                                   h3(strong("Bayesian test")),
@@ -365,7 +364,6 @@ ui <- fluidPage(
                                   ), 
                                   width = 4
                                 ),
-                                
                                 mainPanel(
                                   plotOutput("intro.topic5.plot1"), 
                                   width=8
@@ -374,9 +372,14 @@ ui <- fluidPage(
                               
                               br(), br(),
                               uiOutput("introduction5b"), 
+                              br(), 
+                              plotOutput("intro.topic5.plot2"), 
+                              br(), 
+                              uiOutput("introduction5c"), 
+                              br(), br(), 
                               h4(em("Box: The marginal likelihood.")), 
                               div(style = "border-style: solid; border-color: #DCA559; padding: 10px; color: gray;",
-                                  uiOutput("introduction5c")), 
+                                  uiOutput("introduction5d")), 
                               br(), br()
              ),
              conditionalPanel("input.intro == 'intro.topic6'", uiOutput("introduction6")

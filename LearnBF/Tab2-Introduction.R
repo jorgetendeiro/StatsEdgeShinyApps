@@ -14,10 +14,10 @@ output$H1hyp.cls <- renderUI({ switch(input$H1hyp.cls,
 
 # Left panel, H0 depending on the chosen H1, Bayes:
 H1hyp.bys.reactive <- renderText({ switch(input$H1hyp.bys, 
-                                      "H1.diff0"    = "$\\mathcal{H}_0:\\delta=0$", 
-                                      "H1.larger0"  = "$\\mathcal{H}_0:\\delta\\leq 0$", 
-                                      "H1.smaller0" = "$\\mathcal{H}_0:\\delta\\geq 0$", 
-                                      "H1.point"    = "$\\mathcal{H}_0:\\delta=0$") })
+                                          "H1.diff0"    = "$\\mathcal{H}_0:\\delta=0$", 
+                                          "H1.larger0"  = "$\\mathcal{H}_0:\\delta\\leq 0$", 
+                                          "H1.smaller0" = "$\\mathcal{H}_0:\\delta\\geq 0$", 
+                                          "H1.point"    = "$\\mathcal{H}_0:\\delta=0$") })
 output$H1hyp.bys <- renderUI({
   tagList(
     #withMathJax(),
@@ -510,11 +510,13 @@ output$introduction5a <- renderUI({
     "Let's discuss the options available for both parameters (standardized effect size $\\delta$ and the standard deviation $\\sigma$).", 
     br(), br(),
     h4(em("Prior for $\\delta$")), 
-    "Since $\\mathcal{H}_0: \\delta=0$, there is really only one possible prior for $\\delta$ &#8212; The distribution assigning all probability to the $\\delta=0$ value.", 
+    "For point hypothesis such as $\\mathcal{H}_0: \\delta=0$, there is really only one possible prior for $\\delta$ &#8212; the distribution assigning all probability to the point ($0$ in this case).", 
     br(), br(), 
-    "Choosing a prior for $\\delta$ under $\\mathcal{H}_1:\\delta\\not=0$ is a notoriously more difficult task. There is an infinity of possible distributions that we could choose from.", 
+    "Choosing a prior for $\\delta$ under one-tailed or two-tailed hypotheses is notoriously more difficult task.", 
+    br(), 
+    "There is an infinity of possible distributions that we could choose from.", 
     br(), br(), 
-    "On the left-hand side menu under ", strong("Bayesian test"), " we offer three possible priors for $\\delta$, based on the Cauchy, normal, and $t$-Student distribution families.", 
+    "This app offers three possible priors for $\\delta$, based on the Cauchy, normal, and $t$-Student distribution families.", 
     br(), 
     "Try changing the distribution and their parameters and see how that affects the probability of each value of $\\delta$."
   )
@@ -536,7 +538,15 @@ output$introduction5a <- renderUI({
 output$introduction5b <- renderUI({
   outtext <- paste0(
     h4(em("Prior for $\\sigma$")), 
-    "Parameter $\\sigma$ is common to both hypotheses $\\mathcal{H}_0$ and $\\mathcal{H}_1$"
+    "Parameter $\\sigma$ is common to both hypotheses $\\mathcal{H}_0$ and $\\mathcal{H}_1$. In such situations, it is common to choose a common $\\sigma$ prior under both hypotheses. The idea is that such priors purportedly have a very little influence on the Bayes factor (see, e.g., Rouder et al., 2009).", 
+    br(), br(), 
+    "In this app we use a common default prior for $\\sigma$ (for $\\sigma^2$, in fact), also used in software such as ", a("JASP", href="https://jasp-stats.org/", target="_blank") , " and R's ", a("BayesFactor", href="https://cran.r-project.org/web/packages/BayesFactor/vignettes/manual.html", target="_blank"), " package.", 
+    br(), 
+    "It is known as ", a("Jeffreys' prior", href="https://en.wikipedia.org/wiki/Jeffreys_prior", target="_blank"), " (Jeffreys, 1961).", 
+    br(), br(),  
+    "For the case at hand, the prior is given by $p(\\sigma^2)\\propto\\frac{1}{\\sigma^2}$ ($\\propto$ means ", em("is proportional to"), ").", 
+    br(), 
+    "Interestingly, this distribution is ", em("improper"), " (i.e., it does not integrate to 1), although that does not prevent the Bayes factor from being computed."
   )
   
   tagList(HTML(outtext), 
@@ -551,6 +561,26 @@ output$introduction5b <- renderUI({
 
 output$introduction5c <- renderUI({
   outtext <- paste0(
+    h4("References"), 
+    div(style = "color: gray;", 
+        icon("file-lines"), " Jeffreys, H. (1961). ", em("Theory of probability (3rd ed.)."), "Oxford England: Oxford University Press.", 
+        br(), 
+        icon("file-lines"), " Rouder, J. N., Speckman, P. L., Sun, D., & Morey, R. D. (2009). Bayesian t tests for accepting and rejecting the null hypothesis. ", em("Psychonomic Bulletin & Review"), ", ", em("16"), "(2), 225–237. ", a("https://doi.org/10.3758/PBR.16.2.225", href="https://doi.org/10.3758/PBR.16.2.225", target="_blank")
+    )
+  )
+  
+  tagList(HTML(outtext), 
+          br(), br(), 
+          tags$script(HTML(js)),
+          tags$script(
+            async="",
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+          )
+  )
+})
+
+output$introduction5d <- renderUI({
+  outtext <- paste0(
     "The <font color=\"#DCA559\"><b>marginal likelihood</b></font> for $\\mathcal{H}_i$ is given by $$p(D|\\mathcal{H}_i) = \\int_{\\Theta_i}\\underbrace{p(D|\\theta_i,\\mathcal{H}_i)}_{\\text{likelihood}}\\,\\underbrace{p(\\theta_i|\\mathcal{H}_i)}_{\\text{prior}}d\\theta_i.$$ The first term is the ", em("likelihood function"), " (for the $t$-test, the normal distribution), evaluated for the observed data $D$.", 
     br(), 
     "The second term is the joint ", em("prior distribution"), " for all parameters from the likelihood function (for the Bayesian $t$-test, $\\delta$ and $\\sigma$). ", 
@@ -561,7 +591,9 @@ output$introduction5c <- renderUI({
     br(), br(), 
     "In simple terms, $p(D|\\mathcal{H}_i)$ is related to the probability of the observed data, taking into account all the uncertainty in the parameter values as dictated by the chosen prior distributions.", 
     br(), br(), 
-    "$p(D|\\mathcal{H}_i)$ is actually a <font color=\"#DCA559\"><b>weighted average</b></font> of $p(D|\\theta_i,\\mathcal{H}_i)$, which is related to the probability of the observed data at each combination of parameter values, $\\theta_i$. The weights are determined by $p(\\theta_i|\\mathcal{H}_i)$, the prior distribution for the parameters."
+    "$p(D|\\mathcal{H}_i)$ is actually a <font color=\"#DCA559\"><b>weighted average</b></font> of $p(D|\\theta_i,\\mathcal{H}_i)$, which is related to the probability of the observed data at each combination of parameter values, $\\theta_i$.", 
+    br(), 
+    "The weights are determined by $p(\\theta_i|\\mathcal{H}_i)$, the prior distribution for the parameters."
   )
   
   tagList(HTML(outtext), 
@@ -655,12 +687,13 @@ output$intro.topic5.plot1 <- renderPlot({
     mtext("Probability", 2, 2, cex = 1.5)
   } else if (input$H1hyp == "H1.larger0")
   {
-    x.supp <- seq(floor(location() - 3.5*scale()), 0, length.out = 1024)
+    x.abs  <- max(abs(c(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()))))
+    x.supp <- seq(-x.abs, 0, length.out = 1024)
     y      <- prior(x.supp) / .5
     y.max  <- max(prior(c(-x.supp, x.supp)) / .5 )
     
-    par(mar = c(2, 4.5, 1.5, .5))
-    plot(x.supp, y, xlim = c(min(x.supp), 0), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
+    par(mar = c(4, 4.5, 1.5, .5))
+    plot(x.supp, y, xlim = c(-x.abs, 0), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
          las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", 
          cex.main = 1.5, font.main = 1, 
          main = switch(input$prior,
@@ -668,16 +701,18 @@ output$intro.topic5.plot1 <- renderPlot({
                        "normal"    = expression("Prior for " * delta * "  under " * H[0] * " (Normal-)"),
                        "t.student" = expression("Prior for " * delta * "  under " * H[0] * " (" * italic(t) * "-Student-)")))
     axis(1, at = min(x.supp):0)
+    mtext(expression(delta), 1, 2.5, cex = 1.5)
     mtext("Density", 2, 3, cex = 1.5)
     polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
   } else 
   {
-    x.supp <- seq(0, floor(location() + 3.5*scale()), length.out = 1024)
+    x.abs  <- max(abs(c(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()))))
+    x.supp <- seq(0, x.abs, length.out = 1024)
     y      <- prior(x.supp) / .5
     y.max  <- max(prior(c(-x.supp, x.supp)) / .5 )
     
-    par(mar = c(2, 4.5, 1.5, .5))
-    plot(x.supp, y, xlim = c(0, max(x.supp)), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
+    par(mar = c(4, 4.5, 1.5, .5))
+    plot(x.supp, y, xlim = c(0, x.abs), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
          las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", 
          cex.main = 1.5, font.main = 1, 
          main = switch(input$prior,
@@ -685,6 +720,7 @@ output$intro.topic5.plot1 <- renderPlot({
                        "normal"    = expression("Prior for " * delta * "  under " * H[0] * " (Normal+)"),
                        "t.student" = expression("Prior for " * delta * "  under " * H[0] * " (" * italic(t) * "-Student+)")))
     axis(1, at = 0:max(x.supp))
+    mtext(expression(delta), 1, 2.5, cex = 1.5)
     mtext("Density", 2, 3, cex = 1.5)
     polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
   }
@@ -692,17 +728,17 @@ output$intro.topic5.plot1 <- renderPlot({
   # Right plot:
   if (input$H1hyp == "H1.point")
   {
-    par(mar = c(4, 4, 1.5, .5))
+    par(mar = c(4, .5, 1.5, 4.5))
     plot(NULL, xlim = c(-2, 2), ylim = c(0, 1.05), ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", 
          cex.axis = 2, main = expression("Prior for " * delta * "  under " * H[1]), cex.main = 1.5, font.main = 1)
     axis(1, c(-2, input$H1pointslide, 2), c("", input$H1pointslide, ""))
-    axis(2, c(0, 1), las = 1)
+    axis(4, c(0, 1), las = 1)
     segments(input$H1pointslide, 0, input$H1pointslide, 1, lty = 2, col = "gray")
     points(input$H1pointslide, 1, pch = 16, cex = 2, col = "#005E3C")
     segments(-2, 0, 2, 0, lty = 1, col = "#005E3C", lwd = 2)
     points(input$H1pointslide, 0, pch = 21, cex = 2, bg = "white", col = "#005E3C")
     mtext(expression(delta), 1, 2.5, cex = 1.5)
-    mtext("Probability", 2, 2, cex = 1.5)
+    mtext("Probability", 4, 2, cex = 1.5)
   } else if (input$H1hyp == "H1.diff0")
   {
     
@@ -715,56 +751,75 @@ output$intro.topic5.plot1 <- renderPlot({
                      "normal"    = normal.prior(x.supp, location(), scale()),
                      "t.student" = tstude.prior(x.supp, location(), scale(), df()))
     
-    par(mar = c(2, 4.5, 1.5, .5))
+    par(mar = c(4, .5, 1.5, 4.5))
     plot(x.supp, y, xlim = c(min(x.supp), max(x.supp)), ylim = c(0, 1.2*max(y)), ylab = "", xlab = "", bty = "n",
-         las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", 
+         las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", yaxt = "n", 
          cex.main = 1.5, font.main = 1, 
          main = switch(input$prior,
                        "cauchy"    = expression("Prior for " * delta * "  under " * H[1] * " (Cauchy)"),
                        "normal"    = expression("Prior for " * delta * "  under " * H[1] * " (Normal)"),
                        "t.student" = expression("Prior for " * delta * "  under " * H[1] * " (" * italic(t) * "-Student)")))
     axis(1, at = min(x.supp):max(x.supp))
-    mtext("Density", 2, 3, cex = 1.5)
+    axis(4, las = 1)
+    mtext(expression(delta), 1, 2.5, cex = 1.5)
+    mtext("Density", 4, 3, cex = 1.5)
     polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
   } else if (input$H1hyp == "H1.smaller0")
   {
-    x.supp <- seq(floor(location() - 3.5*scale()), 0, length.out = 1024)
+    x.abs  <- max(abs(c(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()))))
+    x.supp <- seq(-x.abs, 0, length.out = 1024)
     y      <- prior(x.supp) / .5
     y.max  <- max(prior(c(-x.supp, x.supp)) / .5 )
     
-    par(mar = c(2, 4.5, 1.5, .5))
-    plot(x.supp, y, xlim = c(min(x.supp), 0), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
-         las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", 
+    par(mar = c(4, .5, 1.5, 4.5))
+    plot(x.supp, y, xlim = c(-x.abs, 0), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
+         las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", yaxt = "n", 
          cex.main = 1.5, font.main = 1, 
          main = switch(input$prior,
                        "cauchy"    = expression("Prior for " * delta * "  under " * H[1] * " (Cauchy-)"),
                        "normal"    = expression("Prior for " * delta * "  under " * H[1] * " (Normal-)"),
                        "t.student" = expression("Prior for " * delta * "  under " * H[1] * " (" * italic(t) * "-Student-)")))
     axis(1, at = min(x.supp):0)
-    mtext("Density", 2, 3, cex = 1.5)
+    axis(4, las = 1)
+    mtext(expression(delta), 1, 2.5, cex = 1.5)
+    mtext("Density", 4, 3, cex = 1.5)
     polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
   } else 
   {
-    x.supp <- seq(0, floor(location() + 3.5*scale()), length.out = 1024)
+    x.abs  <- max(abs(c(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()))))
+    x.supp <- seq(0, x.abs, length.out = 1024)
     y      <- prior(x.supp) / .5
     y.max  <- max(prior(c(-x.supp, x.supp)) / .5 )
     
-    par(mar = c(2, 4.5, 1.5, .5))
-    plot(x.supp, y, xlim = c(0, max(x.supp)), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
-         las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", 
+    par(mar = c(4, .5, 1.5, 4.5))
+    plot(x.supp, y, xlim = c(0, x.abs), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
+         las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", yaxt = "n", 
          cex.main = 1.5, font.main = 1, 
          main = switch(input$prior,
                        "cauchy"    = expression("Prior for " * delta * "  under " * H[1] * " (Cauchy+)"),
                        "normal"    = expression("Prior for " * delta * "  under " * H[1] * " (Normal+)"),
                        "t.student" = expression("Prior for " * delta * "  under " * H[1] * " (" * italic(t) * "-Student+)")))
     axis(1, at = 0:max(x.supp))
-    mtext("Density", 2, 3, cex = 1.5)
+    axis(4, las = 1)
+    mtext(expression(delta), 1, 2.5, cex = 1.5)
+    mtext("Density", 4, 3, cex = 1.5)
     polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
   }
   
 })
 
-
+output$intro.topic5.plot2 <- renderPlot({
+  x.supp <- seq(.05, 1.2, by = .001)
+  y      <- 1 / (x.supp^2)
+  
+  par(mar = c(4, 4.5, 1.5, .5))
+  plot(x.supp, y, xlim = c(0, 1.2), ylab = "", xlab = "", bty = "n",
+       las = 1, type = "l", col = "#005E3C", lwd = 2, yaxt = "n", 
+       cex.main = 1.5, font.main = 1, 
+       main = expression("Prior for " * sigma^" 2"))
+  mtext(expression(sigma^" 2"), 1, 3, cex = 1.5)
+  polygon(c(x.supp, rev(x.supp)), c(y, rep(0, length(x.supp))), col = "#DCA55966", border = NA)
+})
 
 
 
