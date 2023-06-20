@@ -243,7 +243,7 @@ output$intro.topic1.plot1 <- renderPlot({
   segments(-1, 0, -1, 1.05*dnorm(0), col = "#005E3C", lwd = 2, lty = 2)
   segments( 1, 0,  1, 1.05*dnorm(0), col = "#DCA559", lwd = 2, lty = 2)
   arrows(-1, 1.05*dnorm(0), 1, 1.05*dnorm(0), length = .2, lwd = 2, code = 3)
-  axis(1, at = c(-5, -1, 1, 5), labels = c("", expression(mu["  A"]), expression(mu["  B"]), ""), las = 1, cex.axis = 1.5)
+  axis(1, at = c(-5, -1, 1, 5), labels = c("", expression(mu["A"]), expression(mu["B"]), ""), las = 1, cex.axis = 1.5)
   text(0, 1.05*dnorm(0), "??", pos = 3, cex = 1.5)
   text(-2, .6*dnorm(0), "Group A", pos = 2, cex = 1.5)
   text( 2, .6*dnorm(0), "Group B", pos = 4, cex = 1.5)
@@ -816,7 +816,7 @@ output$intro.topic5.plot2 <- renderPlot({
   plot(x.supp, y, xlim = c(0, 1.2), ylab = "", xlab = "", bty = "n",
        las = 1, type = "l", col = "#005E3C", lwd = 2, yaxt = "n", 
        cex.main = 1.5, font.main = 1, 
-       main = expression("Prior for " * sigma^" 2"))
+       main = expression("Prior for " * sigma^"2"))
   mtext(expression(sigma^" 2"), 1, 3, cex = 1.5)
   polygon(c(x.supp, rev(x.supp)), c(y, rep(0, length(x.supp))), col = "#DCA55966", border = NA)
 })

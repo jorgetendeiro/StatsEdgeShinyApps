@@ -373,7 +373,10 @@ ui <- fluidPage(
                               br(), br(),
                               uiOutput("introduction5b"), 
                               br(), 
-                              plotOutput("intro.topic5.plot2"), 
+                              fluidRow(
+                                column(2),
+                                column(8, align = 'center', plotOutput("intro.topic5.plot2")), 
+                                column(2)), 
                               br(), 
                               uiOutput("introduction5c"), 
                               br(), br(), 
@@ -382,20 +385,27 @@ ui <- fluidPage(
                                   uiOutput("introduction5d")), 
                               br(), br()
              ),
-             conditionalPanel("input.intro == 'intro.topic6'", uiOutput("introduction6")
-             ), 
-             conditionalPanel("input.intro == 'intro.topic6'", fluidRow(
-               align = "center", 
-               column(3),
-               column(6, align = "center", sliderInput("Ncommon.BF.p", "Sample size:", min = 50, max = 5000, value = 50, step = 50, 
-                                                       animate = animationOptions( interval = 100 ), width = '100%', ticks   = FALSE)), 
-               column(3)
-             )), 
-             conditionalPanel("input.intro == 'intro.topic6'", fluidRow(
-               column(1),
-               column(5, align = 'center', plotOutput("intro.topic6.plot1")), 
-               column(5, align = 'center', plotOutput("intro.topic6.plot2")), 
-               column(1)))
+             conditionalPanel("input.intro == 'intro.topic6'", 
+                              uiOutput("introduction6"), 
+                              fluidRow(
+                                align = "center", 
+                                column(3),
+                                column(6, align = "center", sliderInput("Ncommon.BF.p", "Sample size:", 
+                                                                        min     = 50, 
+                                                                        max     = 5000, 
+                                                                        value   = 50, 
+                                                                        step    = 50, 
+                                                                        animate = animationOptions( interval = 100 ), 
+                                                                        width   = '100%', 
+                                                                        ticks   = FALSE)), 
+                                column(3)
+                              ),
+                              fluidRow(
+                                column(1),
+                                column(5, align = 'center', plotOutput("intro.topic6.plot1")), 
+                                column(5, align = 'center', plotOutput("intro.topic6.plot2")), 
+                                column(1))
+             )
     ), 
     tabPanel("Bayesian t-test", 
              br(), 
@@ -950,8 +960,7 @@ ui <- fluidPage(
                ))), 
     tabPanel("Let's practice!", 
              br(), 
-             fluidRow( htmlOutput("practice") ), 
-             "abc")
+             fluidRow( htmlOutput("practice") ))
   )#)
   
 )
