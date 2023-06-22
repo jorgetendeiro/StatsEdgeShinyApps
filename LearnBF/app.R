@@ -1013,6 +1013,7 @@ server <- function(input, output, session) {
   
   # Tab 5 - Let's practice:
   output$practice <- renderUI({
+    rmarkdown::render("learnBF_tutorial/learnBF_tutorial.Rmd")
     tags$iframe(
       src="https://statsedge.org/StatsEdgeShinyApps/learnBF_tutorial/", 
       width="100%", height="100%", frameBorder=0, style="height: 100vh;", scrolling = 'yes'
