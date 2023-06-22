@@ -518,7 +518,7 @@ kim.out.topic2.df1.reactive <- renderText({
              switch(rv$H1hyp,
                     "H1.diff0"    = "\\mathcal{H}_1: \\delta\\not=0$",
                     "H1.larger0"  = "\\mathcal{H}_1: \\delta>0$",
-                    "H1.smaller0" = "\\mathcal{H}_1: \\delta<0$",
+                    "H1.smaller0" = paste0("\\mathcal{H}_1: \\delta", HTML("&#60;"), "0$"),
                     "H1.point"    = paste0("\\mathcal{H}_1: \\delta=", rv$H1pointslide, "$"))
       ), 
       distH0, 
