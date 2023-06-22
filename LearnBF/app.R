@@ -412,6 +412,7 @@ ui <- fluidPage(
              br(), 
              sidebarLayout(
                sidebarPanel(
+                 style = "position:fixed;width:30%;", 
                  fluidRow(
                    column(4), 
                    column(4, align = "center", 
