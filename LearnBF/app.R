@@ -1014,7 +1014,7 @@ server <- function(input, output, session) {
   # Tab 5 - Let's practice:
   output$practice <- renderUI({
     tags$iframe(
-      src="https://statsedge.org/StatsEdgeShinyApps/learnBF_tutorial/", 
+      src = paste0("https://statsedge.org/StatsEdgeShinyApps/learnBF_tutorial/learnBF_tutorial_", sample(1:12, 1)), 
       width="100%", height="100%", frameBorder=0, style="height: 100vh;", scrolling = 'yes'
     )
   })
