@@ -1,6 +1,7 @@
 # Load Shiny ----
 library(shiny)
 library(shinyWidgets)
+library(shinyjs)
 # library(dplyr)
 # library(broom)
 library(kableExtra)
@@ -131,6 +132,15 @@ ui <- fluidPage(
                               sidebarLayout(
                                 sidebarPanel(
                                   # style = "position:fixed;width:30%;",
+                                  fluidRow(
+                                    column(4), 
+                                    column(4, align = "center", 
+                                           tagList(useShinyjs(),
+                                                   actionButton("go_tab2", "Ready", icon = character(0), style = "color: black; background-color: #DCA55980; border-color: #DCA559; border-width: 2px; animation: none;"))
+                                    ),
+                                    column(4)
+                                  ), 
+                                  hr(style = "border-top: 2px solid #005E3C;"),
                                   h3(strong("Descriptives")),
                                   h4("Group A"),
                                   fluidRow(
@@ -251,7 +261,7 @@ ui <- fluidPage(
                                   fluidRow(
                                     column(width = 4, uiOutput("H1hyp.bys")),
                                     column(width = 8,
-                                           div(prettyRadioButtons(inputId  = "H1hyp.bys",
+                                           div(prettyRadioButtons(inputId  = "H1hypbys",
                                                                   label    = em("$\\mathcal{H}_1$:$\\hspace{1mm}$"),
                                                                   choices  = list("$\\delta\\not=0$" = "H1.diff0",
                                                                                   "$\\delta>0$" = "H1.larger0",
@@ -264,7 +274,7 @@ ui <- fluidPage(
                                                                   shape    = "round",
                                                                   fill     = TRUE
                                            ), class = "not_bold"),
-                                           conditionalPanel("input.H1hyp == 'H1.point'",
+                                           conditionalPanel("input.H1hypbys == 'H1.point'",
                                                             div(sliderInput(inputId = "H1pointslide.bys", 
                                                                             label   = NULL, 
                                                                             min     = -2, 
@@ -276,8 +286,8 @@ ui <- fluidPage(
                                     )
                                   ),
                                   br(),
-                                  conditionalPanel("input.H1hyp != 'H1.point'", 
-                                                   div(prettyRadioButtons(inputId  = "prior.bys",
+                                  conditionalPanel("input.H1hypbys != 'H1.point'", 
+                                                   div(prettyRadioButtons(inputId  = "priorbys",
                                                                           label    = em("Prior for $\\delta$ under $\\mathcal{H}_1$:"),
                                                                           choices  = list("Cauchy" = "cauchy", "Normal" = "normal", "$t$-Student" = "t.student"),
                                                                           selected = "cauchy",
@@ -289,7 +299,7 @@ ui <- fluidPage(
                                                    ), class = "not_bold"), 
                                                    fluidRow(
                                                      column(width = 4,
-                                                            conditionalPanel("input.prior == 'cauchy'",
+                                                            conditionalPanel("input.priorbys == 'cauchy'",
                                                                              div(sliderInput(inputId = "location.c.bys",
                                                                                              label   = em("Location:"),
                                                                                              min     = -3,
@@ -298,7 +308,7 @@ ui <- fluidPage(
                                                                                              ticks   = FALSE,
                                                                                              step    = 0.1,
                                                                                              width   = "100%"), class = "not_bold")),
-                                                            conditionalPanel("input.prior == 'normal'",
+                                                            conditionalPanel("input.priorbys == 'normal'",
                                                                              div(sliderInput(inputId = "location.n.bys",
                                                                                              label   = em("Location:"),
                                                                                              min     = -3,
@@ -307,7 +317,7 @@ ui <- fluidPage(
                                                                                              ticks   = FALSE,
                                                                                              step    = 0.1,
                                                                                              width   = "100%"), class = "not_bold")),
-                                                            conditionalPanel("input.prior == 't.student'",
+                                                            conditionalPanel("input.priorbys == 't.student'",
                                                                              div(sliderInput(inputId = "location.t.bys",
                                                                                              label   = em("Location:"),
                                                                                              min     = -3,
@@ -319,37 +329,28 @@ ui <- fluidPage(
                                                      ),
                                                      column(width = 4,
                                                             # uiOutput("prior.param2")
-                                                            conditionalPanel("input.prior == 'cauchy'",
-                                                                             div(sliderInput(inputId = "scale.c.bys",
-                                                                                             label   = em("Scale:"),
-                                                                                             min     = .1,
-                                                                                             max     = 2,
-                                                                                             value   = .707,
-                                                                                             ticks   = FALSE,
-                                                                                             step    = 0.1,
-                                                                                             width   = "100%"), class = "not_bold")),
-                                                            conditionalPanel("input.prior == 'normal'",
-                                                                             div(sliderInput(inputId = "scale.n.bys",
-                                                                                             label   = em("Scale:"),
-                                                                                             min     = .1,
-                                                                                             max     = 2,
-                                                                                             value   = 1,
-                                                                                             ticks   = FALSE,
-                                                                                             step    = 0.1,
-                                                                                             width   = "100%"), class = "not_bold")),
-                                                            conditionalPanel("input.prior == 't.student'",
-                                                                             div(sliderInput(inputId = "scale.t.bys",
-                                                                                             label   = em("Scale:"),
-                                                                                             min     = .1,
-                                                                                             max     = 2,
-                                                                                             value   = 1,
-                                                                                             ticks   = FALSE,
-                                                                                             step    = 0.1,
-                                                                                             width   = "100%"), class = "not_bold"))
+                                                            conditionalPanel("input.priorbys == 'cauchy'",
+                                                                             div(sliderTextInput(inputId  = "scale.c.bys",
+                                                                                                 label    = em("Scale:"),
+                                                                                                 choices  = sort(c(seq(.1, 2, by = .1), .707)), 
+                                                                                                 selected = .707, 
+                                                                                                 width    = "100%"), class = "not_bold")),
+                                                            conditionalPanel("input.priorbys == 'normal'",
+                                                                             div(sliderTextInput(inputId  = "scale.n.bys",
+                                                                                                 label    = em("Scale:"),
+                                                                                                 choices  = sort(c(seq(.1, 2, by = .1), .707)), 
+                                                                                                 selected = 1, 
+                                                                                                 width    = "100%"), class = "not_bold")),
+                                                            conditionalPanel("input.priorbys == 't.student'",
+                                                                             div(sliderTextInput(inputId  = "scale.t.bys",
+                                                                                                 label    = em("Scale:"),
+                                                                                                 choices  = sort(c(seq(.1, 2, by = .1), .707)), 
+                                                                                                 selected = 1, 
+                                                                                                 width    = "100%"), class = "not_bold"))
                                                      ),
                                                      column(width = 4,
                                                             # uiOutput("prior.param3")
-                                                            conditionalPanel("input.prior == 't.student'",
+                                                            conditionalPanel("input.priorbys == 't.student'",
                                                                              div(sliderInput(inputId = "df.t.bys",
                                                                                              label   = em("df:"),
                                                                                              min     = 1,
@@ -411,7 +412,15 @@ ui <- fluidPage(
              br(), 
              sidebarLayout(
                sidebarPanel(
-                 style = "position:fixed;width:30%;",
+                 fluidRow(
+                   column(4), 
+                   column(4, align = "center", 
+                          tagList(useShinyjs(),
+                                  actionButton("go", "Ready", icon = character(0), style = "color: black; background-color: #DCA55980; border-color: #DCA559; border-width: 2px; animation: none;"))
+                   ),
+                   column(4)
+                 ), 
+                 hr(style = "border-top: 2px solid #005E3C;"),
                  h3(strong("Descriptives")),
                  h4("Group A"),
                  fluidRow(
@@ -475,7 +484,7 @@ ui <- fluidPage(
                  h3(strong("Bayesian test")),
                  em("Null and alternative hypotheses:"),
                  fluidRow(
-                   column(width = 4, "$\\mathcal{H}_0:\\delta=0$"),
+                   column(width = 4, uiOutput("H0hyp")),
                    column(width = 8,
                           div(prettyRadioButtons(inputId  = "H1hyp",
                                                  label    = em("$\\mathcal{H}_1$:$\\hspace{1mm}$"),
@@ -548,32 +557,23 @@ ui <- fluidPage(
                                     column(width = 4,
                                            # uiOutput("prior.param2")
                                            conditionalPanel("input.prior == 'cauchy'",
-                                                            div(sliderInput(inputId = "scale.c",
-                                                                            label   = em("Scale:"),
-                                                                            min     = .1,
-                                                                            max     = 2,
-                                                                            value   = .707,
-                                                                            ticks   = FALSE,
-                                                                            step    = 0.1,
-                                                                            width   = "100%"), class = "not_bold")),
+                                                            div(sliderTextInput(inputId  = "scale.c",
+                                                                                label    = em("Scale:"),
+                                                                                choices  = sort(c(seq(.1, 2, by = .1), .707)), 
+                                                                                selected = .707, 
+                                                                                width    = "100%"), class = "not_bold")),
                                            conditionalPanel("input.prior == 'normal'",
-                                                            div(sliderInput(inputId = "scale.n",
-                                                                            label   = em("Scale:"),
-                                                                            min     = .1,
-                                                                            max     = 2,
-                                                                            value   = 1,
-                                                                            ticks   = FALSE,
-                                                                            step    = 0.1,
-                                                                            width   = "100%"), class = "not_bold")),
+                                                            div(sliderTextInput(inputId  = "scale.n",
+                                                                                label    = em("Scale:"),
+                                                                                choices  = sort(c(seq(.1, 2, by = .1), .707)), 
+                                                                                selected = 1, 
+                                                                                width    = "100%"), class = "not_bold")),
                                            conditionalPanel("input.prior == 't.student'",
-                                                            div(sliderInput(inputId = "scale.t",
-                                                                            label   = em("Scale:"),
-                                                                            min     = .1,
-                                                                            max     = 2,
-                                                                            value   = 1,
-                                                                            ticks   = FALSE,
-                                                                            step    = 0.1,
-                                                                            width   = "100%"), class = "not_bold"))
+                                                            div(sliderTextInput(inputId  = "scale.t",
+                                                                                label    = em("Scale:"),
+                                                                                choices  = sort(c(seq(.1, 2, by = .1), .707)), 
+                                                                                selected = 1, 
+                                                                                width    = "100%"), class = "not_bold"))
                                     ),
                                     column(width = 4,
                                            # uiOutput("prior.param3")
@@ -622,7 +622,7 @@ ui <- fluidPage(
                                           post    = "%",
                                           ticks   = FALSE,
                                           step    = 5), class = "not_bold"))
-                 ),
+                 ), 
                  br(),
                  width = 4
                ),
@@ -673,6 +673,15 @@ ui <- fluidPage(
              sidebarLayout(
                sidebarPanel(
                  style = "position:fixed;width:30%;", 
+                 fluidRow(
+                   column(4), 
+                   column(4, align = "center", 
+                          tagList(useShinyjs(),
+                                  actionButton("go_tab4", "Ready", icon = character(0), style = "color: black; background-color: #DCA55980; border-color: #DCA559; border-width: 2px; animation: none;"))
+                   ),
+                   column(4)
+                 ), 
+                 hr(style = "border-top: 2px solid #005E3C;"),
                  h3(strong("Descriptives")),
                  h4("Group A"),
                  fluidRow(
@@ -736,9 +745,9 @@ ui <- fluidPage(
                  h3(strong("Bayesian test")),
                  em("Null and alternative hypotheses:"),
                  fluidRow(
-                   column(width = 4, "$\\mathcal{H}_0:\\delta=0$"),
+                   column(width = 4, uiOutput("H0hyp.tab4")),
                    column(width = 8,
-                          div(prettyRadioButtons(inputId  = "H1hyp.tab4",
+                          div(prettyRadioButtons(inputId  = "H1hyptab4",
                                                  label    = em("$\\mathcal{H}_1$:$\\hspace{1mm}$"),
                                                  choices  = list("$\\delta\\not=0$" = "H1.diff0",
                                                                  "$\\delta>0$" = "H1.larger0",
@@ -752,7 +761,7 @@ ui <- fluidPage(
                                                  fill     = TRUE
                           ), class = "not_bold"),
                           # uiOutput("H1point.tab4")
-                          conditionalPanel("input.H1hyp == 'H1.point'",
+                          conditionalPanel("input.H1hyptab4 == 'H1.point'",
                                            div(sliderInput(inputId = "H1pointslide.tab4", 
                                                            label   = NULL, 
                                                            min     = -2, 
@@ -764,8 +773,8 @@ ui <- fluidPage(
                    )
                  ),
                  br(),
-                 conditionalPanel("input.H1hyp != 'H1.point'", 
-                                  div(prettyRadioButtons(inputId  = "prior.tab4",
+                 conditionalPanel("input.H1hyptab4 != 'H1.point'", 
+                                  div(prettyRadioButtons(inputId  = "priortab4",
                                                          label    = em("Prior for $\\delta$ under $\\mathcal{H}_1$:"),
                                                          choices  = list("Cauchy" = "cauchy", "Normal" = "normal", "$t$-Student" = "t.student"),
                                                          selected = "cauchy",
@@ -778,7 +787,7 @@ ui <- fluidPage(
                                   fluidRow(
                                     column(width = 4, 
                                            # uiOutput("prior.param1.tab4")
-                                           conditionalPanel("input.prior == 'cauchy'", 
+                                           conditionalPanel("input.priortab4 == 'cauchy'", 
                                                             div(sliderInput(inputId = "location.c.tab4", 
                                                                             label   = em("Location:"), 
                                                                             min     = -3, 
@@ -787,7 +796,7 @@ ui <- fluidPage(
                                                                             ticks   = FALSE, 
                                                                             step    = 0.1, 
                                                                             width   = "100%"), class = "not_bold")), 
-                                           conditionalPanel("input.prior == 'normal'", 
+                                           conditionalPanel("input.priortab4 == 'normal'", 
                                                             div(sliderInput(inputId = "location.n.tab4", 
                                                                             label   = em("Location:"), 
                                                                             min     = -3, 
@@ -796,7 +805,7 @@ ui <- fluidPage(
                                                                             ticks   = FALSE, 
                                                                             step    = 0.1, 
                                                                             width   = "100%"), class = "not_bold")), 
-                                           conditionalPanel("input.prior == 't.student'", 
+                                           conditionalPanel("input.priortab4 == 't.student'", 
                                                             div(sliderInput(inputId = "location.t.tab4", 
                                                                             label   = em("Location:"), 
                                                                             min     = -3, 
@@ -808,37 +817,27 @@ ui <- fluidPage(
                                     ),
                                     column(width = 4, 
                                            # uiOutput("prior.param2.tab4")
-                                           conditionalPanel("input.prior == 'cauchy'", 
-                                                            div(sliderInput(inputId = "scale.c.tab4", 
-                                                                            label   = em("Scale:"), 
-                                                                            min     = .1, 
-                                                                            max     = 2, 
-                                                                            value   = .707, 
-                                                                            ticks   = FALSE, 
-                                                                            step    = 0.1, 
-                                                                            width   = "100%"), class = "not_bold")), 
-                                           conditionalPanel("input.prior == 'normal'", 
-                                                            div(sliderInput(inputId = "scale.n.tab4", 
-                                                                            label   = em("Scale:"), 
-                                                                            min     = .1, 
-                                                                            max     = 2, 
-                                                                            value   = 1, 
-                                                                            ticks   = FALSE, 
-                                                                            step    = 0.1, 
-                                                                            width   = "100%"), class = "not_bold")), 
-                                           conditionalPanel("input.prior == 't.student'", 
-                                                            div(sliderInput(inputId = "scale.t.tab4", 
-                                                                            label   = em("Scale:"), 
-                                                                            min     = .1, 
-                                                                            max     = 2, 
-                                                                            value   = 1, 
-                                                                            ticks   = FALSE, 
-                                                                            step    = 0.1, 
-                                                                            width   = "100%"), class = "not_bold"))
+                                           conditionalPanel("input.priortab4 == 'cauchy'", 
+                                                            div(sliderTextInput(inputId  = "scale.c.tab4",
+                                                                                label    = em("Scale:"),
+                                                                                choices  = sort(c(seq(.1, 2, by = .1), .707)), 
+                                                                                selected = .707, 
+                                                                                width    = "100%"), class = "not_bold")), 
+                                           conditionalPanel("input.priortab4 == 'normal'", 
+                                                            div(sliderTextInput(inputId  = "scale.n.tab4",
+                                                                                label    = em("Scale:"),
+                                                                                choices  = sort(c(seq(.1, 2, by = .1), .707)), 
+                                                                                selected = 1, 
+                                                                                width    = "100%"), class = "not_bold")), 
+                                           conditionalPanel("input.priortab4 == 't.student'", 
+                                                            div(sliderTextInput(inputId  = "scale.t.tab4",
+                                                                                label    = em("Scale:"),
+                                                                                choices  = sort(c(seq(.1, 2, by = .1), .707)), 
+                                                                                selected = 1, 
+                                                                                width    = "100%"), class = "not_bold"))
                                     ),
                                     column(width = 4, 
-                                           # uiOutput("prior.param3.tab4")
-                                           conditionalPanel("input.prior == 't.student'", 
+                                           conditionalPanel("input.priortab4 == 't.student'", 
                                                             div(sliderInput(inputId = "df.t.tab4", 
                                                                             label   = em("df:"), 
                                                                             min     = 1, 
@@ -920,9 +919,12 @@ ui <- fluidPage(
                  uiOutput("kim.out"), 
                  # br(), 
                  conditionalPanel("input.keepinmind == 'topic1'", br(), htmlOutput("kim.out.topic1.df1")), 
-                 conditionalPanel("input.keepinmind == 'topic2'", br(), plotOutput("kim.out.topic2.plot1")), 
-                 br(), br(), 
-                 conditionalPanel("input.keepinmind == 'topic2'", htmlOutput("kim.out.topic2.df1")),
+                 conditionalPanel("input.keepinmind == 'topic2'", 
+                                  br(), 
+                                  plotOutput("kim.out.topic2.plot1"), 
+                                  br(), br(), 
+                                  htmlOutput("kim.out.topic2.df1")
+                 ),
                  conditionalPanel("input.keepinmind == 'topic5'", htmlOutput("kim.out.topic5.df1")), 
                  conditionalPanel("input.keepinmind == 'topic5'", uiOutput("kim.out.topic5.part2"), br()), 
                  conditionalPanel("input.keepinmind == 'topic5'", fluidRow(
@@ -1014,20 +1016,6 @@ server <- function(input, output, session) {
                       value   = 100 - input$priorprob1.tab4)
   })
   
-  # To force these inputs to be available:
-  location   <- reactive({ switch(input$prior, 
-                                  'cauchy'    = req(input$location.c), 
-                                  'normal'    = req(input$location.n), 
-                                  't.student' = req(input$location.t)) })
-  scale      <- reactive({ switch(input$prior, 
-                                  'cauchy'    = req(input$scale.c), 
-                                  'normal'    = req(input$scale.n), 
-                                  't.student' = req(input$scale.t)) })
-  df         <- reactive({ switch(input$prior, 
-                                  'cauchy'    = NULL, 
-                                  'normal'    = NULL, 
-                                  't.student' = req(input$df.t)) })
-  
   # Hyperlinks to tabs:
   observeEvent(input$intro.tab2a, {
     updateTabsetPanel(session, "maintabs", "Introduction")
@@ -1052,100 +1040,230 @@ server <- function(input, output, session) {
   })
   
   # Cohen's d:
-  cohen.d <- reactive({ (input$mean1 - input$mean2) / sqrt(((input$n1-1) * (input$sd1^2) + (input$n2-1) * (input$sd2^2)) / (input$n1 + input$n2 - 2)) })
+  cohen.d <- reactive({ (rv$mean1 - rv$mean2) / sqrt(((rv$n1-1) * (rv$sd1^2) + (rv$n2-1) * (rv$sd2^2)) / (rv$n1 + rv$n2 - 2)) })
   
-  # Sync the side panel of tabs 3 and 4 (and 2 for descriptives only):
-  observe({
-    req(input$mean1)
-    updateNumericInput(session, 'mean1.tab4',        value = input$mean1)
-    updateNumericInput(session, 'sd1.tab4',          value = input$sd1)
-    updateNumericInput(session, 'n1.tab4',           value = input$n1)
-    updateNumericInput(session, 'mean2.tab4',        value = input$mean2)
-    updateNumericInput(session, 'sd2.tab4',          value = input$sd2)
-    updateNumericInput(session, 'n2.tab4',           value = input$n2)
-    updateNumericInput(session, 'H1hyp.tab4',        value = input$H1hyp)
-    updateNumericInput(session, 'H1pointslide.tab4', value = input$H1pointslide)
-    updateNumericInput(session, 'prior.tab4',        value = input$prior)
-    updateNumericInput(session, 'location.c.tab4',   value = input$location.c)
-    updateNumericInput(session, 'location.n.tab4',   value = input$location.n)
-    updateNumericInput(session, 'location.t.tab4',   value = input$location.t)
-    updateNumericInput(session, 'scale.c.tab4',      value = input$scale.c)
-    updateNumericInput(session, 'scale.n.tab4',      value = input$scale.n)
-    updateNumericInput(session, 'scale.t.tab4',      value = input$scale.t)
-    updateNumericInput(session, 'df.t.tab4',         value = input$df.t)
-    updateNumericInput(session, 'BF10.01.tab4',      value = input$BF10.01)
-    updateNumericInput(session, 'priorprob0.tab4',   value = input$priorprob0)
-    # updateNumericInput(session, 'priorprob1.tab4',   value = input$priorprob1) # avoid infinite loop
-    # Intro, classical test:
-    updateNumericInput(session, 'mean1.tab2',        value = input$mean1)
-    updateNumericInput(session, 'sd1.tab2',          value = input$sd1)
-    updateNumericInput(session, 'n1.tab2',           value = input$n1)
-    updateNumericInput(session, 'mean2.tab2',        value = input$mean2)
-    updateNumericInput(session, 'sd2.tab2',          value = input$sd2)
-    updateNumericInput(session, 'n2.tab2',           value = input$n2)
-    # Intro, Bayes test:
-    updateNumericInput(session, 'H1hyp.bys',        value = input$H1hyp)
-    updateNumericInput(session, 'H1pointslide.bys', value = input$H1pointslide)
-    updateNumericInput(session, 'prior.bys',        value = input$prior)
-    updateNumericInput(session, 'location.c.bys',   value = input$location.c)
-    updateNumericInput(session, 'location.n.bys',   value = input$location.n)
-    updateNumericInput(session, 'location.t.bys',   value = input$location.t)
-    updateNumericInput(session, 'scale.c.bys',      value = input$scale.c)
-    updateNumericInput(session, 'scale.n.bys',      value = input$scale.n)
-    updateNumericInput(session, 'scale.t.bys',      value = input$scale.t)
-    updateNumericInput(session, 'df.t.bys',         value = input$df.t)
+  # observeEvent(input$go1, {
+  #   updateNumericInput(session, 'num', value = input$num1)
+  #   updateNumericInput(session, 'num2', value = input$num1)
+  # })
+  # observeEvent(input$go2, {
+  #   updateNumericInput(session, 'num', value = input$num2)
+  #   updateNumericInput(session, 'num1', value = input$num2)
+  # })
+  
+  rv <- reactiveValues(mean1 = 15.292,     mean1.tab2 = 15.292,     mean1.tab4 = 15.292, 
+                       sd1   = 6.376,      sd1.tab2   = 6.376,      sd1.tab4   = 6.376, 
+                       n1    = 24,         n1.tab2    = 24,         n1.tab4    = 24, 
+                       mean2 = 10.880,     mean2.tab2 = 10.880,     mean2.tab4 = 10.880, 
+                       sd2   = 4.324,      sd2.tab2   = 4.324,      sd2.tab4   = 4.324, 
+                       n2    = 25,         n2.tab2    = 25,         n2.tab4    = 25, 
+                       H1hyp = "H1.diff0", H1hyptab4 = "H1.diff0", 
+                       H1pointslide = .2,  H1pointslide.tab4 = .2, 
+                       prior = "cauchy",   priortab4 = "cauchy", 
+                       location.c = 0,     location.c.tab4 = 0, 
+                       location.n = 0,     location.n.tab4 = 0, 
+                       location.t = 0,     location.t.tab4 = 0, 
+                       scale.c = .707,     scale.c.tab4 = .707, 
+                       scale.n = 1,        scale.n.tab4 = 1, 
+                       scale.t = 1,        scale.t.tab4 = 1, 
+                       df.t = 1,           df.t.tab4 = 1, 
+                       BF10.01 = "BF10",   BF10.01.tab4 = "BF10", 
+                       priorprob0 = 50,    priorprob1.tab4 = 50, 
+                       priorprob1 = 50,    priorprob1.tab4 = 51
+  )
+  
+  observeEvent(input$go, {
+    rv$mean1        <- input$mean1;         rv$mean1.tab2 <- input$mean1;               rv$mean1.tab4 <- input$mean1;
+    rv$sd1          <- input$sd1;           rv$sd1.tab2   <- input$sd1;                 rv$sd1.tab4   <- input$sd1; 
+    rv$n1           <- input$n1;            rv$n1.tab2    <- input$n1;                  rv$n1.tab4    <- input$n1; 
+    rv$mean2        <- input$mean2;         rv$mean2.tab2 <- input$mean2;               rv$mean2.tab4 <- input$mean2; 
+    rv$sd2          <- input$sd2;           rv$sd2.tab2   <- input$sd2;                 rv$sd2.tab4   <- input$sd2; 
+    rv$n2           <- input$n2;            rv$n2.tab2    <- input$n2;                  rv$n2.tab4    <- input$n2; 
+    rv$H1hyp        <- input$H1hyp;         rv$H1hyptab4 <- input$H1hyp; 
+    rv$H1pointslide <- input$H1pointslide;  rv$H1pointslide.tab4 <- input$H1pointslide; 
+    rv$prior        <- input$prior;         rv$priortab4 <- input$prior; 
+    rv$location.c   <- input$location.c;    rv$location.c.tab4 <- input$location.c; 
+    rv$location.n   <- input$location.n;    rv$location.n.tab4 <- input$location.n; 
+    rv$location.t   <- input$location.t;    rv$location.t.tab4 <- input$location.t; 
+    rv$scale.c      <- input$scale.c;       rv$scale.c.tab4 <- input$scale.c; 
+    rv$scale.n      <- input$scale.n;       rv$scale.n.tab4 <- input$scale.n; 
+    rv$scale.t      <- input$scale.t;       rv$scale.t.tab4 <- input$scale.t; 
+    rv$df.t         <- input$df.t;          rv$df.t.tab4 <- input$df.t; 
+    rv$BF10.01      <- input$BF10.01;       rv$BF10.01.tab4 <- input$BF10.01; 
+    rv$priorprob0   <- input$priorprob0;    rv$priorprob1.tab4 <- input$priorprob0; 
+    rv$priorprob1   <- input$priorprob1;    rv$priorprob1.tab4 <- input$priorprob1;
+    # 
+    updateNumericInput(session, 'mean1.tab2', value = rv$mean1); updateNumericInput(session, 'mean1.tab4', value = rv$mean1)
+    updateNumericInput(session, 'sd1.tab2',   value = rv$sd1);   updateNumericInput(session, 'sd1.tab4',   value = rv$sd1)
+    updateNumericInput(session, 'n1.tab2',    value = rv$n1);    updateNumericInput(session, 'n1.tab4',    value = rv$n1)
+    updateNumericInput(session, 'mean2.tab2', value = rv$mean2); updateNumericInput(session, 'mean2.tab4', value = rv$mean2)
+    updateNumericInput(session, 'sd2.tab2',   value = rv$sd2);   updateNumericInput(session, 'sd2.tab4',   value = rv$sd2)
+    updateNumericInput(session, 'n2.tab2',    value = rv$n2);    updateNumericInput(session, 'n2.tab4',    value = rv$n2)
+    updateNumericInput(session, 'H1hyptab4',        value = rv$H1hyp)
+    updateNumericInput(session, 'H1pointslide.tab4', value = rv$H1pointslide)
+    updateNumericInput(session, 'priortab4',        value = rv$prior)
+    updateNumericInput(session, 'location.c.tab4', value = rv$location.c)
+    updateNumericInput(session, 'location.n.tab4', value = rv$location.n)
+    updateNumericInput(session, 'location.t.tab4', value = rv$location.t)
+    updateSliderTextInput(session, 'scale.c.tab4', selected = rv$scale.c)
+    updateSliderTextInput(session, 'scale.n.tab4', selected = rv$scale.n)
+    updateSliderTextInput(session, 'scale.t.tab4', selected = rv$scale.t)
+    updateNumericInput(session, 'df.t.tab4',    value = rv$df.t)
+    updateNumericInput(session, 'BF10.01.tab4',    value = rv$BF10.01)
+    updateNumericInput(session, 'priorprob0.tab4', value = rv$priorprob0)
+    updateNumericInput(session, 'priorprob1.tab4', value = rv$priorprob1)
   })
-  observe({
-    req(input$mean1.tab4)
-    updateNumericInput(session, 'mean1',        value = input$mean1.tab4)
-    updateNumericInput(session, 'sd1',          value = input$sd1.tab4)
-    updateNumericInput(session, 'n1',           value = input$n1.tab4)
-    updateNumericInput(session, 'mean2',        value = input$mean2.tab4)
-    updateNumericInput(session, 'sd2',          value = input$sd2.tab4)
-    updateNumericInput(session, 'n2',           value = input$n2.tab4)
-    updateNumericInput(session, 'H1hyp',        value = input$H1hyp.tab4)
-    updateNumericInput(session, 'H1pointslide', value = input$H1pointslide.tab4)
-    updateNumericInput(session, 'prior',        value = input$prior.tab4)
-    updateNumericInput(session, 'location.c',   value = input$location.c.tab4)
-    updateNumericInput(session, 'location.n',   value = input$location.n.tab4)
-    updateNumericInput(session, 'location.t',   value = input$location.t.tab4)
-    updateNumericInput(session, 'scale.c',      value = input$scale.c.tab4)
-    updateNumericInput(session, 'scale.n',      value = input$scale.n.tab4)
-    updateNumericInput(session, 'scale.t',      value = input$scale.t.tab4)
-    updateNumericInput(session, 'df.t',         value = input$df.t.tab4)
-    updateNumericInput(session, 'BF10.01',      value = input$BF10.01.tab4)
-    updateNumericInput(session, 'priorprob0',   value = input$priorprob0.tab4)
+  
+  observeEvent(input$go_tab2, {
+    rv$mean1        <- input$mean1.tab2;         rv$mean1.tab2 <- input$mean1.tab2;               rv$mean1.tab4 <- input$mean1.tab2;
+    rv$sd1          <- input$sd1.tab2;           rv$sd1.tab2   <- input$sd1.tab2;                 rv$sd1.tab4   <- input$sd1.tab2; 
+    rv$n1           <- input$n1.tab2;            rv$n1.tab2    <- input$n1.tab2;                  rv$n1.tab4    <- input$n1.tab2; 
+    rv$mean2        <- input$mean2.tab2;         rv$mean2.tab2 <- input$mean2.tab2;               rv$mean2.tab4 <- input$mean2.tab2; 
+    rv$sd2          <- input$sd2.tab2;           rv$sd2.tab2   <- input$sd2.tab2;                 rv$sd2.tab4   <- input$sd2.tab2; 
+    rv$n2           <- input$n2.tab2;            rv$n2.tab2    <- input$n2.tab2;                  rv$n2.tab4    <- input$n2.tab2; 
+    # 
+    updateNumericInput(session, 'mean1', value = rv$mean1); updateNumericInput(session, 'mean1.tab4', value = rv$mean1)
+    updateNumericInput(session, 'sd1',   value = rv$sd1);   updateNumericInput(session, 'sd1.tab4',   value = rv$sd1)
+    updateNumericInput(session, 'n1',    value = rv$n1);    updateNumericInput(session, 'n1.tab4',    value = rv$n1)
+    updateNumericInput(session, 'mean2', value = rv$mean2); updateNumericInput(session, 'mean2.tab4', value = rv$mean2)
+    updateNumericInput(session, 'sd2',   value = rv$sd2);   updateNumericInput(session, 'sd2.tab4',   value = rv$sd2)
+    updateNumericInput(session, 'n2',    value = rv$n2);    updateNumericInput(session, 'n2.tab4',    value = rv$n2)
   })
-  observe({
-    req(input$mean1.tab2)
-    updateNumericInput(session, 'mean1',        value = input$mean1.tab2)
-    updateNumericInput(session, 'sd1',          value = input$sd1.tab2)
-    updateNumericInput(session, 'n1',           value = input$n1.tab2)
-    updateNumericInput(session, 'mean2',        value = input$mean2.tab2)
-    updateNumericInput(session, 'sd2',          value = input$sd2.tab2)
-    updateNumericInput(session, 'n2',           value = input$n2.tab2)
+  
+  observeEvent(input$go_tab4, {
+    rv$mean1        <- input$mean1.tab4;         rv$mean1.tab2 <- input$mean1.tab4;               rv$mean1.tab4 <- input$mean1.tab4;
+    rv$sd1          <- input$sd1.tab4;           rv$sd1.tab2   <- input$sd1.tab4;                 rv$sd1.tab4   <- input$sd1.tab4; 
+    rv$n1           <- input$n1.tab4;            rv$n1.tab2    <- input$n1.tab4;                  rv$n1.tab4    <- input$n1.tab4; 
+    rv$mean2        <- input$mean2.tab4;         rv$mean2.tab2 <- input$mean2.tab4;               rv$mean2.tab4 <- input$mean2.tab4; 
+    rv$sd2          <- input$sd2.tab4;           rv$sd2.tab2   <- input$sd2.tab4;                 rv$sd2.tab4   <- input$sd2.tab4; 
+    rv$n2           <- input$n2.tab4;            rv$n2.tab2    <- input$n2.tab4;                  rv$n2.tab4    <- input$n2.tab4; 
+    rv$H1hyp        <- input$H1hyptab4;         rv$H1hyptab4 <- input$H1hyptab4;
+    rv$H1pointslide <- input$H1pointslide.tab4;  rv$H1pointslide.tab4 <- input$H1pointslide.tab4;
+    rv$prior        <- input$priortab4;         rv$priortab4 <- input$priortab4;
+    rv$location.c   <- input$location.c.tab4;    rv$location.c.tab4 <- input$location.c.tab4;
+    rv$location.n   <- input$location.n.tab4;    rv$location.n.tab4 <- input$location.n.tab4;
+    rv$location.t   <- input$location.t.tab4;    rv$location.t.tab4 <- input$location.t.tab4;
+    rv$scale.c      <- input$scale.c.tab4;       rv$scale.c.tab4 <- input$scale.c.tab4;
+    rv$scale.n      <- input$scale.n.tab4;       rv$scale.n.tab4 <- input$scale.n.tab4;
+    rv$scale.t      <- input$scale.t.tab4;       rv$scale.t.tab4 <- input$scale.t.tab4;
+    rv$df.t         <- input$df.t.tab4;          rv$df.t.tab4 <- input$df.t.tab4;
+    rv$BF10.01      <- input$BF10.01.tab4;       rv$BF10.01.tab4 <- input$BF10.01.tab4;
+    rv$priorprob0   <- input$priorprob0.tab4;    rv$priorprob1.tab4 <- input$priorprob0.tab4;
+    rv$priorprob1   <- input$priorprob1.tab4;    rv$priorprob1.tab4 <- input$priorprob1.tab4;
+    # 
+    updateNumericInput(session, 'mean1', value = rv$mean1); updateNumericInput(session, 'mean1.tab2', value = rv$mean1)
+    updateNumericInput(session, 'sd1',   value = rv$sd1);   updateNumericInput(session, 'sd1.tab2',   value = rv$sd1)
+    updateNumericInput(session, 'n1',    value = rv$n1);    updateNumericInput(session, 'n1.tab2',    value = rv$n1)
+    updateNumericInput(session, 'mean2', value = rv$mean2); updateNumericInput(session, 'mean2.tab2', value = rv$mean2)
+    updateNumericInput(session, 'sd2',   value = rv$sd2);   updateNumericInput(session, 'sd2.tab2',   value = rv$sd2)
+    updateNumericInput(session, 'n1',    value = rv$n2);    updateNumericInput(session, 'n2.tab2',    value = rv$n2)
+    updateNumericInput(session, 'H1hyp',        value = rv$H1hyp)
+    updateNumericInput(session, 'H1pointslide', value = rv$H1pointslide)
+    updateNumericInput(session, 'prior',        value = rv$prior)
+    updateNumericInput(session, 'location.c', value = rv$location.c)
+    updateNumericInput(session, 'location.n', value = rv$location.n)
+    updateNumericInput(session, 'location.t', value = rv$location.t)
+    updateSliderTextInput(session, 'scale.c', selected = rv$scale.c)
+    updateSliderTextInput(session, 'scale.n', selected = rv$scale.n)
+    updateSliderTextInput(session, 'scale.t', selected = rv$scale.t)
+    updateNumericInput(session, 'df.t',    value = rv$df.t)
+    updateNumericInput(session, 'BF10.01',    value = rv$BF10.01)
+    updateNumericInput(session, 'priorprob0', value = rv$priorprob0)
+    updateNumericInput(session, 'priorprob1', value = rv$priorprob1)
   })
-  observe({
-    req(input$H1hyp.bys)
-    updateNumericInput(session, 'H1hyp',        value = input$H1hyp.bys)
-    updateNumericInput(session, 'H1pointslide', value = input$H1pointslide.bys)
-    updateNumericInput(session, 'prior',        value = input$prior.bys)
-    updateNumericInput(session, 'location.c',   value = input$location.c.bys)
-    updateNumericInput(session, 'location.n',   value = input$location.n.bys)
-    updateNumericInput(session, 'location.t',   value = input$location.t.bys)
-    updateNumericInput(session, 'scale.c',      value = input$scale.c.bys)
-    updateNumericInput(session, 'scale.n',      value = input$scale.n.bys)
-    updateNumericInput(session, 'scale.t',      value = input$scale.t.bys)
-    updateNumericInput(session, 'df.t',         value = input$df.t.bys)
-  })
+  
+  # To force these inputs to be available:
+  location   <- reactive({ switch(rv$prior, 
+                                  'cauchy'    = req(rv$location.c), 
+                                  'normal'    = req(rv$location.n), 
+                                  't.student' = req(rv$location.t)) })
+  scale      <- reactive({ switch(rv$prior, 
+                                  'cauchy'    = req(rv$scale.c), 
+                                  'normal'    = req(rv$scale.n), 
+                                  't.student' = req(rv$scale.t)) })
+  df         <- reactive({ switch(rv$prior, 
+                                  'cauchy'    = NULL, 
+                                  'normal'    = NULL, 
+                                  't.student' = req(rv$df.t)) })
+  
+  # Glow action buttons:
+  # Tab 2:
+  observeEvent(c(input$mean1.tab2, input$sd1.tab2, input$n1.tab2, 
+                 input$mean2.tab2, input$sd2.tab2, input$n2.tab2), 
+               {
+                 updateActionButton(session, "go_tab2", "Update!", icon("paper-plane"))
+                 runjs(paste0('$("#go_tab2").css("animation","glowing 0.9s infinite")'))
+               }, 
+               ignoreInit = TRUE)
+  observeEvent(input$go_tab2, 
+               {
+                 delay(200, 
+                       {
+                         updateActionButton(session, "go_tab2", "Ready", character(0))
+                         updateActionButton(session, "go",      "Ready", character(0))
+                         updateActionButton(session, "go_tab4", "Ready", character(0))
+                         runjs(paste0('$("#go_tab2").css("animation","none")'))
+                         runjs(paste0('$("#go").css("animation","none")'))
+                         runjs(paste0('$("#go_tab4").css("animation","none")'))
+                       }
+                 )
+               }, 
+               ignoreInit = TRUE)
+  # Tab 3:
+  observeEvent(c(input$mean1, input$sd1, input$n1, 
+                 input$mean2, input$sd2, input$n2, 
+                 input$H1hyp, input$H1pointslide, input$prior, 
+                 input$location.c, input$location.n, input$location.t, 
+                 input$scale.c, input$scale.n, input$scale.t, input$df.t, 
+                 input$BF10.01, input$priorprob0, input$priorprob1), 
+               {
+                 updateActionButton(session, "go", "Update!", icon("paper-plane"))
+                 runjs(paste0('$("#go").css("animation","glowing 0.9s infinite")'))
+               }, 
+               ignoreInit = TRUE)
+  observeEvent(input$go, 
+               {
+                 delay(200, 
+                       {
+                         updateActionButton(session, "go_tab2", "Ready", character(0))
+                         updateActionButton(session, "go",      "Ready", character(0))
+                         updateActionButton(session, "go_tab4", "Ready", character(0))
+                         runjs(paste0('$("#go_tab2").css("animation","none")'))
+                         runjs(paste0('$("#go").css("animation","none")'))
+                         runjs(paste0('$("#go_tab4").css("animation","none")'))
+                       }
+                 )
+               }, 
+               ignoreInit = TRUE)
+  # Tab 4:
+  observeEvent(c(input$mean1.tab4, input$sd1.tab4, input$n1.tab4, 
+                 input$mean2.tab4, input$sd2.tab4, input$n2.tab4, 
+                 input$H1hyptab4, input$H1pointslide.tab4, input$priortab4, 
+                 input$location.c.tab4, input$location.n.tab4, input$location.t.tab4, 
+                 input$scale.c.tab4, input$scale.n.tab4, input$scale.t.tab4, input$df.t.tab4, 
+                 input$BF10.01.tab4, input$priorprob0.tab4, input$priorprob1.tab4), 
+               {
+                 updateActionButton(session, "go_tab4", "Update!", icon("paper-plane"))
+                 runjs(paste0('$("#go_tab4").css("animation","glowing 0.9s infinite")'))
+               }, 
+               ignoreInit = TRUE)
+  observeEvent(input$go_tab4, 
+               {
+                 delay(200, 
+                       {
+                         updateActionButton(session, "go_tab2", "Ready", character(0))
+                         updateActionButton(session, "go",      "Ready", character(0))
+                         updateActionButton(session, "go_tab4", "Ready", character(0))
+                         runjs(paste0('$("#go_tab2").css("animation","none")'))
+                         runjs(paste0('$("#go").css("animation","none")'))
+                         runjs(paste0('$("#go_tab4").css("animation","none")'))
+                       }
+                 )
+               }, 
+               ignoreInit = TRUE)
   
 }
 
 # Call the app ----
 shinyApp(ui = ui, server = server)
-
-
-
-
-
 

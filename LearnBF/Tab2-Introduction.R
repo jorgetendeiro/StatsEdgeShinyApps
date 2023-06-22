@@ -3,7 +3,7 @@
 
 # Run t-test:
 ttest.res <- reactive({
-  t.test.summ(input$mean1, input$mean2, input$sd1, input$sd2, input$n1, input$n2, input$H1hyp.cls)
+  t.test.summ(rv$mean1, rv$mean2, rv$sd1, rv$sd2, rv$n1, rv$n2, input$H1hyp.cls)
 })
 
 # Left panel, H0 depending on the chosen H1, classic:
@@ -13,7 +13,7 @@ output$H1hyp.cls <- renderUI({ switch(input$H1hyp.cls,
                                       "H1.smaller0" = "$\\mathcal{H}_0:\\delta\\geq 0$") })
 
 # Left panel, H0 depending on the chosen H1, Bayes:
-H1hyp.bys.reactive <- renderText({ switch(input$H1hyp.bys, 
+H1hyp.bys.reactive <- renderText({ switch(input$H1hypbys, 
                                           "H1.diff0"    = "$\\mathcal{H}_0:\\delta=0$", 
                                           "H1.larger0"  = "$\\mathcal{H}_0:\\delta\\leq 0$", 
                                           "H1.smaller0" = "$\\mathcal{H}_0:\\delta\\geq 0$", 
@@ -30,6 +30,28 @@ output$H1hyp.bys <- renderUI({
   )
 })
 
+# General prior parameters for the introduction tab only:
+location.bys   <- reactive({ switch(input$priorbys, 
+                                'cauchy'    = req(input$location.c.bys), 
+                                'normal'    = req(input$location.n.bys), 
+                                't.student' = req(input$location.t.bys)) })
+scale.bys      <- reactive({ switch(input$priorbys, 
+                                'cauchy'    = req(input$scale.c.bys), 
+                                'normal'    = req(input$scale.n.bys), 
+                                't.student' = req(input$scale.t.bys)) })
+df.bys         <- reactive({ switch(input$priorbys, 
+                                'cauchy'    = NULL, 
+                                'normal'    = NULL, 
+                                't.student' = req(input$df.t.bys)) })
+
+# Prior for the introduction tab only:
+prior.bys <- function(delta)
+{
+  switch(input$priorbys, 
+         "cauchy"    = cauchy.prior(delta, location.bys(), scale.bys()), 
+         "normal"    = normal.prior(delta, location.bys(), scale.bys()), 
+         "t.student" = tstude.prior(delta, location.bys(), scale.bys(), df.bys()))
+}
 
 output$ttestB <- function() {
   tab <- data.frame(
@@ -672,137 +694,141 @@ output$intro.topic5.plot1 <- renderPlot({
   layout(matrix(c(1, 2), 1, 2, byrow = TRUE))
   
   # Left plot:
-  if (input$H1hyp %in% c("H1.diff0", "H1.point"))
+  if (input$H1hypbys %in% c("H1.diff0", "H1.point"))
   {
     par(mar = c(4, 4, 1.5, .5))
     plot(NULL, xlim = c(-2, 2), ylim = c(0, 1.05), ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", 
-         cex.axis = 2, main = expression("Prior for " * delta * "  under " * H[0]), cex.main = 1.5, font.main = 1)
+         cex.axis = 1.5, main = expression("Prior for " * delta * "  under " * H[0]), cex.main = 1.2, font.main = 1)
     axis(1, c(-2, 0, 2), c("", "0", ""))
     axis(2, c(0, 1), las = 1)
     segments(0, 0, 0, 1, lty = 2, col = "gray")
     points(0, 1, pch = 16, cex = 2, col = "#005E3C")
     segments(-2, 0, 2, 0, lty = 1, col = "#005E3C", lwd = 2)
     points(0, 0, pch = 21, cex = 2, bg = "white", col = "#005E3C")
-    mtext(expression(delta), 1, 2.5, cex = 1.5)
-    mtext("Probability", 2, 2, cex = 1.5)
-  } else if (input$H1hyp == "H1.larger0")
+    mtext(expression(delta), 1, 2.5, cex = 1.2)
+    mtext("Probability", 2, 2, cex = 1.2)
+  } else if (input$H1hypbys == "H1.larger0")
   {
-    x.abs  <- max(abs(c(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()))))
+    x.abs  <- max(abs(c(floor(location.bys() - 3.5*scale.bys()), ceiling(location.bys() + 3.5*scale.bys()))))
     x.supp <- seq(-x.abs, 0, length.out = 1024)
-    y      <- prior(x.supp) / .5
-    y.max  <- max(prior(c(-x.supp, x.supp)) / .5 )
+    y.area <- integrate(function(delta) prior.bys(delta), lower = -Inf, upper = 0)[[1]]
+    y      <- prior.bys(x.supp) / y.area
+    y.max  <- max(prior.bys(c(-x.supp, x.supp)) / y.area )
     
     par(mar = c(4, 4.5, 1.5, .5))
     plot(x.supp, y, xlim = c(-x.abs, 0), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
          las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", 
-         cex.main = 1.5, font.main = 1, 
-         main = switch(input$prior,
+         cex.main = 1.2, font.main = 1, 
+         main = switch(input$priorbys,
                        "cauchy"    = expression("Prior for " * delta * "  under " * H[0] * " (Cauchy-)"),
                        "normal"    = expression("Prior for " * delta * "  under " * H[0] * " (Normal-)"),
                        "t.student" = expression("Prior for " * delta * "  under " * H[0] * " (" * italic(t) * "-Student-)")))
     axis(1, at = min(x.supp):0)
-    mtext(expression(delta), 1, 2.5, cex = 1.5)
-    mtext("Density", 2, 3, cex = 1.5)
+    mtext(expression(delta), 1, 2.5, cex = 1.2)
+    mtext("Density", 2, 3, cex = 1.2)
     polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
   } else 
   {
-    x.abs  <- max(abs(c(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()))))
+    x.abs  <- max(abs(c(floor(location.bys() - 3.5*scale.bys()), ceiling(location.bys() + 3.5*scale.bys()))))
     x.supp <- seq(0, x.abs, length.out = 1024)
-    y      <- prior(x.supp) / .5
-    y.max  <- max(prior(c(-x.supp, x.supp)) / .5 )
+    y.area <- integrate(function(delta) prior.bys(delta), lower = 0, upper = Inf)[[1]]
+    y      <- prior.bys(x.supp) / y.area
+    y.max  <- max(prior.bys(c(-x.supp, x.supp)) / y.area )
     
     par(mar = c(4, 4.5, 1.5, .5))
     plot(x.supp, y, xlim = c(0, x.abs), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
          las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", 
-         cex.main = 1.5, font.main = 1, 
-         main = switch(input$prior,
+         cex.main = 1.2, font.main = 1, 
+         main = switch(input$priorbys,
                        "cauchy"    = expression("Prior for " * delta * "  under " * H[0] * " (Cauchy+)"),
                        "normal"    = expression("Prior for " * delta * "  under " * H[0] * " (Normal+)"),
                        "t.student" = expression("Prior for " * delta * "  under " * H[0] * " (" * italic(t) * "-Student+)")))
     axis(1, at = 0:max(x.supp))
-    mtext(expression(delta), 1, 2.5, cex = 1.5)
-    mtext("Density", 2, 3, cex = 1.5)
+    mtext(expression(delta), 1, 2.5, cex = 1.2)
+    mtext("Density", 2, 3, cex = 1.2)
     polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
   }
   
   # Right plot:
-  if (input$H1hyp == "H1.point")
+  if (input$H1hypbys == "H1.point")
   {
     par(mar = c(4, .5, 1.5, 4.5))
     plot(NULL, xlim = c(-2, 2), ylim = c(0, 1.05), ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", 
-         cex.axis = 2, main = expression("Prior for " * delta * "  under " * H[1]), cex.main = 1.5, font.main = 1)
-    axis(1, c(-2, input$H1pointslide, 2), c("", input$H1pointslide, ""))
+         cex.axis = 2, main = expression("Prior for " * delta * "  under " * H[1]), cex.main = 1.2, font.main = 1)
+    axis(1, c(-2, input$H1pointslide.bys, 2), c("", input$H1pointslide.bys, ""))
     axis(4, c(0, 1), las = 1)
-    segments(input$H1pointslide, 0, input$H1pointslide, 1, lty = 2, col = "gray")
-    points(input$H1pointslide, 1, pch = 16, cex = 2, col = "#005E3C")
+    segments(input$H1pointslide.bys, 0, input$H1pointslide.bys, 1, lty = 2, col = "gray")
+    points(input$H1pointslide.bys, 1, pch = 16, cex = 2, col = "#005E3C")
     segments(-2, 0, 2, 0, lty = 1, col = "#005E3C", lwd = 2)
-    points(input$H1pointslide, 0, pch = 21, cex = 2, bg = "white", col = "#005E3C")
-    mtext(expression(delta), 1, 2.5, cex = 1.5)
-    mtext("Probability", 4, 2, cex = 1.5)
-  } else if (input$H1hyp == "H1.diff0")
+    points(input$H1pointslide.bys, 0, pch = 21, cex = 2, bg = "white", col = "#005E3C")
+    mtext(expression(delta), 1, 2.5, cex = 1.2)
+    mtext("Probability", 4, 2, cex = 1.2)
+  } else if (input$H1hypbys == "H1.diff0")
   {
     
-    x.supp <- switch(input$prior,
-                     "cauchy"    = seq(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()), length.out = 1024),
-                     "normal"    = seq(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()), length.out = 1024),
-                     "t.student" = seq(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()), length.out = 1024))
-    y      <- switch(input$prior,
-                     "cauchy"    = cauchy.prior(x.supp, location(), scale()),
-                     "normal"    = normal.prior(x.supp, location(), scale()),
-                     "t.student" = tstude.prior(x.supp, location(), scale(), df()))
+    x.supp <- switch(input$priorbys,
+                     "cauchy"    = seq(floor(location.bys() - 3.5*scale.bys()), ceiling(location.bys() + 3.5*scale.bys()), length.out = 1024),
+                     "normal"    = seq(floor(location.bys() - 3.5*scale.bys()), ceiling(location.bys() + 3.5*scale.bys()), length.out = 1024),
+                     "t.student" = seq(floor(location.bys() - 3.5*scale.bys()), ceiling(location.bys() + 3.5*scale.bys()), length.out = 1024))
+    y      <- switch(input$priorbys,
+                     "cauchy"    = cauchy.prior(x.supp, location.bys(), scale.bys()),
+                     "normal"    = normal.prior(x.supp, location.bys(), scale.bys()),
+                     "t.student" = tstude.prior(x.supp, location.bys(), scale.bys(), df.bys()))
     
     par(mar = c(4, .5, 1.5, 4.5))
     plot(x.supp, y, xlim = c(min(x.supp), max(x.supp)), ylim = c(0, 1.2*max(y)), ylab = "", xlab = "", bty = "n",
          las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", yaxt = "n", 
-         cex.main = 1.5, font.main = 1, 
-         main = switch(input$prior,
+         cex.main = 1.2, font.main = 1, 
+         main = switch(input$priorbys,
                        "cauchy"    = expression("Prior for " * delta * "  under " * H[1] * " (Cauchy)"),
                        "normal"    = expression("Prior for " * delta * "  under " * H[1] * " (Normal)"),
                        "t.student" = expression("Prior for " * delta * "  under " * H[1] * " (" * italic(t) * "-Student)")))
     axis(1, at = min(x.supp):max(x.supp))
     axis(4, las = 1)
-    mtext(expression(delta), 1, 2.5, cex = 1.5)
-    mtext("Density", 4, 3, cex = 1.5)
+    mtext(expression(delta), 1, 2.5, cex = 1.2)
+    mtext("Density", 4, 3, cex = 1.2)
     polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
-  } else if (input$H1hyp == "H1.smaller0")
+  } else if (input$H1hypbys == "H1.smaller0")
   {
-    x.abs  <- max(abs(c(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()))))
+    x.abs  <- max(abs(c(floor(location.bys() - 3.5*scale.bys()), ceiling(location.bys() + 3.5*scale.bys()))))
     x.supp <- seq(-x.abs, 0, length.out = 1024)
-    y      <- prior(x.supp) / .5
-    y.max  <- max(prior(c(-x.supp, x.supp)) / .5 )
+    y.area <- integrate(function(delta) prior.bys(delta), lower = -Inf, upper = 0)[[1]]
+    y      <- prior.bys(x.supp) / y.area
+    y.max  <- max(prior.bys(c(-x.supp, x.supp)) / y.area )
     
     par(mar = c(4, .5, 1.5, 4.5))
     plot(x.supp, y, xlim = c(-x.abs, 0), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
          las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", yaxt = "n", 
-         cex.main = 1.5, font.main = 1, 
-         main = switch(input$prior,
+         cex.main = 1.2, font.main = 1, 
+         main = switch(input$priorbys,
                        "cauchy"    = expression("Prior for " * delta * "  under " * H[1] * " (Cauchy-)"),
                        "normal"    = expression("Prior for " * delta * "  under " * H[1] * " (Normal-)"),
                        "t.student" = expression("Prior for " * delta * "  under " * H[1] * " (" * italic(t) * "-Student-)")))
     axis(1, at = min(x.supp):0)
     axis(4, las = 1)
-    mtext(expression(delta), 1, 2.5, cex = 1.5)
-    mtext("Density", 4, 3, cex = 1.5)
+    mtext(expression(delta), 1, 2.5, cex = 1.2)
+    mtext("Density", 4, 3, cex = 1.2)
     polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
   } else 
   {
-    x.abs  <- max(abs(c(floor(location() - 3.5*scale()), ceiling(location() + 3.5*scale()))))
+    x.abs  <- max(abs(c(floor(location.bys() - 3.5*scale.bys()), ceiling(location.bys() + 3.5*scale.bys()))))
     x.supp <- seq(0, x.abs, length.out = 1024)
-    y      <- prior(x.supp) / .5
-    y.max  <- max(prior(c(-x.supp, x.supp)) / .5 )
+    y.area <- integrate(function(delta) prior.bys(delta), lower = 0, upper = Inf)[[1]]
+    y      <- prior.bys(x.supp) / y.area
+    y.max  <- max(prior.bys(c(-x.supp, x.supp)) / y.area )
     
     par(mar = c(4, .5, 1.5, 4.5))
     plot(x.supp, y, xlim = c(0, x.abs), ylim = c(0, 1.2*y.max), ylab = "", xlab = "", bty = "n",
          las = 1, type = "l", col = "#005E3C", lwd = 2, xaxt = "n", yaxt = "n", 
-         cex.main = 1.5, font.main = 1, 
-         main = switch(input$prior,
+         cex.main = 1.2, font.main = 1, 
+         main = switch(input$priorbys,
                        "cauchy"    = expression("Prior for " * delta * "  under " * H[1] * " (Cauchy+)"),
                        "normal"    = expression("Prior for " * delta * "  under " * H[1] * " (Normal+)"),
                        "t.student" = expression("Prior for " * delta * "  under " * H[1] * " (" * italic(t) * "-Student+)")))
     axis(1, at = 0:max(x.supp))
     axis(4, las = 1)
-    mtext(expression(delta), 1, 2.5, cex = 1.5)
-    mtext("Density", 4, 3, cex = 1.5)
+    mtext(expression(delta), 1, 2.5, cex = 1.2)
+    mtext("Density", 4, 3, cex = 1.2)
     polygon(c(x.supp, rev(x.supp)), c(y, rep(0, 1024)), col = "#DCA55966", border = NA)
   }
   
