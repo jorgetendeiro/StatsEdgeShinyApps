@@ -843,7 +843,7 @@ output$intro.topic5.plot2 <- renderPlot({
        las = 1, type = "l", col = "#005E3C", lwd = 2, yaxt = "n", 
        cex.main = 1.5, font.main = 1, 
        main = expression("Prior for " * sigma^"2"))
-  mtext(expression(sigma^" 2"), 1, 3, cex = 1.5)
+  mtext(expression(sigma^"2"), 1, 3, cex = 1.5)
   polygon(c(x.supp, rev(x.supp)), c(y, rep(0, length(x.supp))), col = "#DCA55966", border = NA)
 })
 
