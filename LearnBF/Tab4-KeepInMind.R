@@ -529,9 +529,9 @@ kim.out.topic2.df1.reactive <- renderText({
   if (rv$H1hyp == "H1.diff0") 
   {
     tab <- rbind(tab, 
-                 c("", paste0("&#8226; $p(-0.2<\\delta<0.2)=", round(integrate(function(x) prior(x), -.2, .2)[[1]], 3), "$")), 
-                 c("", paste0("&#8226; $p(-0.5<\\delta<0.5)=", round(integrate(function(x) prior(x), -.5, .5)[[1]], 3), "$")), 
-                 c("", paste0("&#8226; $p(-0.8<\\delta<0.8)=", round(integrate(function(x) prior(x), -.8, .8)[[1]], 3), "$"))
+                 c("", paste0(HTML("&#8226;"), "$\\hspace{2mm}p(-0.2<\\delta<0.2)=", round(integrate(function(x) prior(x), -.2, .2)[[1]], 3), "$")), 
+                 c("", paste0(HTML("&#8226;"), "$\\hspace{2mm}p(-0.5<\\delta<0.5)=", round(integrate(function(x) prior(x), -.5, .5)[[1]], 3), "$")), 
+                 c("", paste0(HTML("&#8226;"), "$\\hspace{2mm}p(-0.8<\\delta<0.8)=", round(integrate(function(x) prior(x), -.8, .8)[[1]], 3), "$"))
     )
     colnames(tab) <- NULL
     
@@ -559,12 +559,12 @@ kim.out.topic2.df1.reactive <- renderText({
     den.H0 <- integrate(function(x) prior(x), -Inf, 0)[[1]]
     den.H1 <- integrate(function(x) prior(x),  0, Inf)[[1]]
     tab1   <- data.frame(c("", "", "", "", "", ""), 
-                         c(paste0("&#8226; $p(-0.2<\\delta<0)=", round(integrate(function(x) prior(x), -.2, 0)[[1]]/den.H0, 3), "$"),
-                           paste0("&#8226; $p(-0.5<\\delta<0)=", round(integrate(function(x) prior(x), -.5, 0)[[1]]/den.H0, 3), "$"),
-                           paste0("&#8226; $p(-0.8<\\delta<0)=", round(integrate(function(x) prior(x), -.8, 0)[[1]]/den.H0, 3), "$"),
-                           paste0("&#8226; $p(0<\\delta<0.2)=", round(integrate(function(x) prior(x), 0, .2)[[1]]/den.H1, 3), "$"),
-                           paste0("&#8226; $p(0<\\delta<0.5)=", round(integrate(function(x) prior(x), 0, .5)[[1]]/den.H1, 3), "$"),
-                           paste0("&#8226; $p(0<\\delta<0.8)=", round(integrate(function(x) prior(x), 0, .8)[[1]]/den.H1, 3), "$")),
+                         c(paste0(HTML("&#8226;"), "$\\hspace{2mm}p(-0.2<\\delta<0)=", round(integrate(function(x) prior(x), -.2, 0)[[1]]/den.H0, 3), "$"),
+                           paste0(HTML("&#8226;"), "$\\hspace{2mm}p(-0.5<\\delta<0)=", round(integrate(function(x) prior(x), -.5, 0)[[1]]/den.H0, 3), "$"),
+                           paste0(HTML("&#8226;"), "$\\hspace{2mm}p(-0.8<\\delta<0)=", round(integrate(function(x) prior(x), -.8, 0)[[1]]/den.H0, 3), "$"),
+                           paste0(HTML("&#8226;"), "$\\hspace{2mm}p(0<\\delta<0.2)=", round(integrate(function(x) prior(x), 0, .2)[[1]]/den.H1, 3), "$"),
+                           paste0(HTML("&#8226;"), "$\\hspace{2mm}p(0<\\delta<0.5)=", round(integrate(function(x) prior(x), 0, .5)[[1]]/den.H1, 3), "$"),
+                           paste0(HTML("&#8226;"), "$\\hspace{2mm}p(0<\\delta<0.8)=", round(integrate(function(x) prior(x), 0, .8)[[1]]/den.H1, 3), "$")),
                          stringsAsFactors = FALSE, 
                          check.names = FALSE
     )
@@ -590,12 +590,12 @@ kim.out.topic2.df1.reactive <- renderText({
     den.H0 <- integrate(function(x) prior(x), 0, Inf)[[1]]
     den.H1 <- integrate(function(x) prior(x), -Inf, 0)[[1]]
     tab1   <- data.frame(c("", "", "", "", "", ""), 
-                         c(paste0("&#8226; $p(-0.2<\\delta<0)=", round(integrate(function(x) prior(x), 0, .2)[[1]]/den.H0, 3), "$"),
-                           paste0("&#8226; $p(-0.5<\\delta<0)=", round(integrate(function(x) prior(x), 0, .5)[[1]]/den.H0, 3), "$"),
-                           paste0("&#8226; $p(-0.8<\\delta<0)=", round(integrate(function(x) prior(x), 0, .8)[[1]]/den.H0, 3), "$"),
-                           paste0("&#8226; $p(0<\\delta<0.2)=", round(integrate(function(x) prior(x), -.2, 0)[[1]]/den.H1, 3), "$"),
-                           paste0("&#8226; $p(0<\\delta<0.5)=", round(integrate(function(x) prior(x), -.5, 0)[[1]]/den.H1, 3), "$"),
-                           paste0("&#8226; $p(0<\\delta<0.8)=", round(integrate(function(x) prior(x), -.8, 0)[[1]]/den.H1, 3), "$")),
+                         c(paste0(HTML("&#8226;"), "$\\hspace{2mm}p(-0.2<\\delta<0)=", round(integrate(function(x) prior(x), 0, .2)[[1]]/den.H0, 3), "$"),
+                           paste0(HTML("&#8226;"), "$\\hspace{2mm}p(-0.5<\\delta<0)=", round(integrate(function(x) prior(x), 0, .5)[[1]]/den.H0, 3), "$"),
+                           paste0(HTML("&#8226;"), "$\\hspace{2mm}p(-0.8<\\delta<0)=", round(integrate(function(x) prior(x), 0, .8)[[1]]/den.H0, 3), "$"),
+                           paste0(HTML("&#8226;"), "$\\hspace{2mm}p(0<\\delta<0.2)=", round(integrate(function(x) prior(x), -.2, 0)[[1]]/den.H1, 3), "$"),
+                           paste0(HTML("&#8226;"), "$\\hspace{2mm}p(0<\\delta<0.5)=", round(integrate(function(x) prior(x), -.5, 0)[[1]]/den.H1, 3), "$"),
+                           paste0(HTML("&#8226;"), "$\\hspace{2mm}p(0<\\delta<0.8)=", round(integrate(function(x) prior(x), -.8, 0)[[1]]/den.H1, 3), "$")),
                          stringsAsFactors = FALSE, 
                          check.names = FALSE
     )
