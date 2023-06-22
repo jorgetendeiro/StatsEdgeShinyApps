@@ -124,6 +124,51 @@ output$kim.out.topic1.df1 <- renderUI({
   )
 })
 
+output$kim.out.topic1.part2 <- renderUI({
+  outtext <- paste0(HTML("&nbsp;&nbsp;&nbsp;"), em("$BF_{", substr(rv$BF10.01, 3, 4), "}=", round(BF(), 3), "$:", br(), " The ", HTML("<font color=\"#DCA559\"><b>observed data</b></font>"), " are $", round(BF(), 2), "$ times more likely in case $\\mathcal{H}_{", substr(rv$BF10.01, 3, 3), "}$", " is true than if ", "$\\mathcal{H}_{", substr(rv$BF10.01, 4, 4), "}$", " is true."), 
+                    br(), br(), 
+                    "This is an interpretation about the relative probability of the ", HTML("<font color=\"#DCA559\"><b>data</b></font>"), "!", 
+                    br(), br(), br(), 
+                    HTML("&nbsp;&nbsp;&nbsp;"), em("Posterior odds = $", round(post.odds(), 3), "$:", br(), " $\\textcolor{#DCA559}{\\mathbf{\\mathcal{H}_{", substr(rv$BF10.01, 3, 3), "}}}$ is $", round(post.odds(), 2), "$ times more likely than $\\textcolor{#DCA559}{\\mathbf{\\mathcal{H}_{", substr(rv$BF10.01, 4, 4), "}}}$, in light of the observed data."), 
+                    br(), br(), 
+                    "This is an interpretation about the relative probability of the ", HTML("<font color=\"#DCA559\"><b>hypotheses</b></font>"), "!", 
+                    br(), br(), 
+                    h4("Visual display"),
+                    "You can see how both the Bayes factor and the posterior odds relate as we manipulate the prior odds:"
+  )
+  tagList(
+    #withMathJax(),
+    HTML(outtext),
+    tags$script(HTML(js)),
+    tags$script(
+      async="",
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    )
+  )
+})
+
+output$kim.out.topic1.plot1 <- renderPlot({
+  prior.prob.H0.t1 <- seq(.01, .99, by = .01)
+  prior.odds.t1    <- if (rv$BF10.01 == "BF10") (1 - prior.prob.H0.t1) / prior.prob.H0.t1 else prior.prob.H0.t1 / (1 - prior.prob.H0.t1)
+  post.odds.t1     <- prior.odds.t1 * BF()
+  y.lims.log       <- sort( c(floor(log(min(post.odds.t1), 10)), ceiling(log(max(post.odds.t1), 10))) )
+  
+  par(mar = c(4, 5.5, 2, 1))
+  plot(NULL, xlim= c (0, 1), ylim = 10^y.lims.log, log = "y", las = 1, bty = "n", yaxs = "i", xaxs = "i", 
+       xlab = "", ylab = "", yaxt = "n", xaxt = "n")
+  abline(v = .5, lty = 3, col = "gray")
+  abline(h = BF(), lwd = 2, col = "#DCA559")
+  points(prior.prob.H0.t1[1:(100*input$priorH0.kim.t1)], 
+         post.odds.t1[1:(100*input$priorH0.kim.t1)], type = "l", col = "#005E3C", lwd = 2)
+  axis(1, at = seq(0, 1, by = .25), las = 1)
+  axis(2, at = 10^(y.lims.log[1]:y.lims.log[2]), las = 1, labels = prettyNum(10^(y.lims.log[1]:y.lims.log[2]), scientific = FALSE, digits = 16))
+  mtext(expression("Prior probability of " * H[0]), 1, 2.5)
+  if (rv$BF10.01 == "BF10") mtext(expression("Posterior odds"["10"]*" (log scale)"), 2, 3) else mtext(expression("Posterior odds"["01"]*" (log scale)"), 2, 3)
+  legend.text <- if (rv$BF10.01 == "BF10") bquote("BF"["10"] * " = " * .(round(BF(), 3))) else bquote("BF"["01"] * " = " * .(round(BF(), 3)))
+  legend("bottomright", legend = legend.text, lwd = 2, col = "#DCA559", 
+         inset=c(0,1), xpd = TRUE, horiz = TRUE, bty = "n", seg.len = 4)
+})
+
 output$kim.out.topic2.plot1 <- renderPlot({
   layout(matrix(c(1, 2), 1, 2, byrow = TRUE))
   
