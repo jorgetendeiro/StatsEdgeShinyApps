@@ -19,7 +19,7 @@ library(markdown)
 knitr::opts_chunk$set(echo = FALSE)
 
 # Load the functions allowing to compute the Bayes factors:
-source("BayesFactors.R")
+source("../learnBF_tutorial/BayesFactors.R")
 ```
 
 
