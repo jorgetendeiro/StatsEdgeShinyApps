@@ -950,6 +950,13 @@ ui <- fluidPage(
                                   br(), br(), 
                                   htmlOutput("kim.out.topic2.df1")
                  ),
+                 conditionalPanel("input.keepinmind == 'topic3'", 
+                                  br(), 
+                                  htmlOutput("kim.out.topic3.df1"), 
+                                  br(), 
+                                  uiOutput("kim.out.topic3.part2"), 
+                                  br(), br()
+                 ),
                  conditionalPanel("input.keepinmind == 'topic5'", 
                                   htmlOutput("kim.out.topic5.df1"), 
                                   uiOutput("kim.out.topic5.part2"), 
@@ -985,7 +992,7 @@ ui <- fluidPage(
                                   br(), 
                                   htmlOutput("kim.out.topic7.df4"), 
                                   uiOutput("kim.out.topic7.part3"), 
-                                  br()
+                                  br(), br()
                  ), 
                  width = 8
                ))), 
