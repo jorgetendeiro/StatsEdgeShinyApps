@@ -798,7 +798,7 @@ output$kim.out.topic5.part2 <- renderUI({
 })
 
 output$kim.out.topic5.part3 <- renderUI({
-  outtext <- paste0(br(), "The main message here is twofold:", HTML(renderMarkdown(text = "- Do not interpret the magnitude of the Bayes factor as the magnitude of the effect size (here, the standardized difference between the group means).\n - When reporting the results, always include some effect size measure together with the test's result. These two pieces of information _complement_ than _replace_ each other.\n")), br(), br(), 
+  outtext <- paste0(br(), "The main message here is twofold:", HTML(renderMarkdown(text = "- Do not interpret the magnitude of the Bayes factor as the magnitude of the effect size (here, the standardized difference between the group means).\n - When reporting the results, always include some effect size measure together with the test's result. These two pieces of information _complement_ than _replace_ each other.\n")), br(), 
                     h4("References"), 
                     div(style = "color: gray;", 
                         icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
