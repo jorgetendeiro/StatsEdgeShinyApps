@@ -406,7 +406,8 @@ ui <- fluidPage(
                                 column(5, align = 'center', plotOutput("intro.topic6.plot1")), 
                                 column(5, align = 'center', plotOutput("intro.topic6.plot2")), 
                                 column(1))
-             )
+             ), 
+             br(), br()
     ), 
     tabPanel("Bayesian t-test", 
              br(), 
@@ -941,14 +942,18 @@ ui <- fluidPage(
                                   fluidRow(
                                     column(2),
                                     column(8, align = 'center', plotOutput("kim.out.topic1.plot1")),  
-                                    column(2)),
+                                    column(2)), 
+                                  br(), br(), 
+                                  uiOutput("kim.out.topic1.part3"), 
                                   br(), br()
                  ), 
                  conditionalPanel("input.keepinmind == 'topic2'", 
                                   br(), 
                                   plotOutput("kim.out.topic2.plot1"), 
                                   br(), br(), 
-                                  htmlOutput("kim.out.topic2.df1")
+                                  htmlOutput("kim.out.topic2.df1"), 
+                                  uiOutput("kim.out.topic2.part2"), 
+                                  br(), br()
                  ),
                  conditionalPanel("input.keepinmind == 'topic3'", 
                                   br(), 

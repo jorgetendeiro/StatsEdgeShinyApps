@@ -305,7 +305,9 @@ output$introduction2b <- renderUI({
     br(), 
     "This is the distribution of all possible values of $t$ under repeated sampling, assuming that $\\mathcal{H}_0$ were indeed true.",
     br(), br(), 
-    "The ", em("critical region"), " (red color) consists of all the values of $t$ that would lead to rejecting $\\mathcal{H}_0$ at $\\alpha=", round(100*(input$alpha), 3), "\\%$ significance level. The probability of $t$ belonging to the critical region, under repeated sampling under $\\mathcal{H}_0$, is precisely equal to $\\alpha$.",
+    "The ", em("critical region"), " (red color) consists of all the values of $t$ that would lead to rejecting $\\mathcal{H}_0$ at $\\alpha=", round(100*(input$alpha), 3), "\\%$ significance level.", 
+    br(), 
+    "The probability of $t$ belonging to the critical region, under repeated sampling under $\\mathcal{H}_0$, is precisely equal to $\\alpha$.",
     br(), br(), 
     "Finally, the $p$-", em("value"), " (brown color) is the probability of observing a value of $t$ at least as extreme as the one we did observe, assuming $\\mathcal{H}_0$ is true.",
     br(), br(),
@@ -429,7 +431,7 @@ output$introduction4a <- renderUI({
     "In this case, the odds are 4-to-1 in favor of $\\mathcal{H}_0$, before considering the data.", 
     br(), br(), 
     h4("Posterior odds"), 
-    "Likewise, the posterior odds reflect the relative belief on either hypothesis, ", em("after"), " looking at the data.", 
+    "Likewise, the posterior odds reflect the relative belief on either hypothesis, but now ", em("after"), " looking at the data.", 
     br(), br(), 
     "So, if the results indicate that the posterior probability of $\\mathcal{H}_0$ is equal to 40% (and therefore the posterior probability of $\\mathcal{H}_1$ is equal to 60%), then the posterior odds equal $\\frac{p(\\mathcal{H}_0|D)}{p(\\mathcal{H}_1|D)} = \\frac{.4}{.6} = \\frac{2}{3}$.", 
     br(), 
@@ -465,9 +467,9 @@ output$introduction4b <- renderUI({
   outtext <- paste0(
     "Let us, for the time being only, focus on two specific hypotheses $\\mathcal{H}_0$ and $\\mathcal{H}_1$. This is not to say that we expect that one of them is ", em("true"), " (and worse, that we intend to use a hypotheses test to sort this out!). In fact, about ", em("always"), " we expect that both hypotheses will be false (recall George Box's adage stating that all model are wrong...). Now this may sound confusing: If the hypotheses are ", em("complementary"), " (e.g., $\\mathcal{H}_0:\\delta=0$ versus $\\mathcal{H}_1:\\delta\\not=0$), how can ", em("both"), " be wrong? The problem is that a hypothesis is typically not completely defined by simply specifying the parameter values being tested; one must further specify ", em("all"), " conditions of the test. For example, the independent samples $t$-test assumes that both populations are normally distributed. Now, how can we ever ", em("establish"), " that? The answer is: We cannot, never. Furthermore, in Bayesian statistics we must also specify prior distributions for all parameters. In case you ask yourself 'Which prior distribution is true in the population?', then you are bound to be disappointed: There is no such thing. There are no ", em("true"), " prior distributions. Prior distributions are a means for us to express how uncertain we are about the value of a parameter. Were we omnipotent we would have no such doubts. In other words: Prior distributions, as much as assumptions like normality and equal group variances, are abstractions imposed by the analyst (= you) that really reflect how much we do not know. Such assumptions cannot really be ", em("established"), " or ", em("proven"), " beyond a shadow of a doubt. We can ", em("test"), " for such things, but we must be modest about the inferences we can draw from such tests.", 
     br(), br(), 
-    "And that brings us back to $\\mathcal{H}_0$ and $\\mathcal{H}_1$. Again, we don't really thing that either is true. However, we may expect one of the two to outperform the other, in a ", em("predictive"), " sense: The observed data may be more likely under one hypothesis in comparison to the other. In this sense, there is value in hypotheses testing.", 
+    "And that brings us back to $\\mathcal{H}_0$ and $\\mathcal{H}_1$. Again, we don't really think that either is true. However, we may expect one of the two to outperform the other, in a ", em("predictive"), " sense: The observed data may be more likely under one hypothesis in comparison to the other. In this sense, there is value in hypotheses testing.", 
     br(), br(), 
-    "Thus, and for the time being only, let us entertain $\\mathcal{H}_0$ and $\\mathcal{H}_1$ as two very interesting hypotheses that could have generated the observed data. The term 'htpothesis' is probably better replaced by the term 'model'. What we are testing against each other is two models. Each model specifies the possible parameter values being considered, the distribution of the data conditional on those parameters (i.e., known as the likelihood function, like the normality in the case of the $t$-test), and all prior distributions (one per parameter).", 
+    "Thus, and for the time being only, let us entertain $\\mathcal{H}_0$ and $\\mathcal{H}_1$ as two very interesting hypotheses that could have generated the observed data. The term 'htpothesis' is probably better replaced by the term 'model'. What we are testing against each other is two models. Each model specifies the possible parameter values being considered, the distribution of the data conditional on those parameters (i.e., the likelihood function, like the normality in the case of the $t$-test), and all prior distributions (one per parameter).", 
     br(), br(), 
     "The Bayes factor can be derived from the ", tagList("", a("Bayes theorem", href="https://en.wikipedia.org/wiki/Bayes%27_theorem", target="_blank")), ", $$\\overset{\\text{posterior}}{\\overbrace{p(\\mathcal{H}_i|D)}} = \\frac{\\overset{\\text{prior}}{\\overbrace{p(\\mathcal{H}_i)}}\\ \\overset{\\text{marginal likelihood}}{\\overbrace{p(D|\\mathcal{H}_i)}}}{\\underset{\\text{evidence}}{\\underbrace{p(D)}}}, \\text{ for } i=0, 1.$$", 
     br(), 
@@ -477,7 +479,7 @@ output$introduction4b <- renderUI({
     br(), 
     "Now we derive the Bayes factor from the Bayes theorem.", 
     br(), 
-    "Consider two equations from the formula above, one when $i=0$ and other when $i=1$.", 
+    "Consider the two equations from the formula above, one when $i=0$ and other when $i=1$.", 
     br(), 
     "Dividing the equations member by member we have that 
       $$\\frac{p(\\mathcal{H}_0|D)}{p(\\mathcal{H}_1|D)} = \\frac{p(\\mathcal{H}_0)p(D|\\mathcal{H}_0) \\bigg/ p(D)}{p(\\mathcal{H}_1)p(D|\\mathcal{H}_1) \\bigg/ p(D)}.$$ Do note that $p(D)$ is the same for both hypotheses (namely, $p(D)=p(\\mathcal{H}_0)p(D|\\mathcal{H}_0) + p(\\mathcal{H}_1)p(D|\\mathcal{H}_1)$; this is due to the ", tagList("", a("law of total probability", href="https://en.wikipedia.org/wiki/Law_of_total_probability", target="_blank")), ").", 
@@ -510,7 +512,7 @@ output$introduction5a <- renderUI({
     br(), 
     "Prior distributions are used directly in the computation of the Bayes factor.", 
     br(), 
-    "Different prior distributions ultimately instantiate different hypotheses (even of the set of parameter values being tested remains the same!), and this will lead to different Bayes factor values.", 
+    "Different prior distributions ultimately instantiate different hypotheses (even if the set of parameter values being tested remains the same!), and this will lead to different Bayes factor values.", 
     br(), br(), 
     "For this reason, it does not suffice to simply say something like \"$\\mathcal{H}_1$ is the hypothesis that $\\delta\\not=0$\".", 
     br(), 
@@ -532,9 +534,9 @@ output$introduction5a <- renderUI({
     "Let's discuss the options available for both parameters (standardized effect size $\\delta$ and the standard deviation $\\sigma$).", 
     br(), br(),
     h4(em("Prior for $\\delta$")), 
-    "For point hypothesis such as $\\mathcal{H}_0: \\delta=0$, there is really only one possible prior for $\\delta$ &#8212; the distribution assigning all probability to the point ($0$ in this case).", 
+    "For a point hypothesis such as $\\mathcal{H}_0: \\delta=0$, there is really only one possible prior for $\\delta$ &#8212; the distribution assigning all probability to the point ($0$ in this case).", 
     br(), br(), 
-    "Choosing a prior for $\\delta$ under one-tailed or two-tailed hypotheses is notoriously more difficult task.", 
+    "Choosing a prior for $\\delta$ under one-tailed or two-tailed hypotheses is a notoriously more difficult task.", 
     br(), 
     "There is an infinity of possible distributions that we could choose from.", 
     br(), br(), 
@@ -560,7 +562,9 @@ output$introduction5a <- renderUI({
 output$introduction5b <- renderUI({
   outtext <- paste0(
     h4(em("Prior for $\\sigma$")), 
-    "Parameter $\\sigma$ is common to both hypotheses $\\mathcal{H}_0$ and $\\mathcal{H}_1$. In such situations, it is common to choose a common $\\sigma$ prior under both hypotheses. The idea is that such priors purportedly have a very little influence on the Bayes factor (see, e.g., Rouder et al., 2009).", 
+    "Parameter $\\sigma$ is common to both hypotheses $\\mathcal{H}_0$ and $\\mathcal{H}_1$. In such situations, it is common to choose a common $\\sigma$ prior under both hypotheses.", 
+    br(), 
+    "The idea is that such priors purportedly have a very little influence on the Bayes factor (see, e.g., Rouder et al., 2009).", 
     br(), br(), 
     "In this app we use a common default prior for $\\sigma$ (for $\\sigma^2$, in fact), also used in software such as ", a("JASP", href="https://jasp-stats.org/", target="_blank") , " and R's ", a("BayesFactor", href="https://cran.r-project.org/web/packages/BayesFactor/vignettes/manual.html", target="_blank"), " package.", 
     br(), 
@@ -603,9 +607,9 @@ output$introduction5c <- renderUI({
 
 output$introduction5d <- renderUI({
   outtext <- paste0(
-    "The <font color=\"#DCA559\"><b>marginal likelihood</b></font> for $\\mathcal{H}_i$ is given by $$p(D|\\mathcal{H}_i) = \\int_{\\Theta_i}\\underbrace{p(D|\\theta_i,\\mathcal{H}_i)}_{\\text{likelihood}}\\,\\underbrace{p(\\theta_i|\\mathcal{H}_i)}_{\\text{prior}}d\\theta_i.$$ The first term is the ", em("likelihood function"), " (for the $t$-test, the normal distribution), evaluated for the observed data $D$.", 
+    "The <font color=\"#DCA559\"><b>marginal likelihood</b></font> for $\\mathcal{H}_i$ is given by $$p(D|\\mathcal{H}_i) = \\int_{\\Theta_i}\\underbrace{p(D|\\theta_i,\\mathcal{H}_i)}_{\\text{likelihood}}\\,\\underbrace{p(\\theta_i|\\mathcal{H}_i)}_{\\text{prior}}d\\theta_i.$$ The first term under the integral is the ", em("likelihood function"), " (for the $t$-test, the normal distribution), evaluated for the observed data $D$.", 
     br(), 
-    "The second term is the joint ", em("prior distribution"), " for all parameters from the likelihood function (for the Bayesian $t$-test, $\\delta$ and $\\sigma$). ", 
+    "The second term under the integral is the joint ", em("prior distribution"), " for all parameters from the likelihood function (for the Bayesian $t$-test, $\\delta$ and $\\sigma$). ", 
     br(), 
     "The parameters of the likelihood function are jointly denoted by vector $\\theta_i$. Thus, for this $t$-test in particular, $\\theta_i=(\\delta, \\sigma)$.", 
     br(), 
@@ -629,7 +633,9 @@ output$introduction5d <- renderUI({
 
 output$introduction6 <- renderUI({
   outtext <- paste0(
-    "NHBT and its Bayes factor is not just a simple replacement to NHST and its $p$-value. The Bayes factor and the $p$-value are different statistical quantities, with different properties and allowing for different types of conclusions. For users of the $p$-value who are now trying to transition towards the Bayes factor, this cannot be stressed enough: ", em("The Bayes factor must be learned and appreciated by its own merits and pitfals."), 
+    "NHBT and its Bayes factor is not just a simple replacement to NHST and its $p$-value. The Bayes factor and the $p$-value are different statistical quantities, with different properties and allowing for different types of conclusions.", 
+    br(), 
+    "For users of the $p$-value who are now trying to transition towards the Bayes factor, this cannot be stressed enough: ", em("The Bayes factor must be learned and appreciated by its own merits and pitfals."), 
     br(), br(), 
     "Here we highlight one clear difference between the $p$-value and the Bayes factor:", 
     br(), 
@@ -637,7 +643,9 @@ output$introduction6 <- renderUI({
     br(), br(), 
     "Let's assume that $\\mathcal{H}_0$ is ", em("true"), ".", 
     br(), br(), 
-    "It is ", tagList("", a("well known", href="https://statproofbook.github.io/P/pval-h0.html", target="_blank")), " that, in this case, the $p$-value is uniformly distributed in the $(0,1)$ interval, across repeated sampling. In other words, the p-value is equally likely to assume any value between 0 and 1. At significance level $\\alpha$, it is therefore expected that the test will turn out non-significant (i.e., $p>\\alpha$) with probability $(1-\\alpha)$, irrespective of the sample size.", 
+    "It is ", tagList("", a("well known", href="https://statproofbook.github.io/P/pval-h0.html", target="_blank")), " that, in this case, the $p$-value is uniformly distributed in the $(0,1)$ interval, across repeated sampling.", 
+    br(), 
+    "In other words, the $p$-value is equally likely to assume any value between 0 and 1. At significance level $\\alpha$, it is therefore expected that the test will turn out non-significant (i.e., $p>\\alpha$) with probability $(1-\\alpha)$, irrespective of the sample size.", 
     br(), 
     "And in case the observed means are ", em("exactly"), " equal to each other, then the $p$-value will be exactly equal to 1, thus the test outcome will always be non-significant.", 
     br(), 
@@ -645,12 +653,17 @@ output$introduction6 <- renderUI({
     br(), br(), 
     "The Bayes factor is different from the $p$-value in this regard. ", em("For a given alternative hypothesis $\\mathcal{H}_1$"), ", large values of $BF_{01}$ do provide relative evidence favoring $\\mathcal{H}_0$ over ", em("the particular alternative hypothesis $\\mathcal{H}_1$"), " that was used in the testing procedure.", 
     br(), br(), 
-    "The app below gives an idea about how the Bayes factor varies, in an idealized setting. The two group means are fixed and ", em("exactly"), " equal to each other at each sample size value (rather arbitrarily we used a common mean of 0 for both groups). Both group standard deviations are equal to 1, and we use a standard normal prior distribution of the effect size $\\delta$. You can see how the $p$-value and the Bayes factor behave as the sample size increases."
+    "The app below gives an idea about how the Bayes factor varies, in an idealized setting.", 
+    br(), 
+    "The two group means are fixed and ", em("exactly"), " equal to each other at each sample size value (rather arbitrarily we used a common mean of 0 for both groups). Both group standard deviations are equal to 1, and we use a standard normal prior distribution of the effect size $\\delta$.", 
+    br(), 
+    "You can see how the $p$-value and the Bayes factor behave as the sample size increases."
   )
   
   tagList(h3(strong("Supporting $\\mathcal{H}_0$")), 
           br(), 
           HTML(outtext), 
+          br(), 
           tags$script(HTML(js)),
           tags$script(
             async="",

@@ -31,13 +31,29 @@ output$kim.out <- renderUI({
            outtext <- paste0("Let's look again at the Bayesian testing outcome:")
          }, 
          topic4 = {
-           outtext <- paste0("We often take a hypothesis such as $\\mathcal{H}_0:\\mu_A=\\mu_B$ to stand for the ", em("absence"), " of an effect (here, 'effect' means a difference between the two population means), and a hypothesis such as $\\mathcal{H}_1:\\mu_A\\not=\\mu_B$ to stand for the ", em("presence"), " of an effect.", br(), br(), "Furthermore, practitioners seem to be often tempted to use the Bayes factor to establish the presence (or lack thereof) of such an effect.", br(), br(), "As it happens, there seems to be a lot of misunderstanding going on here.", br(), "Do notice the following:", br(), br(), HTML(renderMarkdown(text = "1. We should not confuse a _research_ hypothesis with a _statistical_ hypothesis.<br><br>A _research_ hypothesis is a scientific claim. It reflects a theory that we wish to challenge.<br>A _statistical_ hypothesis, on the other hand, is a precise mathematical statement that should reflect some property of the population, assuming the research hypothesis were in fact correct.<br><br>Hypotheses testing is all about the _statistical_ hypotheses.<br>In fact, a theory such as 'an effect is absent' is a _research_ hypothesis, whereas a null hypothesis is only a _statistical_ hypothesis.<br><br>We cannot really test research hypotheses directly simply because we do not have the ability to fully understand all the intricacies of the real world problem under study.<br> Statistical hypotheses are an easy surrogate for research hypotheses.<br><br>On its own, this distinction between research and statistical hypotheses should preclude researchers from attempting to use _p_ values or Bayes factors as a tool to _establish_ the presence or absence of an effect.<br> Much more modestly, all we should derive from hypotheses testing is relative evidence between two competing hypotheses.<br><br>  \n2. The Bayes factor is only a number.<br><br> It would be quite strange to expect that from one sample-based number one could go as far as _establishing_ that a theory essentially holds.<br><br>Think of hypotheses testing as a crime investigation where the detective (= you) will hardly ever have the chance to find the culprit with 100% certainty (= most researched effects are difficult to conceptualize and are assessed indirectly). Now, the detective's work is still very valuable! He or she may collect sufficiently compelling evidence that may convince a judge (= the scientific community) to frame the prime suspect. The court may end up deciding that there is evidence beyond reasonable doubt (= the scientific community endorses the new finding), but the fact is that it is not _proven_ that the prime suspect did commit the crime. And as we all know, it is unfortunately the case that, sometimes many years later, convicted persons are deemed innocent in light of newly acquired information (= new theories overthrow old theories as time goes by).\n")), br(), br(), "We strong suggest that special care is taken when choosing the wording used to report findings. For example, it is best to avoid saying something like '(...) from the test we conclude that there is no effect ($BF_{01} = 11.2$)' or even '(...) we found an effect between both groups ($BF_{10}=11.2$)'.")
+           outtext <- paste0("We often take a hypothesis such as $\\mathcal{H}_0:\\mu_A=\\mu_B$ to stand for the ", em("absence"), " of an effect (here, 'effect' means a difference between the two population means), and a hypothesis such as $\\mathcal{H}_1:\\mu_A\\not=\\mu_B$ to stand for the ", em("presence"), " of an effect.", br(), br(), "Furthermore, practitioners seem to be often tempted to use the Bayes factor to establish the presence (or lack thereof) of such an effect (Tendeiro et al., 2023; Wong et al., 2022).", br(), br(), "As it happens, there seems to be a lot of misunderstanding going on here.", br(), "Do notice the following:", br(), br(), HTML(renderMarkdown(text = "1. We should not confuse a _research_ hypothesis with a _statistical_ hypothesis.<br><br>A _research_ hypothesis is a scientific claim. It reflects a theory that we wish to challenge.<br>A _statistical_ hypothesis, on the other hand, is a precise mathematical statement that should reflect some property of the population, assuming the research hypothesis were in fact correct.<br><br>Hypotheses testing is all about the _statistical_ hypotheses.<br>In fact, a theory such as 'an effect is absent' is a _research_ hypothesis, whereas a null hypothesis is only a _statistical_ hypothesis.<br><br>We cannot really test research hypotheses directly simply because we do not have the ability to fully understand all the intricacies of the real world problem under study.<br> Statistical hypotheses are an easy surrogate for research hypotheses.<br><br>On its own, this distinction between research and statistical hypotheses should preclude researchers from attempting to use \\$p\\$-values or Bayes factors as a tool to _establish_ the presence or absence of an effect.<br> Much more modestly, all we should derive from hypotheses testing is relative evidence between two competing hypotheses.<br><br>  \n2. The Bayes factor is only a number.<br><br> It would be quite strange to expect that from one sample-based number one could go as far as _establishing_ that a theory essentially holds.<br><br>Instead, think of hypotheses testing as a crime investigation where the detective (= you) will hardly ever have the chance to find the culprit with 100% certainty (= most researched effects are difficult to conceptualize and are assessed indirectly). Now, the detective's work is still very valuable! He or she may collect sufficiently compelling evidence that may convince a judge (= the scientific community) to frame the prime suspect. The court may end up deciding that there is evidence beyond reasonable doubt (= the scientific community endorses the new finding), but the fact is that it is not _proven_ that the prime suspect did commit the crime. And as we all know, it is unfortunately the case that, sometimes many years later, convicted persons are deemed innocent in light of newly acquired information (= new theories overthrow old theories as time goes by).\n")), br(), "We strong suggest that special care is taken when choosing the wording used to report findings.", br(), "For example, it is best to avoid saying something like '(...) from the test we conclude that there is no effect ($BF_{01} = 11.2$)' or even '(...) we found an effect between both groups ($BF_{10}=11.2$)'.", br(), br(), 
+                             h4("References"), 
+                             div(style = "color: gray;", 
+                                 icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
+                                 br(), 
+                                 icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank"), 
+                                 br(), 
+                                 icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. Preprint, ", a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank")
+                             ))
          }, 
          topic5 = {
            outtext <- paste0("The Bayes factor is ", em("not"), " an effect size measure. This can be easily checked by manipulating some inputs on the left-side menu, as follows:", HTML(renderMarkdown(text = "- Make sure that the two group means are different from each other, even if only by 0.1.\n- Try increasing the sample size of both groups.\n")), "You can compare the value of the Bayes factor to that of Cohen's $d$ (which here is given by $d=\\frac{\\overline{X}_1-\\overline{X}_2}{\\sqrt{(\\hat{\\sigma}_1^2+\\hat{\\sigma}_2^2)/2}}$):")
          }, 
          topic6 = {
-           outtext <- paste0("A Bayes factor close to 1 implies that the observed data are about equally likely under either $\\mathcal{H}_0$ or $\\mathcal{H}_1$.", br(), "In other words, the observed data do not help to distinguish between the predictive ability of the two competing hypotheses.", br(), br(), "In such cases, we should not make the mistake of concluding that there is evidence in favor of the 'no effect' null model, when $\\mathcal{H}_0$ is the point null hypothesis. The fallacy would be of reasoning something like this: 'Since the test outcome is inconclusive, then maybe the null hypothesis holds after all'. The common fallacy of drawing support in favor of $\\mathcal{H}_0$ from a nonsignificant frequentist test result is a good analogy here.", br(), br(), "In short: From ", em("absence of evidence"), " (i.e., Bayes factor of about 1) one should not infer that there is ", em("evidence of absence"), " (i.e., $\\mathcal{H}_0$ is more supported than $\\mathcal{H}_1$).")
+           outtext <- paste0("A Bayes factor close to 1 implies that the observed data are about equally likely under either $\\mathcal{H}_0$ or $\\mathcal{H}_1$.", br(), "In other words, the observed data do not help to distinguish between the predictive ability of the two competing hypotheses.", br(), br(), "In such cases, we should not make the mistake of concluding that there is evidence in favor of the 'no effect' null model, when $\\mathcal{H}_0$ is the point null hypothesis.", br(), "The fallacy would be of reasoning something like this: 'Since the test outcome is inconclusive, then maybe the null hypothesis holds after all'.", br(), "The common fallacy of drawing support in favor of $\\mathcal{H}_0$ from a nonsignificant frequentist test result is a good analogy here.", br(), br(), "In short: From ", em("absence of evidence"), " (i.e., Bayes factor of about 1) one should not infer that there is ", em("evidence of absence"), " (i.e., $\\mathcal{H}_0$ is more supported than $\\mathcal{H}_1$).", br(), br(), 
+                             h4("References"), 
+                             div(style = "color: gray;", 
+                                 icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
+                                 br(), 
+                                 icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank"), 
+                                 br(), 
+                                 icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. Preprint, ", a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank")
+                             ))
          }, 
          topic7 = {
            outtext <- paste0("The Bayes factor is just a non-negative real number. But how to ", em("interpret"), " this number is not trivial.", br(), "For example, what values of $BF_{10}$ should be considered as weak, moderate, or strong evidence in favor of $\\mathcal{H}_1$ over $\\mathcal{H}_0$?", br(), br(), "Several qualitative classification systems do exist; below you can see three popular options:")
@@ -61,9 +77,9 @@ kim.out.topic1.df1.reactive <- renderText({
     paste0("$", rv$priorprob1/100, "$"), 
     paste0("$\\frac{", if (rv$BF10.01 == "BF10") rv$priorprob1/100 else rv$priorprob0/100, "}{", if (rv$BF10.01 == "BF10") rv$priorprob0/100 else rv$priorprob1/100, "}=", round(prior.odds(), 3), "$"), 
     "", 
-    paste0("$", round(BF(), 3), "$"), 
+    paste0("$\\textcolor{#DCA559}{\\large\\textbf{", round(BF(), 3), "}}$"), 
     "", 
-    paste0("$", round(post.odds(), 3), "$"), 
+    paste0("$\\textcolor{#DCA559}{\\large\\textbf{", round(post.odds(), 3), "}}$"), 
     stringsAsFactors = FALSE, 
     check.names = FALSE, 
     row.names = NULL
@@ -141,6 +157,28 @@ output$kim.out.topic1.plot1 <- renderPlot({
   legend.text <- if (rv$BF10.01 == "BF10") bquote("BF"["10"] * " = " * .(round(BF(), 3))) else bquote("BF"["01"] * " = " * .(round(BF(), 3)))
   legend("bottomright", legend = legend.text, lwd = 2, col = "#DCA559", 
          inset=c(0,1), xpd = TRUE, horiz = TRUE, bty = "n", seg.len = 4)
+})
+
+output$kim.out.topic1.part3 <- renderUI({
+  outtext <- paste0(br(), br(), 
+                    h4("References"), 
+                    div(style = "color: gray;", 
+                        icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
+                        br(), 
+                        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank"), 
+                        br(), 
+                        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. Preprint, ", a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank")
+                    )
+  )
+  tagList(
+    #withMathJax(),
+    HTML(outtext),
+    tags$script(HTML(js)),
+    tags$script(
+      async="",
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    )
+  )
 })
 
 output$kim.out.topic2.plot1 <- renderPlot({
@@ -605,6 +643,28 @@ output$kim.out.topic2.df1 <- renderUI({
   )
 })
 
+output$kim.out.topic2.part2 <- renderUI({
+  outtext <- paste0(br(), br(), 
+                    h4("References"), 
+                    div(style = "color: gray;", 
+                        icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
+                        br(), 
+                        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank"), 
+                        br(), 
+                        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. Preprint, ", a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank")
+                    )
+  )
+  tagList(
+    #withMathJax(),
+    HTML(outtext),
+    tags$script(HTML(js)),
+    tags$script(
+      async="",
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    )
+  )
+})
+
 kim.out.topic3.df1.reactive <- renderText({
   distH0 <- switch(rv$prior,
                    "cauchy"    = paste0("$\\text{Cauchy}", if (rv$H1hyp == 'H1.larger0') '^-' else if (rv$H1hyp == 'H1.smaller0') '^+', "\\text{ (location = }", location(), "\\text{, scale = }", scale(), "\\text{)}$"),
@@ -677,13 +737,13 @@ output$kim.out.topic3.part2 <- renderUI({
                     br(), br(), 
                     HTML("&nbsp;&nbsp;&nbsp;"), "Keep changing between $\\mathcal{H}_1:\\delta\\not=0$ and $\\mathcal{H}_1:\\delta=\\delta_1$.", 
                     br(), 
-                    HTML("&nbsp;&nbsp;&nbsp;"), "You can play with the prior options while either $\\mathcal{H}_1$.", 
+                    HTML("&nbsp;&nbsp;&nbsp;"), "You can play with the prior options for either $\\mathcal{H}_1$.", 
                     br(), br(), 
                     "You will see that the Bayes factor keeps changing, as it should.", 
                     br(), 
                     "This happens ", em("regardless of the fact that the null hypothesis, $\\mathcal{H}_0:\\delta=0$, never changes!"), 
                     br(), 
-                    "It thus makes little to simply speak about the Bayes factor as '", em("providing evidence in favor/against"), " $\\mathcal{H}_0$'.\n", 
+                    "It thus makes little sense to simply speak about the Bayes factor as '", em("providing evidence in favor/against"), " $\\mathcal{H}_0$'.\n", 
                     br(), br(), 
                     h4("See for yourself (variant)"), 
                     "Here is an extreme variant of the previous example:", 
@@ -696,13 +756,22 @@ output$kim.out.topic3.part2 <- renderUI({
                     br(), br(), 
                     "Humm, what is happening here?", 
                     br(), br(), 
-                    "Although $\\mathcal{H}_0$ is the same, changing its testing counterpart can lead to dramatic changes of the evidence against $\\mathcal{H}_0$. ", 
+                    "Although $\\mathcal{H}_0$ is the same, changing its testing counterpart can lead to dramatic changes of the evidence against $\\mathcal{H}_0$: ", 
                     br(), br(), 
                     HTML(renderMarkdown(text = "- For a two-tailed alternative hypothesis, the relative evidence against \\$\\mathcal{H}_0\\$ is overwhelming.\n- For a point alternative hypothesis, the relative evidence against \\$\\mathcal{H}_0\\$ gets weaker and weaker as the alternative point approaches 0.\n")), 
                     br(), 
                     "In other words: There is no absolute evidence against $\\mathcal{H}_0$. It all depends on what $\\mathcal{H}_0$ is being tested against.", 
                     br(),
-                    "This principle is relatively general in hypotheses testing, and in models comparison in general."
+                    "This principle is relatively general in hypotheses testing, and in models comparison in general.", 
+                    br(), br(), 
+                    h4("References"), 
+                    div(style = "color: gray;", 
+                        icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
+                        br(), 
+                        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank"), 
+                        br(), 
+                        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. Preprint, ", a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank")
+                    )
   )
   tagList(
     #withMathJax(),
@@ -729,7 +798,15 @@ output$kim.out.topic5.part2 <- renderUI({
 })
 
 output$kim.out.topic5.part3 <- renderUI({
-  outtext <- paste0(br(), "The main message here is twofold:", HTML(renderMarkdown(text = "- Do not interpret the magnitude of the Bayes factor as the magnitude of the effect size (here, the standardized difference between the group means).\n - When reporting the results, always include some effect size measure together with the test's result. These two pieces of information _complement_ than _replace_ each other.\n")))
+  outtext <- paste0(br(), "The main message here is twofold:", HTML(renderMarkdown(text = "- Do not interpret the magnitude of the Bayes factor as the magnitude of the effect size (here, the standardized difference between the group means).\n - When reporting the results, always include some effect size measure together with the test's result. These two pieces of information _complement_ than _replace_ each other.\n")), br(), br(), 
+                    h4("References"), 
+                    div(style = "color: gray;", 
+                        icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
+                        br(), 
+                        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank"), 
+                        br(), 
+                        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. Preprint, ", a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank")
+                    ))
   tagList(
     #withMathJax(),
     HTML(outtext),
@@ -802,7 +879,15 @@ output$kim.out.topic5.plot2 <- renderPlot({
 })
 
 output$kim.out.topic7.part3 <- renderUI({
-  outtext <- paste0("Furthermore, the discretization shown in the tables above is rather arbitrary. There is nothing really special about the values shown other than some sort of practical convenience.", br(), br(), "Finally, what some consider to be 'substantial' may be deemed uninsteresting or perhaps very relevant by others, depending on the research field or the problem under consideration. For instance, a Bayes factor as little as 4 or 5 may be very relevant in case it pertains to relative evidence is favor of a completely new phenomenon, whereas the same Bayes factor may be considered uninsteresting if it reflects support for a widely established theory.", br(), br(), "In general, we caution against a mechanical use of such labels.", br(), "Instead, we favor explaining the amount of evidence displayed by the Bayes factor in the context of the research being conducted.")
+  outtext <- paste0("Furthermore, the discretization shown in the tables above is rather arbitrary.", br(), "There is nothing really special about the values shown other than some sort of practical convenience.", br(), br(), "Finally, what some consider to be 'substantial' may be deemed uninsteresting or perhaps very relevant by others, depending on the research field or the problem under consideration.", br(), "For instance, a Bayes factor as little as 4 or 5 may be very relevant in case it pertains to relative evidence is favor of a completely new phenomenon, whereas the same Bayes factor may be considered uninsteresting if it reflects support for a widely established theory.", br(), br(), "In general, we caution against a mechanical use of such labels.", br(), "Instead, we favor explaining the amount of evidence displayed by the Bayes factor in the context of the research being conducted.", br(), br(), 
+                    h4("References"), 
+                    div(style = "color: gray;", 
+                        icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
+                        br(), 
+                        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank"), 
+                        br(), 
+                        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. Preprint, ", a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank")
+                    ))
   tagList(
     #withMathJax(),
     HTML(outtext),
