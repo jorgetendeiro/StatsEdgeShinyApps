@@ -108,11 +108,15 @@ BF.df1B.reactive <- renderText({
       "$\\textbf{95% credible interval for }\\delta\\textbf{ under }\\mathcal{H}_1\\hspace{5mm}$"
       ), 
     c(
-      paste0("$\\mathcal{H}_0: \\delta=0\\quad\\text{vs}\\quad", 
+      paste0(switch(rv$H1hyp,
+                    "H1.diff0"    = "$\\mathcal{H}_0: \\delta=0\\quad\\text{vs}\\quad",
+                    "H1.larger0"  = paste0("$\\mathcal{H}_1: \\delta\\leq 0\\quad\\text{vs}\\quad"),
+                    "H1.smaller0" = paste0("$\\mathcal{H}_1: \\delta\\geq 0\\quad\\text{vs}\\quad"),
+                    "H1.point"    = "$\\mathcal{H}_0: \\delta=0\\quad\\text{vs}\\quad"), 
              switch(rv$H1hyp,
                     "H1.diff0"    = "\\mathcal{H}_1: \\delta\\not=0$",
                     "H1.larger0"  = "\\mathcal{H}_1: \\delta>0$",
-                    "H1.smaller0" = "\\mathcal{H}_1: \\delta<0$",
+                    "H1.smaller0" = paste0("\\mathcal{H}_1: \\delta", HTML("&#60;"), "0$"),
                     "H1.point"    = paste0("\\mathcal{H}_1: \\delta=", rv$H1pointslide, "$"))
       ), 
       dist,
