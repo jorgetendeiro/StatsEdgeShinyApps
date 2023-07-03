@@ -338,7 +338,7 @@ output$introduction2b <- renderUI({
     br(), br(),
     "Just to mention a few examples (for an extended list see Goodman, 2008; Greenland et al., 2016), do observe that the following interpretations of the $p$-value are ", em("all incorrect:"),
     br(), br(),
-    HTML(renderMarkdown(text = "1. The probability of \\$\\mathcal{H}_0\\$ being true is equal to \\$p\\$.\n 1. The probability of \\$\\mathcal{H}_1\\$ being true is equal to \\$(1-p)\\$.\n 1. A non-significant test result implies that \\$\\mathcal{H}_0\\$ is true.\n 1. A significant test result implies that \\$\\mathcal{H}_1\\$ is false.\n 1. A non-significant test result implies that the effect size is small.\n 1. A significant test result implies that the effect size is large.\n 1. The probability that a significant test result is a false positive is equal to \\$\\alpha\\$.")),
+    HTML(renderMarkdown(text = "1. The probability of \\$\\mathcal{H}_0\\$ being true is equal to \\$p\\$.\n 1. The probability of \\$\\mathcal{H}_1\\$ being true is equal to \\$(1-p)\\$.\n 1. A non-significant test result implies that \\$\\mathcal{H}_0\\$ is true.\n 1. A significant test result implies that \\$\\mathcal{H}_1\\$ is true.\n 1. A non-significant test result implies that the effect size is small.\n 1. A significant test result implies that the effect size is large.\n 1. The probability that a significant test result is a false positive is equal to \\$\\alpha\\$.")),
     "The main conclusion here is that NHST and its $p$-value are rather elusive and hard to understand concepts.",
     br(),
     "This is really problematic since most science relies on hypothesis testing.",
@@ -395,7 +395,7 @@ output$introduction3 <- renderUI({
     br(), 
     "This is related to what is actually required to compute a Bayes factor.", 
     br(), 
-    "We further explain this when we discuss ", em("prior distributions"), " (", strong("Introduction"), ", section 5)."
+    "We further explain this when we discuss ", em("prior distributions"), " (", HTML("<font color=\"#DCA559\"><b>Introduction</b></font>"), ", section 5)."
   )
   
   tagList(h3(strong("The Bayes factor")), 
@@ -467,15 +467,15 @@ output$introduction4b <- renderUI({
   outtext <- paste0(
     "Let us, for the time being only, focus on two specific hypotheses $\\mathcal{H}_0$ and $\\mathcal{H}_1$. This is not to say that we expect that one of them is ", em("true"), " (and worse, that we intend to use a hypotheses test to sort this out!). In fact, about ", em("always"), " we expect that both hypotheses will be false (recall George Box's adage stating that all model are wrong...). Now this may sound confusing: If the hypotheses are ", em("complementary"), " (e.g., $\\mathcal{H}_0:\\delta=0$ versus $\\mathcal{H}_1:\\delta\\not=0$), how can ", em("both"), " be wrong? The problem is that a hypothesis is typically not completely defined by simply specifying the parameter values being tested; one must further specify ", em("all"), " conditions of the test. For example, the independent samples $t$-test assumes that both populations are normally distributed. Now, how can we ever ", em("establish"), " that? The answer is: We cannot, never. Furthermore, in Bayesian statistics we must also specify prior distributions for all parameters. In case you ask yourself 'Which prior distribution is true in the population?', then you are bound to be disappointed: There is no such thing. There are no ", em("true"), " prior distributions. Prior distributions are a means for us to express how uncertain we are about the value of a parameter. Were we omnipotent we would have no such doubts. In other words: Prior distributions, as much as assumptions like normality and equal group variances, are abstractions imposed by the analyst (= you) that really reflect how much we do not know. Such assumptions cannot really be ", em("established"), " or ", em("proven"), " beyond a shadow of a doubt. We can ", em("test"), " for such things, but we must be modest about the inferences we can draw from such tests.", 
     br(), br(), 
-    "And that brings us back to $\\mathcal{H}_0$ and $\\mathcal{H}_1$. Again, we don't really think that either is true. However, we may expect one of the two to outperform the other, in a ", em("predictive"), " sense: The observed data may be more likely under one hypothesis in comparison to the other. In this sense, there is value in hypotheses testing.", 
+    "And that brings us back to $\\mathcal{H}_0$ and $\\mathcal{H}_1$. Again, we don't really think that either is true. However, we may expect one of the two to outperform the other, in a ", em("predictive"), " sense: The observed data may be more likely under one hypothesis in comparison to the other. In this sense, there is value in hypotheses testing. But never forget: This approach says nothing about the ", em("truthfulness"), " of any hypothesis. We must accept that, when performing a test, we are entertaining only two of potentially an infinity of possible hypotheses. Our inferences should be conditioned on the very two specific hypotheses we considered. We believe this is often disregarded in practice, leading researchers to mistakenly make statements which go much beyond what the given hypotheses and testing procedure allows.", 
     br(), br(), 
-    "Thus, and for the time being only, let us entertain $\\mathcal{H}_0$ and $\\mathcal{H}_1$ as two very interesting hypotheses that could have generated the observed data. The term 'htpothesis' is probably better replaced by the term 'model'. What we are testing against each other is two models. Each model specifies the possible parameter values being considered, the distribution of the data conditional on those parameters (i.e., the likelihood function, like the normality in the case of the $t$-test), and all prior distributions (one per parameter).", 
+    "Thus, and for the time being only, let us entertain $\\mathcal{H}_0$ and $\\mathcal{H}_1$ as two very interesting hypotheses that could have generated the observed data. The term 'hypothesis' is probably better replaced by the term 'model'. What we are testing against each other is two models. Each model specifies the possible parameter values being considered, the distribution of the data conditional on those parameters (i.e., the likelihood function, like the normality in the case of the $t$-test), and all prior distributions (one per parameter).", 
     br(), br(), 
     "The Bayes factor can be derived from the ", tagList("", a("Bayes theorem", href="https://en.wikipedia.org/wiki/Bayes%27_theorem", target="_blank")), ", $$\\overset{\\text{posterior}}{\\overbrace{p(\\mathcal{H}_i|D)}} = \\frac{\\overset{\\text{prior}}{\\overbrace{p(\\mathcal{H}_i)}}\\ \\overset{\\text{marginal likelihood}}{\\overbrace{p(D|\\mathcal{H}_i)}}}{\\underset{\\text{evidence}}{\\underbrace{p(D)}}}, \\text{ for } i=0, 1.$$", 
     br(), 
     "Let's decode what we can see in Bayes theorem:", 
     br(), br(), 
-    HTML(renderMarkdown(text = paste0("- \\$p(\\mathcal{H}_0)\\$ and \\$p(\\mathcal{H}_1)\\$ are the so-called _prior probabilities_ of \\$\\mathcal{H}_0\\$ and \\$\\mathcal{H}_1\\$, respectively.<br> These probabilities reflect our initial belief on either hypothesis, before we consider the observed data.<br>Because \\$\\mathcal{H}_0\\$ and \\$\\mathcal{H}_1\\$ are the only hypotheses of interest, these prior probabilities are complementary, that is, they sum to 1: \\$p(\\mathcal{H}_0)+p(\\mathcal{H}_1)=1\\$.<br><br>\n - \\$p(D|\\mathcal{H}_0)\\$ and \\$p(D|\\mathcal{H}_1)\\$ are the _marginal likelihoods_ of the data under either hypothesis.<br> These values reflect the probability of the observed data under either hypothesis.<br><br>\n - \\$p(D)\\$ is known as the _evidence_. It represents the probability of the observed data across both hypotheses.<br> It is just a normalizing constant.<br><br>\n - Finally, \\$p(\\mathcal{H}_0|D)\\$ and \\$p(\\mathcal{H}_1|D)\\$ are the so-called _posterior probabilities_ of \\$\\mathcal{H}_0\\$ and \\$\\mathcal{H}_1\\$, respectively.<br> These probabilities reflect our belief on either hypothesis, _after_ we consider the observed data.<br> Also these probabilities sum to 1: \\$p(\\mathcal{H}_0|D)+p(\\mathcal{H}_1|D)=1\\$."))), 
+    HTML(renderMarkdown(text = paste0("- \\$p(\\mathcal{H}_0)\\$ and \\$p(\\mathcal{H}_1)\\$ are the so-called _prior probabilities_ of \\$\\mathcal{H}_0\\$ and \\$\\mathcal{H}_1\\$, respectively.<br> These probabilities reflect our initial belief on either hypothesis, before we consider the observed data.<br>Because \\$\\mathcal{H}_0\\$ and \\$\\mathcal{H}_1\\$ are the only hypotheses of interest, these prior probabilities are complementary, that is, they sum to 1: \\$p(\\mathcal{H}_0)+p(\\mathcal{H}_1)=1\\$.<br><br>\n - \\$p(D|\\mathcal{H}_0)\\$ and \\$p(D|\\mathcal{H}_1)\\$ are the _marginal likelihoods_ of the data under either hypothesis.<br> These values reflect the probability of the observed data under either hypothesis.<br><br>\n - \\$p(D)\\$ is known as the _evidence_. It represents the probability of the observed data across both hypotheses.<br><br>\n - Finally, \\$p(\\mathcal{H}_0|D)\\$ and \\$p(\\mathcal{H}_1|D)\\$ are the so-called _posterior probabilities_ of \\$\\mathcal{H}_0\\$ and \\$\\mathcal{H}_1\\$, respectively.<br> These probabilities reflect our belief on either hypothesis, _after_ we consider the observed data.<br> Also these probabilities sum to 1: \\$p(\\mathcal{H}_0|D)+p(\\mathcal{H}_1|D)=1\\$."))), 
     br(), 
     "Now we derive the Bayes factor from the Bayes theorem.", 
     br(), 
@@ -516,9 +516,7 @@ output$introduction5a <- renderUI({
     br(), br(), 
     "For this reason, it does not suffice to simply say something like \"$\\mathcal{H}_1$ is the hypothesis that $\\delta\\not=0$\".", 
     br(), 
-    "We must further specify, and report, how likely we think each value under $\\mathcal{H}_1$ may be.",
-    br(), 
-    "In other words, we ", em("must choose"), " prior distributions.",
+    "We must further specify, and report, all prior distributions that we used.",
     br(), br(), 
     h4("Default priors"), 
     "Choosing a prior distribution for each parameter is not trivial. As explained above, we may take different things into account when choosing a prior.",
@@ -542,7 +540,8 @@ output$introduction5a <- renderUI({
     br(), br(), 
     "This app offers three possible priors for $\\delta$, based on the Cauchy, normal, and $t$-Student distribution families.", 
     br(), 
-    "Try changing the distribution and their parameters and see how that affects the probability of each value of $\\delta$."
+    "Try changing the distribution and their parameters and see how that affects the probability of each value of $\\delta$.", 
+    br()
   )
   
   tagList(h3(strong("Priors")), 
