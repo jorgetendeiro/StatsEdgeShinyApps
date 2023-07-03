@@ -39,8 +39,8 @@ source("R_scripts/BayesFactors.R")
 
 # Load BOOST's non-central t (better precision and less warnings than R's):
 # https://stackoverflow.com/questions/39183938/rs-t-distribution-says-full-precision-may-not-have-been-achieved
-# sourceCpp("www/boost_noncentralt.cpp", cacheDir = "cache_rcpp/")
-sourceCpp("www/boost_noncentralt.cpp")
+sourceCpp("www/boost_noncentralt.cpp", cacheDir = "cache_rcpp/")
+# sourceCpp("www/boost_noncentralt.cpp")
 
 # To edit the LaTeX tables:
 js <- "
@@ -1025,7 +1025,7 @@ server <- function(input, output, session) {
   
   # Tab 5 - Let's practice:
   output$practice <- renderUI({
-    ### rmarkdown::render("../learnBF_tutorial/learnBF_tutorial.Rmd")
+    ## rmarkdown::render("../learnBF_tutorial/learnBF_tutorial.Rmd")
     tags$iframe(
       src="https://statsedge.org/StatsEdgeShinyApps/learnBF_tutorial/", 
       width="100%", height="100%", frameBorder=0, style="height: 100vh;", scrolling = 'yes'
