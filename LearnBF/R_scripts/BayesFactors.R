@@ -49,10 +49,10 @@ p.y.alt <- function(t.stat, n1, n2, prior.dens, type.H1, point.H1, ...) {
   )
 } 
 
+# B01 <- function(t.stat, n1, n2, prior.dens, type.H1, point.H1, ...) {
+#   dnct(t.stat, n1+n2-2, 0) / p.y.alt(t.stat, n1, n2, prior.dens, type.H1, point.H1, ...)
+# }
 B01 <- function(t.stat, n1, n2, prior.dens, type.H1, point.H1, ...) {
-  dnct(t.stat, n1+n2-2, 0) / p.y.alt(t.stat, n1, n2, prior.dens, type.H1, point.H1, ...)
-}
-B01.alt <- function(t.stat, n1, n2, prior.dens, type.H1, point.H1, ...) {
   den <- p.y.alt(t.stat, n1, n2, prior.dens, type.H1, point.H1, ...)
   switch(type.H1, 
          "H1.diff0"    = dnct(t.stat, n1+n2-2, 0) / den, 
