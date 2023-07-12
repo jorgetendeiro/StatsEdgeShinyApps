@@ -1007,7 +1007,7 @@ kim.out.topic7.df4.reactive <- renderText({
   BF.lab3  <- if (BF.tmp <= 3) BF.labs3[1] else if (BF.tmp <= 10) BF.labs3[2] else if (BF.tmp <= 30) BF.labs3[3] else if (BF.tmp <= 100) BF.labs3[4] else  BF.labs3[5]
   
   tab      <- data.frame(
-    c("$\\text{Jeffreys (1961)}$", "$\\text{Kass and Raftery (1955)}$", "$\\text{Lee and Wagenmakers (2014)}$"), 
+    c("$\\text{Jeffreys (1961)}$", "$\\text{Kass and Raftery (1995)}$", "$\\text{Lee and Wagenmakers (2014)}$"), 
     c(BF.lab1, BF.lab2, BF.lab3)
   )
   
