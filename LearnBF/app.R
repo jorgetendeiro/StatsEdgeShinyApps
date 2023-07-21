@@ -640,6 +640,7 @@ ui <- fluidPage(
                  # uiOutput("BF.df1"),
                  # br(), br(),
                  h4("Prior and posterior model probabilities"),
+                 paste0("Conditional on the two specific models being tested ($\\mathcal{H}_0$ and $\\mathcal{H}_1$), below is a breakdown of how the prior probabilities, the Bayes factor, and the posterior probabilities relate to each other:"), 
                  tableOutput("BF.df2"),
                  br(), br(),
                  h4("Posterior distribution of $\\delta$ under $\\mathcal{H}_1$"),
