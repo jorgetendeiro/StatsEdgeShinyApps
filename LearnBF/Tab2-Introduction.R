@@ -648,7 +648,7 @@ output$introduction6 <- renderUI({
     br(), 
     "And in case the observed means are ", em("exactly"), " equal to each other, then the $p$-value will be exactly equal to 1, thus the test outcome will always be non-significant.", 
     br(), 
-    "Unfortunately, we can not derive any conclusion from a non-significant test result.", 
+    "Unfortunately, we can not derive any conclusion from a non-significant test result. Non-significant results may happen when either $\\mathcal{H}_0$ or $\\mathcal{H}_1$ is true, and there is no way to disentangle between the two possibilities.",
     br(), br(), 
     "The Bayes factor is different from the $p$-value in this regard. ", em("For a given alternative hypothesis $\\mathcal{H}_1$"), ", large values of $BF_{01}$ do provide relative evidence favoring $\\mathcal{H}_0$ over ", em("the particular alternative hypothesis $\\mathcal{H}_1$"), " that was used in the testing procedure.", 
     br(), br(), 
