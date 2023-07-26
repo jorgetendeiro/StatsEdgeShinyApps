@@ -634,7 +634,7 @@ output$introduction6 <- renderUI({
   outtext <- paste0(
     "NHBT and its Bayes factor is not just a simple replacement to NHST and its $p$-value. The Bayes factor and the $p$-value are different statistical quantities, with different properties and allowing for different types of conclusions.", 
     br(), 
-    "For users of the $p$-value who are now trying to transition towards the Bayes factor, this cannot be stressed enough: ", em("The Bayes factor must be learned and appreciated by its own merits and pitfalls."), 
+    "For users of the $p$-value who are now trying to transition towards the Bayes factor, this cannot be stressed enough: ", em("The Bayes factor must be learned and appreciated by its own merits and pitfallls."), 
     br(), br(), 
     "Here we highlight one clear difference between the $p$-value and the Bayes factor:", 
     br(), 
