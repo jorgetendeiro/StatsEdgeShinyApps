@@ -149,6 +149,8 @@ output$BF.df1B <- renderUI({
   )
 })
 
+# For the merged cells in the table below to work, I need to install this after each R updating of packages:
+# remotes::install_github('haozhu233/kableExtra')
 output$BF.df2 <- function() {
   tab <- data.frame(
     if (rv$BF10.01 == "BF10") c(paste0("$", rv$priorprob1 / 100, "$"), paste0("$", rv$priorprob0 / 100, "$")) else c(paste0("$", rv$priorprob0 / 100, "$"), paste0("$", rv$priorprob1 / 100, "$")),
