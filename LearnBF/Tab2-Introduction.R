@@ -70,7 +70,7 @@ output$ttestB <- function() {
              switch(input$H1hyp.cls,
                     "H1.diff0"    = "\\mathcal{H}_1: \\delta\\not=0$",
                     "H1.larger0"  = "\\mathcal{H}_1: \\delta>0$",
-                    "H1.smaller0" = "\\mathcal{H}_1: \\delta<0$")
+                    "H1.smaller0" = paste0("\\mathcal{H}_1: \\delta", HTML("&#60;"), "0$"))
       ), 
       paste0("$t\\text{-Student (df = }", ttest.res()["df"], "\\text{)}$"), 
       paste0("$d=", round(cohen.d(), 3), "$"), 

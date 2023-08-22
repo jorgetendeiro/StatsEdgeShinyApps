@@ -17,7 +17,7 @@ output$instructions <- renderUI({
     br(), br(), 
     "Our main focus is on ", em("understanding"), " and ", em("correctly"), " interpreting the Bayes factor.", 
     br(), 
-    "We do provide some formulas in the ", actionLink("intro.tab2a", "Introduction", style = "font-weight: bold;"), ", but we keep things as conceptual possible.",
+    "We do provide some formulas in the ", actionLink("intro.tab2a", "Introduction", style = "font-weight: bold;"), ", but we keep things as conceptual as possible.",
     br(), br(),
     h4(tags$i(class = "fa-solid fa-arrows-down-to-people"), "Intended audience"), 
     "The app is particularly aimed at those who are new to Bayesian hypothesis testing and to the Bayes factor and need to ", em("apply"), " it in their research.", 
