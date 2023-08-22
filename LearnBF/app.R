@@ -1066,6 +1066,12 @@ server <- function(input, output, session) {
   observeEvent(input$intro.tab2b, {
     updateTabsetPanel(session, "maintabs", "Introduction")
   })
+  observeEvent(input$intro.tab2c, {
+    updateTabsetPanel(session, "maintabs", "Introduction")
+  })
+  observeEvent(input$intro.tab2d, {
+    updateTabsetPanel(session, "maintabs", "Introduction")
+  })
   observeEvent(input$intro.tab3a, {
     updateTabsetPanel(session, "maintabs", "Bayesian t-test")
   })
