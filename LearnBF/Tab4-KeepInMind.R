@@ -759,8 +759,37 @@ output$kim.out.topic3.part2 <- renderUI({
                     "Although $\\mathcal{H}_0$ is the same, changing its testing counterpart can lead to dramatic changes of the evidence against $\\mathcal{H}_0$: ", 
                     br(), br(), 
                     HTML(renderMarkdown(text = "- For a two-tailed alternative hypothesis, the relative evidence against \\$\\mathcal{H}_0\\$ is overwhelming.\n- For a point alternative hypothesis, the relative evidence against \\$\\mathcal{H}_0\\$ gets weaker and weaker as the alternative point approaches 0.\n")), 
-                    br(), 
-                    "In other words: There is no absolute evidence against $\\mathcal{H}_0$. It all depends on what $\\mathcal{H}_0$ is being tested against.", 
+                    "The plot below shows exactly this. The Bayes factor is plotted against values for $\\delta_1$ close to 0. Invariably, as $\\delta_1$ approaches 0, the Bayes factor approaches 1 (the horizontal line), ", em("regardless of the evidence in the data.")
+  )
+  tagList(
+    #withMathJax(),
+    HTML(outtext),
+    tags$script(HTML(js)),
+    tags$script(
+      async="",
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    )
+  )
+})
+
+output$kim.out.topic3.plot1 <- renderPlot({
+  delta1.supp <- seq(-.2, .2, by = .01)
+  BF10.delta1 <- reactive({ sapply(delta1.supp, function(dlt1) B01(ttest.res()["t"], rv$n1, rv$n2, prior, 'H1.point', dlt1)) })
+  
+  par(mar = c(4, 5.5, 2, 1))
+  plot(delta1.supp, BF10.delta1(), type = "l", xlim= c(-.2, .2), ylim = c(floor(min(BF10.delta1())), ceiling(max(BF10.delta1()))), 
+       #log = "y", 
+       las = 1, bty = "n", yaxs = "i", xaxs = "i", 
+       xlab = "", ylab = "", xaxt = "n")
+  abline(h = 1, lwd = 2, col = "#DCA559")
+  axis(1, at = seq(-.2, .2, by = .1), las = 1)
+  # axis(2, at = 10^(y.lims.log[1]:y.lims.log[2]), las = 1, labels = prettyNum(10^(y.lims.log[1]:y.lims.log[2]), scientific = FALSE, digits = 16))
+  mtext(expression("Point" * delta[1]), 1, 2.5)
+  mtext(expression("BF"["10"]), 2, 3)
+})
+
+output$kim.out.topic3.part3 <- renderUI({
+  outtext <- paste0("In other words: There is no absolute evidence against $\\mathcal{H}_0$. It all depends on what $\\mathcal{H}_0$ is being tested against.", 
                     br(),
                     "This principle is relatively general in hypotheses testing, and in models comparison in general.", 
                     br(), br(), 

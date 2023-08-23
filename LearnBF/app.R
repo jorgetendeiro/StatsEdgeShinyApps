@@ -961,6 +961,10 @@ ui <- fluidPage(
                                   htmlOutput("kim.out.topic3.df1"), 
                                   br(), 
                                   uiOutput("kim.out.topic3.part2"), 
+                                  br(), 
+                                  plotOutput("kim.out.topic3.plot1"),
+                                  br(), 
+                                  uiOutput("kim.out.topic3.part3"), 
                                   br(), br()
                  ),
                  conditionalPanel("input.keepinmind == 'topic5'", 
