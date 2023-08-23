@@ -784,7 +784,7 @@ output$kim.out.topic3.plot1 <- renderPlot({
   abline(h = 1, lwd = 2, col = "#DCA559")
   axis(1, at = seq(-.2, .2, by = .1), las = 1)
   # axis(2, at = 10^(y.lims.log[1]:y.lims.log[2]), las = 1, labels = prettyNum(10^(y.lims.log[1]:y.lims.log[2]), scientific = FALSE, digits = 16))
-  mtext(expression("Point" * delta[1]), 1, 2.5)
+  mtext(expression("Point " * delta[1]), 1, 2.5)
   mtext(expression("BF"["10"]), 2, 3)
 })
 
