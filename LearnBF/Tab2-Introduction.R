@@ -32,17 +32,17 @@ output$H1hyp.bys <- renderUI({
 
 # General prior parameters for the introduction tab only:
 location.bys   <- reactive({ switch(input$priorbys, 
-                                'cauchy'    = req(input$location.c.bys), 
-                                'normal'    = req(input$location.n.bys), 
-                                't.student' = req(input$location.t.bys)) })
+                                    'cauchy'    = req(input$location.c.bys), 
+                                    'normal'    = req(input$location.n.bys), 
+                                    't.student' = req(input$location.t.bys)) })
 scale.bys      <- reactive({ switch(input$priorbys, 
-                                'cauchy'    = req(input$scale.c.bys), 
-                                'normal'    = req(input$scale.n.bys), 
-                                't.student' = req(input$scale.t.bys)) })
+                                    'cauchy'    = req(input$scale.c.bys), 
+                                    'normal'    = req(input$scale.n.bys), 
+                                    't.student' = req(input$scale.t.bys)) })
 df.bys         <- reactive({ switch(input$priorbys, 
-                                'cauchy'    = NULL, 
-                                'normal'    = NULL, 
-                                't.student' = req(input$df.t.bys)) })
+                                    'cauchy'    = NULL, 
+                                    'normal'    = NULL, 
+                                    't.student' = req(input$df.t.bys)) })
 
 # Prior for the introduction tab only:
 prior.bys <- function(delta)
@@ -382,6 +382,8 @@ output$introduction3 <- renderUI({
     br(), 
     "$BF_{10} = \\frac{p(D|\\mathcal{H}_1)}{p(D|\\mathcal{H}_0)}$, on the other hand, is equal to $\\frac{1}{BF_{01}}$ and it indicates how many times are the observed data more likely under $\\mathcal{H}_1$ in comparison to $\\mathcal{H}_0$.", 
     br(), br(), 
+    "It is important to note that, even though the Bayes factor may indicate that the data are more likely to occur under one a particular hypothesis relative to another, one should not infer that such a hypothesis is more likely. We will further stress this idea in ", actionLink("intro.tab4d", "Keep in mind", style = "font-weight: bold;"), ", section 1.", 
+    br(), br(), 
     h4("Example"), 
     "Suppose we had found that $BF_{10} = 5.2$. Then we may say this:", 
     br(), 
@@ -400,7 +402,7 @@ output$introduction3 <- renderUI({
   
   tagList(h3(strong("The Bayes factor")), 
           br(), 
-          h4("Definition 1: As a ratio of marginal likelihoods"), 
+          h4("Definition 1: As a ratio of marginal likelihoods for comparing the predictive ability of two hypotheses"), 
           br(), 
           HTML(outtext), 
           br(), br(), 
@@ -451,7 +453,7 @@ output$introduction4a <- renderUI({
   
   tagList(h3(strong("The Bayes factor")), 
           br(), 
-          h4("Definition 2: As an updating factor"), 
+          h4("Definition 2: As an updating factor from prior odds to posterior odds"), 
           br(), 
           HTML(outtext), 
           br(), br(), 

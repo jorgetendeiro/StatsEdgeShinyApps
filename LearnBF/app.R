@@ -662,6 +662,10 @@ ui <- fluidPage(
                  br(), br(),
                  h4("Bayes factor ", HTML("&#8212;"), " Interpretation 2"),
                  withMathJax(uiOutput("BFint2")),
+                 br(), 
+                 fluidRow(uiOutput("BF.formula3"), align = "center"),
+                 br(), br(), 
+                 withMathJax(uiOutput("BFint3")),
                  br(),
                  fluidRow(uiOutput("BF.formula2"), align = "center"),
                  br(), br(),
@@ -941,9 +945,8 @@ ui <- fluidPage(
                                     column(3)), 
                                   br(), 
                                   fluidRow(
-                                    column(2),
-                                    column(8, align = 'center', plotOutput("kim.out.topic1.plot1")),  
-                                    column(2)), 
+                                    column(12, align = 'center', plotOutput("kim.out.topic1.plot1")),  
+                                    ), 
                                   br(), br(), 
                                   uiOutput("kim.out.topic1.part3"), 
                                   br(), br()
@@ -1086,6 +1089,9 @@ server <- function(input, output, session) {
     updateTabsetPanel(session, "maintabs", "Keep in mind")
   })
   observeEvent(input$intro.tab4c, {
+    updateTabsetPanel(session, "maintabs", "Keep in mind")
+  })
+  observeEvent(input$intro.tab4d, {
     updateTabsetPanel(session, "maintabs", "Keep in mind")
   })
   observeEvent(input$intro.tab5a, {

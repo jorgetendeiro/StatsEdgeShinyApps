@@ -212,9 +212,23 @@ output$BFint2 <- renderUI({
   outtext <- paste0(
     HTML("&nbsp;&nbsp;&nbsp;"), em("$BF_{", substr(rv$BF10.01, 3, 4), "}=", round(BF(), 2), "$: The prior odds ", " ( $", round(prior.odds(), 3), "$-to-$1$ in favor of $\\mathcal{H}_{", substr(rv$BF10.01, 3, 3), "}$", ") are updated by a factor of $BF_{", substr(rv$BF10.01, 3, 4), "}=", round(BF(), 2), "$", " in favor of $\\mathcal{H}_{", substr(rv$BF10.01, 3, 3), "}$."), 
     br(), br(), 
-    "Here, the Bayes factor is interpreted as being the factor updating the relative probability between both hypotheses, in light of the observed data.", 
-    br(), br(), 
-    "This should ", strong("not"), " be interpreted as the relative posterior probability of the <font color=\"#DCA559\">hypotheses</font> $\\mathcal{H}_0$ and $\\mathcal{H}_1$!", 
+    "Here, the Bayes factor is interpreted as being the factor updating the relative probability between both hypotheses, in light of the observed data. Simply:",
+    br(), br()
+  )
+  
+  tagList(
+    HTML(outtext),
+    tags$script(HTML(js)),
+    tags$script(
+      async="",
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    )
+  )
+})
+
+output$BFint3 <- renderUI({
+  outtext <- paste0(
+    "Again, this should ", strong("not"), " be interpreted as the relative posterior probability of the <font color=\"#DCA559\">hypotheses</font> $\\mathcal{H}_0$ and $\\mathcal{H}_1$!", 
     br(), 
     "See ", actionLink("intro.tab4c", "Keep in mind", style = "font-weight: bold;"), ", section 1.", 
     br(), br()
@@ -314,6 +328,15 @@ output$BF.formula1 <- renderUI({
 
 output$BF.formula2 <- renderUI({
   form <- if (rv$BF10.01 == "BF10") paste0("$\\boxed{\\Large\\frac{\\color{#005E3C}{", rv$priorprob1/100, "}}{\\color{#DCA559}{", rv$priorprob0/100, "}}\\times BF_{10}=\\frac{\\color{#005E3C}{", round(post.probs()[2], 4), "}}{\\color{#DCA559}{", round(post.probs()[1], 4), "}}}$") else paste0("$\\boxed{\\Large\\frac{\\color{#DCA559}{", rv$priorprob0/100, "}}{\\color{#005E3C}{", rv$priorprob1/100, "}}\\times BF_{01}=\\frac{\\color{#DCA559}{", round(post.probs()[1], 4), "}}{\\color{#005E3C}{", round(post.probs()[2], 4), "}}}$")
+  tagList(
+    #withMathJax(),
+    HTML(form),
+    tags$script(HTML(js))
+  )
+})
+
+output$BF.formula3 <- renderUI({
+  form <- paste0("$\\Large\\underbrace{", round(prior.odds(), 3), "}_{\\text{prior odds}}\\times\\underbrace{", round(BF(), 3), "}_", if (rv$BF10.01 == "BF10") "{BF_{10}}" else "{BF_{01}}", "=\\underbrace{", round(post.odds(), 3), "}_{\\text{post. odds}}$.")
   tagList(
     #withMathJax(),
     HTML(form),

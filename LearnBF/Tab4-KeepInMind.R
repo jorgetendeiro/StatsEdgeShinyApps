@@ -124,7 +124,11 @@ output$kim.out.topic1.part2 <- renderUI({
                     "This is an interpretation about the relative probability of the ", HTML("<font color=\"#DCA559\"><b>hypotheses</b></font>"), "!", 
                     br(), br(), 
                     h4("Visual display"),
-                    "You can see how both the Bayes factor and the posterior odds relate as we manipulate the prior odds:"
+                    "You can see how the Bayes factor and the posterior odds (and posterior probabilities) relate as we manipulate the prior odds.", 
+                    br(), br(), 
+                    "The left panel shows how the Bayes factor (horizontal line) and the posterior odds (green curve) relate to each other. Note that they only coincide when the prior probability of $\\mathcal{H}_0$ is 0.5.", 
+                    br(), br(), 
+                    "The right panel shows how the probability of $\\mathcal{H}_0$ updates from before ($x$-axis) to after considering the data ($y$ axis). Just like the posterior odds, the posterior probability of either hypotheses also changes according to their corresponding prior probability. The Bayes factor is always the same, though (here, $BF_{", substr(rv$BF10.01, 3, 4), "}=", round(BF(), 3), "$)."
   )
   tagList(
     #withMathJax(),
@@ -142,9 +146,13 @@ output$kim.out.topic1.plot1 <- renderPlot({
   prior.odds.t1    <- if (rv$BF10.01 == "BF10") (1 - prior.prob.H0.t1) / prior.prob.H0.t1 else prior.prob.H0.t1 / (1 - prior.prob.H0.t1)
   post.odds.t1     <- prior.odds.t1 * BF()
   y.lims.log       <- sort( c(floor(log(min(post.odds.t1), 10)), ceiling(log(max(post.odds.t1), 10))) )
+  # Right plot:
+  post.prob.H0.t1  <- if (rv$BF10.01 == "BF10") 1 / (1+post.odds.t1) else post.odds.t1 / (1 + post.odds.t1)
   
+  layout(matrix(c(1, 2), 1, 2, byrow = TRUE))
+  # Left plot:
   par(mar = c(4, 5.5, 2, 1))
-  plot(NULL, xlim= c (0, 1), ylim = 10^y.lims.log, log = "y", las = 1, bty = "n", yaxs = "i", xaxs = "i", 
+  plot(NULL, xlim= c(0, 1), ylim = 10^y.lims.log, log = "y", las = 1, bty = "n", yaxs = "i", xaxs = "i", 
        xlab = "", ylab = "", yaxt = "n", xaxt = "n")
   abline(v = .5, lty = 3, col = "gray")
   abline(h = BF(), lwd = 2, col = "#DCA559")
@@ -157,6 +165,17 @@ output$kim.out.topic1.plot1 <- renderPlot({
   legend.text <- if (rv$BF10.01 == "BF10") bquote("BF"["10"] * " = " * .(round(BF(), 3))) else bquote("BF"["01"] * " = " * .(round(BF(), 3)))
   legend("bottomright", legend = legend.text, lwd = 2, col = "#DCA559", 
          inset=c(0,1), xpd = TRUE, horiz = TRUE, bty = "n", seg.len = 4)
+  # Right plot:
+  par(mar = c(4, 5.5, 2, 1))
+  plot(NULL, xlim= c(0, 1), ylim = c(0, 1), las = 1, bty = "n", yaxs = "i", xaxs = "i", 
+       xlab = "", ylab = "", yaxt = "n", xaxt = "n")
+  abline(a = 0, b = 1, lty = 3, col = "gray")
+  points(prior.prob.H0.t1[1:(100*input$priorH0.kim.t1)], 
+         post.prob.H0.t1 [1:(100*input$priorH0.kim.t1)], type = "l", col = "#005E3C", lwd = 2)
+  axis(1, at = seq(0, 1, by = .25), las = 1)
+  axis(2, at = seq(0, 1, by = .25), las = 1)
+  mtext(expression("Prior probability of " * H[0]), 1, 2.5)
+  mtext(expression("Posterior probability of " * H[0]), 2, 3)
 })
 
 output$kim.out.topic1.part3 <- renderUI({
@@ -781,7 +800,7 @@ output$kim.out.topic3.plot1 <- renderPlot({
        #log = "y", 
        las = 1, bty = "n", yaxs = "i", xaxs = "i", 
        xlab = "", ylab = "", xaxt = "n")
-  abline(h = 1, lwd = 2, col = "#DCA559")
+  abline(h = 1, lwd = 2, col = "#DCA559", lty = 2)
   axis(1, at = seq(-.2, .2, by = .1), las = 1)
   # axis(2, at = 10^(y.lims.log[1]:y.lims.log[2]), las = 1, labels = prettyNum(10^(y.lims.log[1]:y.lims.log[2]), scientific = FALSE, digits = 16))
   mtext(expression("Point " * delta[1]), 1, 2.5)
