@@ -382,7 +382,7 @@ output$introduction3 <- renderUI({
     br(), 
     "$BF_{10} = \\frac{p(D|\\mathcal{H}_1)}{p(D|\\mathcal{H}_0)}$, on the other hand, is equal to $\\frac{1}{BF_{01}}$ and it indicates how many times are the observed data more likely under $\\mathcal{H}_1$ in comparison to $\\mathcal{H}_0$.", 
     br(), br(), 
-    "It is important to note that, even though the Bayes factor may indicate that the data are more likely to occur under one a particular hypothesis relative to another, one should not infer that such a hypothesis is more likely. We will further stress this idea in ", actionLink("intro.tab4d", "Keep in mind", style = "font-weight: bold;"), ", section 1.", 
+    "It is important to note that, even though the Bayes factor may indicate that the data are more likely to occur under one particular hypothesis relative to another, one should not infer that such a hypothesis is more likely. We will further stress this idea in ", actionLink("intro.tab4d", "Keep in mind", style = "font-weight: bold;"), ", section 1.", 
     br(), br(), 
     h4("Example"), 
     "Suppose we had found that $BF_{10} = 5.2$. Then we may say this:", 
