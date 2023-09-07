@@ -552,7 +552,7 @@ output$introduction5a <- renderUI({
     br(), 
     "Try changing the distribution and their parameters and see how that affects the probability of each value of $\\delta$.", 
     br(), 
-    "When looking at the plots, consider whether the allocation of probability across the various possible values of $\\delta$ closely match what you know about the standardized effect size that you are studying.", 
+    "When looking at the plots, consider whether the allocation of probability across the various possible values of $\\delta$ closely matches what you know about the standardized effect size that you are studying.", 
     br()
   )
   
