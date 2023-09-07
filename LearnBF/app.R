@@ -149,7 +149,7 @@ ui <- fluidPage(
                                                             label   = em("Mean:"),
                                                             min     = -16,      # -10
                                                             max     = 16,       # 10
-                                                            value   = 15.292,   # 0
+                                                            value   = 4.2,   # 0
                                                             step    = 0.1,
                                                             width = "100%"), class = "not_bold")
                                     ),
@@ -158,7 +158,7 @@ ui <- fluidPage(
                                                             label   = em("SD:"),
                                                             min     = 0,
                                                             max     = NA,
-                                                            value   = 6.376,    # 1
+                                                            value   = 2.6,    # 1
                                                             step    = .1,
                                                             width = "100%"), class = "not_bold")
                                     ),
@@ -167,7 +167,7 @@ ui <- fluidPage(
                                                             label   = em("$N$:"),
                                                             min     = 5,
                                                             max     = 50,
-                                                            value   = 24,    # 30
+                                                            value   = 10,    # 30
                                                             width = "100%"), class = "not_bold")
                                     )
                                   ),
@@ -178,7 +178,7 @@ ui <- fluidPage(
                                                             label   = em("Mean:"),
                                                             min     = -16,       # -10
                                                             max     = 16,        # 10
-                                                            value   = 10.88,     # 0.2
+                                                            value   = 2.8,     # 0.2
                                                             step    = 0.1,
                                                             width = "100%"), class = "not_bold")
                                     ),
@@ -187,7 +187,7 @@ ui <- fluidPage(
                                                             label   = em("SD:"),
                                                             min     = 0,
                                                             max     = NA,
-                                                            value   = 4.324,    # 1
+                                                            value   = 1.7,    # 1
                                                             step    = .1,
                                                             width = "100%"), class = "not_bold")
                                     ),
@@ -196,7 +196,7 @@ ui <- fluidPage(
                                                             label   = em("$N$:"),
                                                             min     = 5,
                                                             max     = 50,
-                                                            value   = 25,    # 30
+                                                            value   = 15,    # 30
                                                             width = "100%"), class = "not_bold")
                                     )
                                   ), 
@@ -431,7 +431,7 @@ ui <- fluidPage(
                                            label   = em("Mean:"),
                                            min     = -16,      # -10
                                            max     = 16,       # 10
-                                           value   = 15.292,   # 0
+                                           value   = 4.2,   # 0
                                            step    = 0.1,
                                            width = "100%"), class = "not_bold")
                    ),
@@ -440,7 +440,7 @@ ui <- fluidPage(
                                            label   = em("SD:"),
                                            min     = 0,
                                            max     = NA,
-                                           value   = 6.376,    # 1
+                                           value   = 2.6,    # 1
                                            step    = .1,
                                            width = "100%"), class = "not_bold")
                    ),
@@ -449,7 +449,7 @@ ui <- fluidPage(
                                            label   = em("$N$:"),
                                            min     = 5,
                                            max     = 50,
-                                           value   = 24,    # 30
+                                           value   = 10,    # 30
                                            width = "100%"), class = "not_bold")
                    )
                  ),
@@ -460,7 +460,7 @@ ui <- fluidPage(
                                            label   = em("Mean:"),
                                            min     = -16,       # -10
                                            max     = 16,        # 10
-                                           value   = 10.88,     # 0.2
+                                           value   = 2.8,     # 0.2
                                            step    = 0.1,
                                            width = "100%"), class = "not_bold")
                    ),
@@ -469,7 +469,7 @@ ui <- fluidPage(
                                            label   = em("SD:"),
                                            min     = 0,
                                            max     = NA,
-                                           value   = 4.324,    # 1
+                                           value   = 1.7,    # 1
                                            step    = .1,
                                            width = "100%"), class = "not_bold")
                    ),
@@ -478,7 +478,7 @@ ui <- fluidPage(
                                            label   = em("$N$:"),
                                            min     = 5,
                                            max     = 50,
-                                           value   = 25,    # 30
+                                           value   = 15,    # 30
                                            width = "100%"), class = "not_bold")
                    )
                  ),
@@ -697,7 +697,7 @@ ui <- fluidPage(
                                            label   = em("Mean:"),
                                            min     = -16,      # -10
                                            max     = 16,       # 10
-                                           value   = 15.292,   # 0
+                                           value   = 4.2,   # 0
                                            step    = 0.1,
                                            width = "100%"), class = "not_bold")
                    ),
@@ -706,7 +706,7 @@ ui <- fluidPage(
                                            label   = em("SD:"),
                                            min     = 0,
                                            max     = NA,
-                                           value   = 6.376,    # 1
+                                           value   = 2.6,    # 1
                                            step    = .1,
                                            width = "100%"), class = "not_bold")
                    ),
@@ -715,7 +715,7 @@ ui <- fluidPage(
                                            label   = em("$N$:"),
                                            min     = 5,
                                            max     = 50,
-                                           value   = 24,    # 30
+                                           value   = 10,    # 30
                                            width = "100%"), class = "not_bold")
                    )
                  ),
@@ -726,7 +726,7 @@ ui <- fluidPage(
                                            label   = em("Mean:"),
                                            min     = -16,       # -10
                                            max     = 16,        # 10
-                                           value   = 10.88,     # 0.2
+                                           value   = 2.8,     # 0.2
                                            step    = 0.1,
                                            width = "100%"), class = "not_bold")
                    ),
@@ -735,7 +735,7 @@ ui <- fluidPage(
                                            label   = em("SD:"),
                                            min     = 0,
                                            max     = NA,
-                                           value   = 4.324,    # 1
+                                           value   = 1.7,    # 1
                                            step    = .1,
                                            width = "100%"), class = "not_bold")
                    ),
@@ -744,7 +744,7 @@ ui <- fluidPage(
                                            label   = em("$N$:"),
                                            min     = 5,
                                            max     = 50,
-                                           value   = 25,    # 30
+                                           value   = 15,    # 30
                                            width = "100%"), class = "not_bold")
                    )
                  ),
@@ -1110,12 +1110,12 @@ server <- function(input, output, session) {
   #   updateNumericInput(session, 'num1', value = input$num2)
   # })
   
-  rv <- reactiveValues(mean1 = 15.292,     mean1.tab2 = 15.292,     mean1.tab4 = 15.292, 
-                       sd1   = 6.376,      sd1.tab2   = 6.376,      sd1.tab4   = 6.376, 
-                       n1    = 24,         n1.tab2    = 24,         n1.tab4    = 24, 
-                       mean2 = 10.880,     mean2.tab2 = 10.880,     mean2.tab4 = 10.880, 
-                       sd2   = 4.324,      sd2.tab2   = 4.324,      sd2.tab4   = 4.324, 
-                       n2    = 25,         n2.tab2    = 25,         n2.tab4    = 25, 
+  rv <- reactiveValues(mean1 = 4.2,     mean1.tab2 = 4.2,     mean1.tab4 = 4.2, 
+                       sd1   = 2.6,      sd1.tab2   = 2.6,      sd1.tab4   = 2.6, 
+                       n1    = 10,         n1.tab2    = 10,         n1.tab4    = 10, 
+                       mean2 = 2.80,     mean2.tab2 = 2.80,     mean2.tab4 = 2.80, 
+                       sd2   = 1.7,      sd2.tab2   = 1.7,      sd2.tab4   = 1.7, 
+                       n2    = 15,         n2.tab2    = 15,         n2.tab4    = 15, 
                        H1hyp = "H1.diff0", H1hyptab4 = "H1.diff0", 
                        H1pointslide = .2,  H1pointslide.tab4 = .2, 
                        prior = "cauchy",   priortab4 = "cauchy", 

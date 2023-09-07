@@ -180,7 +180,7 @@ output$introduction1a <- renderUI({
     br(), br(), 
     "This has led to various developments to try to mitigate the problem.", 
     br(), 
-    "The ", em("Bayes factor"), " can be considered one such development.", 
+    "The ", em("Bayes factor"), " can be considered one such development (even though its origins go back about 100 years; Etz & Wagenmakers, 2017).", 
     br(), br(), 
     h4("Null hypothesis tests used"), 
     "We focus on one particular hypothesis testing scenario: The ", 
@@ -221,11 +221,15 @@ output$introduction1b <- renderUI({
     "(for example, the two-tailed test becomes $\\mathcal{H}_0: \\mu_D = 0 \\text{ versus } \\mathcal{H}_1: \\mu_D \\not= 0.$)", 
     br(), br(), 
     h4("Hypotheses in Bayesian testing"), 
-    "For the Bayesian independent samples $t$-test used in this app, the parameter being tested is actually a ", em("standardized effect size"), " defined as $\\delta=\\frac{\\mu_D}{\\sigma}$ (Rouder et al., 2009). The hypotheses being tested are: $$\\begin{eqnarray*}\\mathcal{H}_0: \\delta=0 &\\quad\\text{ versus }\\quad \\mathcal{H}_1: \\delta\\not=0,\\\\ \\mathcal{H}_0: \\delta\\leq 0 &\\quad\\text{ versus }\\quad \\mathcal{H}_1: \\delta>0,\\\\ \\mathcal{H}_0: \\delta\\geq 0 &\\quad\\text{ versus }\\quad \\mathcal{H}_1: \\delta<0.\\end{eqnarray*}$$ We will also be able to test a ", em("point alternative hypothesis"), ", so the following test is also available in the Bayesian module: $$\\mathcal{H}_0: \\delta=0\\quad\\text{ versus }\\quad \\mathcal{H}_1: \\delta=\\delta_1,$$ where $\\delta_1$ is a real number.", 
+    "For the Bayesian independent samples $t$-test used in this app, the parameter being tested is actually a ", em("standardized effect size"), " defined as $\\delta=\\frac{\\mu_D}{\\sigma}$ (Rouder et al., 2009).", 
+    br(), 
+    "The hypotheses being tested are: $$\\begin{eqnarray*}\\mathcal{H}_0: \\delta=0 &\\quad\\text{ versus }\\quad \\mathcal{H}_1: \\delta\\not=0,\\\\ \\mathcal{H}_0: \\delta\\leq 0 &\\quad\\text{ versus }\\quad \\mathcal{H}_1: \\delta>0,\\\\ \\mathcal{H}_0: \\delta\\geq 0 &\\quad\\text{ versus }\\quad \\mathcal{H}_1: \\delta<0.\\end{eqnarray*}$$ We will also be able to test a ", em("point alternative hypothesis"), ", so the following test is also available in the Bayesian module: $$\\mathcal{H}_0: \\delta=0\\quad\\text{ versus }\\quad \\mathcal{H}_1: \\delta=\\delta_1,$$ where $\\delta_1$ is a real number.", 
     br(), br(), 
     h4("References"), 
     div(style = "color: gray;", 
         icon("file-lines"), " Belia, S., Fidler, F., Williams, J., & Cumming, G. (2005). Researchers Misunderstand Confidence Intervals and Standard Error Bars. ", em("Psychological Methods"), ", ", em("10"), "(4), 389–396. ", a("https://doi.org/10.1037/1082-989X.10.4.389", href="https://doi.org/10.1037/1082-989X.10.4.389", target="_blank"),
+        br(), 
+        icon("file-lines"), " Etz, A. & Wagenmakers, E.-J. (2017). J. B. S. Haldane's contribution to the Bayes factor hypothesis test. ", em("Statistical Science"), ", ", em("32"), "(2), 313–329. ", a("http://doi.org/10.1214/16-STS599", href=" http://dx.doi.org/10.1214/16-STS599", target="_blank"), 
         br(), 
         icon("file-lines"), " Falk, R., & Greenbaum, C. W. (1995). Significance Tests Die Hard: The Amazing Persistence of a Probabilistic Misconception. ", em("Theory & Psychology"), ", ", em("5"), "(1), 75–98. ", a("https://doi.org/10.1177/0959354395051004", href=" https://doi.org/10.1177/0959354395051004", target="_blank"), 
         br(), 
@@ -313,7 +317,7 @@ output$introduction2b <- renderUI({
     br(), br(),
     "In significance testing, we decide to reject $\\mathcal{H}_0$ when the $p$-value is smaller than $\\alpha$ (the result is 'statistically significant') and we fail to reject $\\mathcal{H}_0$ otherwise (the result is not statistically significant).",
     br(),
-    "In this case, the test result is ",
+    "For the data above, the test result is ",
     if (ttest.res()["p"] > input$alpha) "not ",
     "statistically significant at $", round(100*(input$alpha), 3), "\\%$ significance level ($t = ",
     round(ttest.res()["t"], 3),
@@ -339,6 +343,10 @@ output$introduction2b <- renderUI({
     "Just to mention a few examples (for an extended list see Goodman, 2008; Greenland et al., 2016), do observe that the following interpretations of the $p$-value are ", em("all incorrect:"),
     br(), br(),
     HTML(renderMarkdown(text = "1. The probability of \\$\\mathcal{H}_0\\$ being true is equal to \\$p\\$.\n 1. The probability of \\$\\mathcal{H}_1\\$ being true is equal to \\$(1-p)\\$.\n 1. A non-significant test result implies that \\$\\mathcal{H}_0\\$ is true.\n 1. A significant test result implies that \\$\\mathcal{H}_1\\$ is true.\n 1. A non-significant test result implies that the effect size is small.\n 1. A significant test result implies that the effect size is large.\n 1. The probability that a significant test result is a false positive is equal to \\$\\alpha\\$.")),
+    "It is a good exercise to consider why each statement above is actually incorrect! Can you explain?", 
+    br(), 
+    em("(Note:"), " Goodman, 2008 and Greenland et al., 2016 discuss these topics at length.)", 
+    br(), br(), 
     "The main conclusion here is that NHST and its $p$-value are rather elusive and hard to understand concepts.",
     br(),
     "This is really problematic since most science relies on hypothesis testing.",
@@ -426,7 +434,7 @@ output$introduction4a <- renderUI({
     h4("Prior odds"), 
     "The prior odds reflect the relative initial belief on either hypothesis.", 
     br(), 
-    "For example, equal initial belief implies that the prior odds equal $\\frac{p(\\mathcal{H}_0)}{p(\\mathcal{H}_1)} = 1$.", 
+    "For example, equal initial belief implies that the prior odds equal $\\frac{p(\\mathcal{H}_0)}{p(\\mathcal{H}_1)} = \\frac{.5}{.5} = 1$.", 
     br(), br(), 
     "Or, strong initial belief in $\\mathcal{H}_0$, say 80% for $\\mathcal{H}_0$ and 20% for $\\mathcal{H}_1$, implies that the prior odds equal $\\frac{p(\\mathcal{H}_0)}{p(\\mathcal{H}_1)} = \\frac{.8}{.2} = 4$.", 
     br(), 
@@ -440,7 +448,7 @@ output$introduction4a <- renderUI({
     "In this case, the odds are 2-to-3 in favor of $\\mathcal{H}_1$, after considering the data.", 
     br(), br(), 
     h4("Example"), 
-    "The Bayes factor indicates how a rational agent (i.e., one who adheres to basic axioms of probability) updates his or her relative belief on each hypothesis in light of the observed data.", 
+    "The Bayes factor indicates how a rational agent (i.e., one who adheres to basic axioms of probability) updates their relative belief on each hypothesis in light of the observed data.", 
     br(), br(), 
     "Suppose we had found that $BF_{01} = 4$. Then we may say this:", 
     br(), 
@@ -448,7 +456,7 @@ output$introduction4a <- renderUI({
     br(), br(), 
     "Observe that this interpretation holds ", em("irrespective of the prior odds"), ":", 
     br(), br(), 
-    HTML(renderMarkdown(text = paste0("- Given equal prior odds (i.e., \\$\\frac{p(\\mathcal{H}_0)}{p(\\mathcal{H}_1)} = 1\\$), then the posterior odds are equal to \\$1\\times 4=4\\$<br> (so, \\$p(\\mathcal{H}_0|D)=.8\\$ and \\$p(\\mathcal{H_1}|D)=.2\\$).\n - If the prior odds are equal to \\$\\frac{p(\\mathcal{H}_0)}{p(\\mathcal{H}_1)} = \\frac{3}{2}\\$, then the posterior odds are equal to \\$\\frac{3}{2}\\times 4=6\\$<br> (so, \\$p(\\mathcal{H}_0|D)=\\frac{6}{6+1}=.86\\$ and \\$p(\\mathcal{H_1}|D)=\\frac{1}{6+1}=.14\\$).\n - ...")))
+    HTML(renderMarkdown(text = paste0("- Given equal prior odds (i.e., \\$\\frac{p(\\mathcal{H}_0)}{p(\\mathcal{H}_1)} = 1\\$), then the posterior odds are equal to \\$1\\times \\textcolor{#DCA559}{4}=4\\$<br> (so, \\$p(\\mathcal{H}_0|D)=.8\\$ and \\$p(\\mathcal{H_1}|D)=.2\\$).\n - If the prior odds are equal to \\$\\frac{p(\\mathcal{H}_0)}{p(\\mathcal{H}_1)} = \\frac{3}{2}\\$, then the posterior odds are equal to \\$\\frac{3}{2}\\times \\textcolor{#DCA559}{4}=6\\$<br> (so, \\$p(\\mathcal{H}_0|D)=\\frac{6}{6+1}=.86\\$ and \\$p(\\mathcal{H_1}|D)=\\frac{1}{6+1}=.14\\$).\n - ...")))
   )
   
   tagList(h3(strong("The Bayes factor")), 
@@ -467,9 +475,9 @@ output$introduction4a <- renderUI({
 
 output$introduction4b <- renderUI({
   outtext <- paste0(
-    "Let us, for the time being only, focus on two specific hypotheses $\\mathcal{H}_0$ and $\\mathcal{H}_1$. This is not to say that we expect that one of them is ", em("true"), " (and worse, that we intend to use a hypotheses test to sort this out!). In fact, about ", em("always"), " we expect that both hypotheses will be false (recall George Box's adage stating that all model are wrong...). Now this may sound confusing: If the hypotheses are ", em("complementary"), " (e.g., $\\mathcal{H}_0:\\delta=0$ versus $\\mathcal{H}_1:\\delta\\not=0$), how can ", em("both"), " be wrong? The problem is that a hypothesis is typically not completely defined by simply specifying the parameter values being tested; one must further specify ", em("all"), " conditions of the test. For example, the independent samples $t$-test assumes that both populations are normally distributed. Now, how can we ever ", em("establish"), " that? The answer is: We cannot, never. Furthermore, in Bayesian statistics we must also specify prior distributions for all parameters. In case you ask yourself 'Which prior distribution is true in the population?', then you are bound to be disappointed: There is no such thing. There are no ", em("true"), " prior distributions. Prior distributions are a means for us to express how uncertain we are about the value of a parameter. Were we omnipotent we would have no such doubts. In other words: Prior distributions, as much as assumptions like normality and equal group variances, are abstractions imposed by the analyst (= you) that really reflect how much we do not know. Such assumptions cannot really be ", em("established"), " or ", em("proven"), " beyond a shadow of a doubt. We can ", em("test"), " for such things, but we must be modest about the inferences we can draw from such tests.", 
+    "Let us, for the time being only, focus on two specific hypotheses $\\mathcal{H}_0$ and $\\mathcal{H}_1$. This is not to say that we expect that one of them is ", em("true"), " (and worse, that we intend to use a hypotheses test to sort this out!). In fact, about ", em("always"), " we expect that both hypotheses will be false (recall George Box's adage stating that all model are wrong...). Now this may sound confusing: If the hypotheses are ", em("complementary"), " (e.g., $\\mathcal{H}_0:\\delta=0$ versus $\\mathcal{H}_1:\\delta\\not=0$), how can ", em("both"), " be wrong? The problem is that a hypothesis is typically not completely defined by simply specifying the parameter values being tested; one must further specify ", em("all"), " conditions of the test. For example, the independent samples $t$-test assumes that both populations are normally distributed. Now, how can we ever ", em("establish"), " that? The answer is: We cannot, ever. Furthermore, in Bayesian statistics we must also specify prior distributions for all parameters. In case you ask yourself 'Which prior distribution is true in the population?', then you are bound to be disappointed: There is no such thing. There are no ", em("true"), " prior distributions. Prior distributions are a means for us to express how uncertain we are about the value of a parameter. Were we omnipotent we would have no such doubts. In other words: Prior distributions, as much as assumptions like normality and equal group variances, are abstractions imposed by the analyst (= you) that really reflect how much we do not know. Such assumptions cannot really be ", em("established"), " or ", em("proven"), " beyond a shadow of a doubt. We can ", em("test"), " for such things, but we must be modest about the inferences we can draw from such tests.", 
     br(), br(), 
-    "And that brings us back to $\\mathcal{H}_0$ and $\\mathcal{H}_1$. Again, we don't really think that either is true. However, we may expect one of the two to outperform the other, in a ", em("predictive"), " sense: The observed data may be more likely under one hypothesis in comparison to the other. In this sense, there is value in hypotheses testing. But never forget: This approach says nothing about the ", em("truthfulness"), " of any hypothesis. We must accept that, when performing a test, we are entertaining only two of potentially an infinity of possible hypotheses. Our inferences should be conditioned on the very two specific hypotheses we considered. We believe this is often disregarded in practice, leading researchers to mistakenly make statements which go much beyond what the given hypotheses and testing procedure allows.", 
+    "And that brings us back to $\\mathcal{H}_0$ and $\\mathcal{H}_1$. Again, we don't really think that either is true. However, we may expect one of the two to outperform the other, in a ", em("predictive"), " sense: The observed data may be more likely under one hypothesis in comparison to the other. In this sense, there is value in hypotheses testing. But never forget: This approach says nothing about the ", em("truthfulness"), " of any hypothesis. We must accept that, when performing a test, we are entertaining only two of potentially an infinity of possible hypotheses. Our inferences should be conditioned on the very two specific hypotheses we considered. We believe this is often disregarded in practice, leading researchers to mistakenly make statements which go much beyond what the given hypotheses and testing procedure allow.", 
     br(), br(), 
     "Thus, and for the time being only, let us entertain $\\mathcal{H}_0$ and $\\mathcal{H}_1$ as two very interesting hypotheses that could have generated the observed data. The term 'hypothesis' is probably better replaced by the term 'model'. What we are testing against each other is two models. Each model specifies the possible parameter values being considered, the distribution of the data conditional on those parameters (i.e., the likelihood function, like the normality in the case of the $t$-test), and all prior distributions (one per parameter).", 
     br(), br(), 
@@ -543,6 +551,8 @@ output$introduction5a <- renderUI({
     "This app offers three possible priors for $\\delta$, based on the Cauchy, normal, and $t$-Student distribution families.", 
     br(), 
     "Try changing the distribution and their parameters and see how that affects the probability of each value of $\\delta$.", 
+    br(), 
+    "When looking at the plots, consider whether the allocation of probability across the various possible values of $\\delta$ closely match what you know about the standardized effect size that you are studying.", 
     br()
   )
   
@@ -563,7 +573,7 @@ output$introduction5a <- renderUI({
 output$introduction5b <- renderUI({
   outtext <- paste0(
     h4(em("Prior for $\\sigma$")), 
-    "Parameter $\\sigma$ is common to both hypotheses $\\mathcal{H}_0$ and $\\mathcal{H}_1$. In such situations, it is common to choose a common $\\sigma$ prior under both hypotheses.", 
+    "Parameter $\\sigma$ is common to both hypotheses $\\mathcal{H}_0$ and $\\mathcal{H}_1$. In such situations, it is usual to choose a common $\\sigma$ prior under both hypotheses.", 
     br(), 
     "The idea is that such priors purportedly have a very little influence on the Bayes factor (see, e.g., Rouder et al., 2009).", 
     br(), br(), 
@@ -690,7 +700,7 @@ output$intro.topic6.plot1 <- renderPlot({
   axis(1, at = seq(0, 5000, by = 1000), las = 1)
   axis(2, at = seq(0, 50, 10), las = 1)
   mtext("Sample size per group", 1, 2.5)
-  mtext(expression("BF"["01"] * " (log scale)"), 2, 3)
+  mtext(expression("BF"["01"]), 2, 3)
 })
 
 output$intro.topic6.plot2 <- renderPlot({
