@@ -128,7 +128,9 @@ output$kim.out.topic1.part2 <- renderUI({
                     br(), br(), 
                     "The left panel shows how the Bayes factor (horizontal line) and the posterior odds (green curve) relate to each other. Note that they only coincide when the prior probability of $\\mathcal{H}_0$ is 0.5.", 
                     br(), br(), 
-                    "The right panel shows how the probability of $\\mathcal{H}_0$ updates from before ($x$-axis) to after considering the data ($y$ axis). Just like the posterior odds, the posterior probability of either hypotheses also changes according to their corresponding prior probability. The Bayes factor is always the same, though (here, $BF_{", substr(rv$BF10.01, 3, 4), "}=", round(BF(), 3), "$)."
+                    "The right panel shows how the probability of $\\mathcal{H}_0$ updates from before ($x$-axis) to after considering the data ($y$-axis).", 
+                    br(), 
+                    "Just like the posterior odds, the posterior probability of either hypotheses also changes according to their corresponding prior probability. The Bayes factor is always the same, though (here, $BF_{", substr(rv$BF10.01, 3, 4), "}=", round(BF(), 3), "$)."
   )
   tagList(
     #withMathJax(),

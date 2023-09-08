@@ -113,10 +113,10 @@ output$ttest.crit <- renderPlot({
              #         col = "#FF000005", border = NA)
              polygon(x = c(x.supp.crit, rev(x.supp.crit)), 
                      y = c(dt(x.supp.crit, ttest.res()["df"]), rep(0, 101)), 
-                     col = "#FF000033", border = NA)
+                     col = "#FF00000D", border = NA)
              polygon(x = c(-x.supp.crit, rev(-x.supp.crit)),
                      y = c(dt(-x.supp.crit, ttest.res()["df"]), rep(0, 101)),
-                     col = "#FF000033", border = NA)
+                     col = "#FF00000D", border = NA)
              segments(-xlimupp, 0, qt(input$alpha/2, ttest.res()["df"]), 0, lwd = 4, col = "#FF0000")
              segments(qt(1-input$alpha/2, ttest.res()["df"]), 0, xlimupp, 0, lwd = 4, col = "#FF0000")
              x.supp <- seq(abs(ttest.res()["t"]), xlimupp, length.out = 101)
@@ -135,7 +135,7 @@ output$ttest.crit <- renderPlot({
              #        col = "#FF000005", border = NA)
              polygon(x = c(x.supp.crit, rev(x.supp.crit)), 
                      y = c(dt(x.supp.crit, ttest.res()["df"]), rep(0, 101)), 
-                     col = "#FF000033", border = NA)
+                     col = "#FF00000D", border = NA)
              segments(-xlimupp, 0, qt(input$alpha, ttest.res()["df"]), 0, lwd = 4, col = "#FF0000")
              x.supp <- seq(-xlimupp, ttest.res()["t"], length.out = 101)
              polygon(x = c(x.supp, rev(x.supp)), 
@@ -150,7 +150,7 @@ output$ttest.crit <- renderPlot({
              #         col = "#FF000005", border = NA)
              polygon(x = c(x.supp.crit, rev(x.supp.crit)), 
                      y = c(dt(x.supp.crit, ttest.res()["df"]), rep(0, 101)), 
-                     col = "#FF000033", border = NA)
+                     col = "#FF00000D", border = NA)
              segments(qt(1-input$alpha, ttest.res()["df"]), 0, xlimupp, 0, lwd = 4, col = "#FF0000")
              x.supp <- seq(ttest.res()["t"], xlimupp, length.out = 101)
              polygon(x = c(x.supp, rev(x.supp)), 
@@ -162,7 +162,7 @@ output$ttest.crit <- renderPlot({
   text(ttest.res()["t"], 1.05*dt(0, ttest.res()["df"]), paste0("t = ", round(ttest.res()["t"], 3)), cex = 1.4, pos = if (ttest.res()["t"] < 0) 2 else 4)
   # text(if (ttest.res()["t"] < 0) xlimupp else -xlimupp, 1.05*dt(0, ttest.res()["df"]), paste0("Critical region (probability = ", input$alpha, ")"), pos = if (ttest.res()["t"] < 0) 2 else 4, cex = 1.4, col = "#F00000")
   # legend:
-  legend("bottomleft", paste0("Critical region (probability = ", input$alpha, ")"), pch = 15, col = "#FF000033", 
+  legend("bottomleft", paste0("Critical region (probability = ", input$alpha, ")"), pch = 15, col = "#FF00000D", 
          inset=c(0,1), xpd = TRUE, horiz = TRUE, bty = "n", seg.len = 4, pt.cex = 3)
 })
 

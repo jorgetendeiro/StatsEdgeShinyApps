@@ -178,7 +178,7 @@ ui <- fluidPage(
                                                             label   = em("Mean:"),
                                                             min     = -16,       # -10
                                                             max     = 16,        # 10
-                                                            value   = 2.8,     # 0.2
+                                                            value   = 2.1,     # 0.2
                                                             step    = 0.1,
                                                             width = "100%"), class = "not_bold")
                                     ),
@@ -460,7 +460,7 @@ ui <- fluidPage(
                                            label   = em("Mean:"),
                                            min     = -16,       # -10
                                            max     = 16,        # 10
-                                           value   = 2.8,     # 0.2
+                                           value   = 2.1,     # 0.2
                                            step    = 0.1,
                                            width = "100%"), class = "not_bold")
                    ),
@@ -726,7 +726,7 @@ ui <- fluidPage(
                                            label   = em("Mean:"),
                                            min     = -16,       # -10
                                            max     = 16,        # 10
-                                           value   = 2.8,     # 0.2
+                                           value   = 2.1,     # 0.2
                                            step    = 0.1,
                                            width = "100%"), class = "not_bold")
                    ),
@@ -1113,7 +1113,7 @@ server <- function(input, output, session) {
   rv <- reactiveValues(mean1 = 4.2,     mean1.tab2 = 4.2,     mean1.tab4 = 4.2, 
                        sd1   = 2.6,      sd1.tab2   = 2.6,      sd1.tab4   = 2.6, 
                        n1    = 10,         n1.tab2    = 10,         n1.tab4    = 10, 
-                       mean2 = 2.80,     mean2.tab2 = 2.80,     mean2.tab4 = 2.80, 
+                       mean2 = 2.10,     mean2.tab2 = 2.10,     mean2.tab4 = 2.10, 
                        sd2   = 1.7,      sd2.tab2   = 1.7,      sd2.tab4   = 1.7, 
                        n2    = 15,         n2.tab2    = 15,         n2.tab4    = 15, 
                        H1hyp = "H1.diff0", H1hyptab4 = "H1.diff0", 
