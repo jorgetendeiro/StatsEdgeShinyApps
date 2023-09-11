@@ -1033,8 +1033,7 @@ server <- function(input, output, session) {
   
   # Tab 5 - Let's practice:
   output$practice <- renderUI({
-    # This only works in the server:
-    rmarkdown::render("/srv/shiny-server/learnBF_tutorial/learnBF_tutorial.Rmd")
+    # rmarkdown::render("/srv/shiny-server/learnBF_tutorial/learnBF_tutorial.Rmd")
     tags$iframe(
       src="https://statsedge.org/shiny/learnBF_tutorial/", 
       width="100%", height="100%", frameBorder=0, style="height: 100vh;", scrolling = 'yes'
