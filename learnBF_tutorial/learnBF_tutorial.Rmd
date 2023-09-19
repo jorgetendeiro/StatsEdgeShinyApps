@@ -610,7 +610,6 @@ questions.7[[2]] <- questions.7[[2]][n.questions7]
 deployQs      <- questions.1
 deployQs[[2]] <- c(questions.1[[2]], questions.2[[2]], questions.3[[2]], 
                    questions.4[[2]], questions.5[[2]], questions.6[[2]], questions.7[[2]]) |> sample()
-# deployQs
 deployQs
 ```
 
