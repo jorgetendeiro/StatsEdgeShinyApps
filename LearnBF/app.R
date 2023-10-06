@@ -1038,7 +1038,14 @@ server <- function(input, output, session) {
                sample(0:9,     3, replace = TRUE),
                sample(LETTERS, 3, replace = TRUE))),
       collapse = "")
-    rmarkdown::render("/srv/shiny-server/learnBF_tutorial/learnBF_tutorial.Rmd", 
+    file.copy(from = "../learnBF_tutorial/learnBF_tutorial.Rmd", 
+              to   = "/tmp/learnBF_tutorial.Rmd", 
+              overwrite = TRUE)
+    file.copy(from = "../learnBF_tutorial/BayesFactors.R", 
+              to   = "/tmp/BayesFactors.R", 
+              overwrite = TRUE)
+    
+    rmarkdown::render("/tmp/learnBF_tutorial.Rmd", 
                       output_dir  = paste0("/tmp"), 
                       output_file = paste0(random.name, ".html"))
     # rmarkdown::render("/srv/shiny-server/learnBF_tutorial/learnBF_tutorial.Rmd")
