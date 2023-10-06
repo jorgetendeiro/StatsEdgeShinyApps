@@ -1033,21 +1033,22 @@ server <- function(input, output, session) {
   
   # Tab 5 - Let's practice:
   output$practice <- renderUI({
-    random.name <- paste0(
-      sample(c(sample(letters, 3, replace = TRUE),
-               sample(0:9,     3, replace = TRUE),
-               sample(LETTERS, 3, replace = TRUE))),
-      collapse = "")
-    dir.create(paste0("/tmp/", random.name))
+    # random.name <- paste0(
+    #   sample(c(sample(letters, 3, replace = TRUE),
+    #            sample(0:9,     3, replace = TRUE),
+    #            sample(LETTERS, 3, replace = TRUE))),
+    #   collapse = "")
+    # dir.create(paste0("/tmp/", random.name))
+    # 
+    # file.copy(from = "../learnBF_tutorial/learnBF_tutorial.Rmd", 
+    #           to   = paste0("/tmp/", random.name, "/learnBF_tutorial.Rmd"), 
+    #           overwrite = TRUE)
+    # file.copy(from = "../learnBF_tutorial/BayesFactors.R", 
+    #           to   = paste0("/tmp/", random.name, "/BayesFactors.R"), 
+    #           overwrite = TRUE)
+    # 
+    # rmarkdown::render(paste0("/tmp/", random.name, "/learnBF_tutorial.Rmd"))
     
-    file.copy(from = "../learnBF_tutorial/learnBF_tutorial.Rmd", 
-              to   = paste0("/tmp/", random.name, "/learnBF_tutorial.Rmd"), 
-              overwrite = TRUE)
-    file.copy(from = "../learnBF_tutorial/BayesFactors.R", 
-              to   = paste0("/tmp/", random.name, "/BayesFactors.R"), 
-              overwrite = TRUE)
-    
-    rmarkdown::render(paste0("/tmp/", random.name, "/learnBF_tutorial.Rmd"))
     # rmarkdown::render("/srv/shiny-server/learnBF_tutorial/learnBF_tutorial.Rmd")
     tags$iframe(
       # src="https://statsedge.org/shiny/learnBF_tutorial/",
