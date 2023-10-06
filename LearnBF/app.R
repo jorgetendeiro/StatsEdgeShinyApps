@@ -1038,7 +1038,9 @@ server <- function(input, output, session) {
                sample(0:9,     3, replace = TRUE),
                sample(LETTERS, 3, replace = TRUE))),
       collapse = "")
-    rmarkdown::render("/srv/shiny-server/learnBF_tutorial/learnBF_tutorial.Rmd", output_file = paste0("/tmp/", random.name, ".html"))
+    rmarkdown::render("/srv/shiny-server/learnBF_tutorial/learnBF_tutorial.Rmd", 
+                      output_dir = paste0("/tmp"), 
+                      output_dir = paste0(random.name, ".html"))
     # rmarkdown::render("/srv/shiny-server/learnBF_tutorial/learnBF_tutorial.Rmd")
     tags$iframe(
       # src="https://statsedge.org/shiny/learnBF_tutorial/",
