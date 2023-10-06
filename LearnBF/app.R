@@ -1033,9 +1033,16 @@ server <- function(input, output, session) {
   
   # Tab 5 - Let's practice:
   output$practice <- renderUI({
+    random.name <- paste0(
+      sample(c(sample(letters, 3, replace = TRUE),
+               sample(0:9,     3, replace = TRUE),
+               sample(LETTERS, 3, replace = TRUE))),
+      collapse = "")
+    rmarkdown::render("/srv/shiny-server/learnBF_tutorial/learnBF_tutorial.Rmd", output_file = paste0("/tmp/", random.name, ".html"))
     # rmarkdown::render("/srv/shiny-server/learnBF_tutorial/learnBF_tutorial.Rmd")
     tags$iframe(
-      src="https://statsedge.org/shiny/learnBF_tutorial/",
+      # src="https://statsedge.org/shiny/learnBF_tutorial/",
+      src = paste0("/tmp/", random.name, ".html"), 
       width="100%", height="100%", frameBorder=0, style="height: 100vh;", scrolling = 'yes'
     )
   })
