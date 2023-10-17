@@ -36,6 +36,8 @@ t.test.summ <- function(m1, m2, sd1, sd2, n1, n2, alternative = "H1.diff0")
 
 # Load the functions allowing to compute the Bayes factors:
 source("R_scripts/BayesFactors.R")
+# Load setSliderColor(), which is soon to be deprecated from shinyWidgets:
+source("R_scripts/setSliderColor.R")
 
 # Load BOOST's non-central t (better precision and less warnings than R's):
 # https://stackoverflow.com/questions/39183938/rs-t-distribution-says-full-precision-may-not-have-been-achieved
@@ -1038,21 +1040,25 @@ server <- function(input, output, session) {
     #            sample(0:9,     3, replace = TRUE),
     #            sample(LETTERS, 3, replace = TRUE))),
     #   collapse = "")
-    # dir.create(paste0("/tmp/", random.name))
+    # tmp.dir <- paste0("/tmp/", random.name)
+    # dir.create(tmp.dir)
     # 
-    # file.copy(from = "../learnBF_tutorial/learnBF_tutorial.Rmd", 
-    #           to   = paste0("/tmp/", random.name, "/learnBF_tutorial.Rmd"), 
+    # file.copy(from = "../learnBF_tutorial/learnBF_tutorial.Rmd",
+    #           to   = paste0(tmp.dir, "/learnBF_tutorial.Rmd"),
     #           overwrite = TRUE)
-    # file.copy(from = "../learnBF_tutorial/BayesFactors.R", 
-    #           to   = paste0("/tmp/", random.name, "/BayesFactors.R"), 
+    # file.copy(from = "../learnBF_tutorial/BayesFactors.R",
+    #           to   = paste0(tmp.dir, "/BayesFactors.R"),
     #           overwrite = TRUE)
     # 
-    # rmarkdown::render(paste0("/tmp/", random.name, "/learnBF_tutorial.Rmd"))
+    # app.dir <- getwd() ####
+    # setwd(tmp.dir)      ####
+    # rmarkdown::render(paste0(tmp.dir, "/learnBF_tutorial.Rmd"), 
+    #                   envir = new.env(parent = globalenv()))
+    # setwd(app.dir)     ####
     
-    # rmarkdown::render("/srv/shiny-server/learnBF_tutorial/learnBF_tutorial.Rmd")
     tags$iframe(
       src="https://statsedge.org/shiny/learnBF_tutorial/",
-      # src = paste0("/tmp/", random.name), 
+      # src = tmp.dir, 
       width="100%", height="100%", frameBorder=0, style="height: 100vh;", scrolling = 'yes'
     )
   })
