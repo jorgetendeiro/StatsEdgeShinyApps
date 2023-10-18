@@ -1057,8 +1057,8 @@ server <- function(input, output, session) {
     # setwd(app.dir)     ####
     
     tags$iframe(
-      src="https://statsedge.org/shiny/learnBF_tutorial/",
-      # src = tmp.dir, 
+      # src="https://statsedge.org/shiny/learnBF_tutorial/",
+      src = paste0("../learnBF_tutorial/Tutorial", sample(1:20, 1)), 
       width="100%", height="100%", frameBorder=0, style="height: 100vh;", scrolling = 'yes'
     )
   })
