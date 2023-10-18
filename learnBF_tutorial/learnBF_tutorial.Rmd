@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = FALSE)
 set.seed(NULL)
 
 # Load the functions allowing to compute the Bayes factors:
-source("BayesFactors.R")
+######source("BayesFactors.R")
 ```
 
 
