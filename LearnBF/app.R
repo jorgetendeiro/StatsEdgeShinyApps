@@ -1,21 +1,14 @@
 # Load Shiny ----
 library(shiny)
-library(shinyWidgets)
 library(shinyjs)
-# library(dplyr)
-# library(broom)
 library(kableExtra)
+library(knitr)
 library(BayesFactor)
-library(xtable)
-# library(DT)
 library(markdown)
-# library(stevemisc)
-# library(katex)
-# library(BH)
 library(Rcpp)
 library(fontawesome)
 # install devtools in server
-# install kableExtra (now 1.3.4) from Github: devtools::install_github("haozhu233/kableExtra")
+# install kableExtra from Github: devtools::install_github("haozhu233/kableExtra")
 
 # Function computing the t-test from summaries ----
 t.test.summ <- function(m1, m2, sd1, sd2, n1, n2, alternative = "H1.diff0")
