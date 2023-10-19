@@ -1035,34 +1035,11 @@ server <- function(input, output, session) {
   
   # Tab 5 - Let's practice:
   output$practice <- renderUI({
-    # random.name <- paste0(
-    #   sample(c(sample(letters, 3, replace = TRUE),
-    #            sample(0:9,     3, replace = TRUE),
-    #            sample(LETTERS, 3, replace = TRUE))),
-    #   collapse = "")
-    # tmp.dir <- paste0("/tmp/", random.name)
-    # dir.create(tmp.dir)
-    # 
-    # file.copy(from = "../learnBF_tutorial/learnBF_tutorial.Rmd",
-    #           to   = paste0(tmp.dir, "/learnBF_tutorial.Rmd"),
-    #           overwrite = TRUE)
-    # file.copy(from = "../learnBF_tutorial/BayesFactors.R",
-    #           to   = paste0(tmp.dir, "/BayesFactors.R"),
-    #           overwrite = TRUE)
-    # 
-    # app.dir <- getwd() ####
-    # setwd(tmp.dir)      ####
-    # rmarkdown::render(paste0(tmp.dir, "/learnBF_tutorial.Rmd"), 
-    #                   envir = new.env(parent = globalenv()))
-    # setwd(app.dir)     ####
-    
     tags$iframe(
-      # src="https://statsedge.org/shiny/learnBF_tutorial/",
-      src = paste0("../learnBF_tutorial/Tutorial", sample(1:20, 1)), 
+      src=paste0("../learnBF_tutorial/Tutorial", sample(1:20, 1), "/"),
       width="100%", height="100%", frameBorder=0, style="height: 100vh;", scrolling = 'yes'
     )
   })
-  
   
   # Change prior prob of H1 when that of H0 changes:
   observeEvent(input$priorprob0,  {
