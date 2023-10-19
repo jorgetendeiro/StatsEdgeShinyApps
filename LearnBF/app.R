@@ -1,5 +1,6 @@
 # Load Shiny ----
 library(shiny)
+library(shinyWidgets)
 library(shinyjs)
 library(kableExtra)
 library(knitr)

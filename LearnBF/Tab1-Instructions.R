@@ -45,9 +45,9 @@ output$instructions <- renderUI({
     div(style = "color: gray;", 
         icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
         br(), 
-        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank"), 
+        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. ", em("In press"), a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank"), 
         br(), 
-        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. Preprint, ", a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank")
+        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank")
     )
   )
   

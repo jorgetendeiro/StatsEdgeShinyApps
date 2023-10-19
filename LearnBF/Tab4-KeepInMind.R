@@ -36,9 +36,9 @@ output$kim.out <- renderUI({
                              div(style = "color: gray;", 
                                  icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
                                  br(), 
-                                 icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank"), 
+                                 icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. ", em("In press"), a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank"), 
                                  br(), 
-                                 icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. Preprint, ", a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank")
+                                 icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank")
                              ))
          }, 
          topic5 = {
@@ -50,9 +50,9 @@ output$kim.out <- renderUI({
                              div(style = "color: gray;", 
                                  icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
                                  br(), 
-                                 icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank"), 
+                                 icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. ", em("In press"), a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank"), 
                                  br(), 
-                                 icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. Preprint, ", a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank")
+                                 icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank")
                              ))
          }, 
          topic7 = {
@@ -186,9 +186,9 @@ output$kim.out.topic1.part3 <- renderUI({
                     div(style = "color: gray;", 
                         icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
                         br(), 
-                        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank"), 
+                        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. ", em("In press"), a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank"), 
                         br(), 
-                        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. Preprint, ", a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank")
+                        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank")
                     )
   )
   tagList(
@@ -670,9 +670,9 @@ output$kim.out.topic2.part2 <- renderUI({
                     div(style = "color: gray;", 
                         icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
                         br(), 
-                        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank"), 
+                        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. ", em("In press"), a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank"), 
                         br(), 
-                        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. Preprint, ", a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank")
+                        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank")
                     )
   )
   tagList(
@@ -818,9 +818,9 @@ output$kim.out.topic3.part3 <- renderUI({
                     div(style = "color: gray;", 
                         icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
                         br(), 
-                        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank"), 
+                        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. ", em("In press"), a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank"), 
                         br(), 
-                        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. Preprint, ", a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank")
+                        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank")
                     )
   )
   tagList(
@@ -853,9 +853,9 @@ output$kim.out.topic5.part3 <- renderUI({
                     div(style = "color: gray;", 
                         icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
                         br(), 
-                        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank"), 
+                        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. ", em("In press"), a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank"), 
                         br(), 
-                        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. Preprint, ", a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank")
+                        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank")
                     ))
   tagList(
     #withMathJax(),
@@ -933,11 +933,17 @@ output$kim.out.topic7.part3 <- renderUI({
   outtext <- paste0("Furthermore, the discretization shown in the tables above is rather arbitrary.", br(), "There is nothing really special about the values shown other than some sort of practical convenience.", br(), br(), "Finally, what some consider to be 'substantial' may be deemed uninsteresting or perhaps very relevant by others, depending on the research field or the problem under consideration.", br(), "For instance, a Bayes factor as little as 4 or 5 may be very relevant in case it pertains to relative evidence in favor of a completely new phenomenon, whereas the same Bayes factor may be considered uninsteresting if it reflects support for a widely established theory.", br(), br(), "In general, we caution against a mechanical use of such labels.", br(), "Instead, we favor explaining the amount of evidence displayed by the Bayes factor in the context of the research being conducted.", br(), br(), 
                     h4("References"), 
                     div(style = "color: gray;", 
+                        icon("file-lines"), " Jeffreys, H. (1961). ", em("Theory of Probability,"), "3rd edition. Oxford University Press, Oxford.", 
+                        br(), 
+                        icon("file-lines"), " Kass, R. E., & Raftery, A. E. (1995). Bayes Factors. ", em("Journal of the American Statistical Association"), ", ", em("90"), ", 773–795. ", a("http://dx.doi.org/10.2307/2291091", href="http://dx.doi.org/10.2307/2291091", target="_blank"),  
+                        br(), 
+                        icon("file-lines"), " Lee, M. D., & Wagenmakers, E. J. (2014). ", em("Bayesian Cognitive Modeling: A Practical Course."), " Cambridge University Press, Cambridge; New York.", 
+                        br(), 
                         icon("file-lines"), " Tendeiro, J. N., & Kiers, H. A. L. (2019).  A review of issues about null hypothesis Bayesian testing. ", em("Psychological Methods"), ", ", em("24"), "(6), 774–795. ", a("http://dx.doi.org/10.1037/met0000221", href="http://dx.doi.org/10.1037/met0000221", target="_blank"), 
                         br(), 
-                        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank"), 
+                        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. ", em("In press"), a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank"), 
                         br(), 
-                        icon("file-lines"), " Tendeiro, J. N., Kiers, H. A. L., Hoekstra, R., Wong, T. K., & Morey, R. D. (2023). Diagnosing the use of the Bayes factor in applied research. Preprint, ", a("https://psyarxiv.com/du3fc/", href="https://psyarxiv.com/du3fc/", target="_blank")
+                        icon("file-lines"), " Wong, T. K., Kiers, H. A. L., & Tendeiro, J. N. (2022). On the potential mismatch between the function of the Bayes factor and researchers' expectations. ", em("Collabra: Psychology"), ", ", em("8"), " (1). ", a("https://doi.org/10.1525/collabra.36357", href="https://doi.org/10.1525/collabra.36357", target="_blank")
                     ))
   tagList(
     #withMathJax(),
