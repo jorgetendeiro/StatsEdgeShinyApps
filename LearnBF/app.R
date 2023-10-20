@@ -54,6 +54,7 @@ window.MathJax = {
 
 # User interface ----
 ui <- fluidPage(
+  title = "The Bayes factor", # Browser tab title
   includeCSS("www/mystyle.css"),
   #!#!#!#!
   # tags$head(
