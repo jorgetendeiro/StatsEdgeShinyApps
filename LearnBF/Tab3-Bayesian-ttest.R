@@ -367,7 +367,8 @@ output$BFplot3 <- renderPlot({
     segments(y.95CI.LB, 1.10*max(y, y.post), y.95CI.UB, 1.10*max(y, y.post), lwd = 2, col = "#DCA559")
     segments(y.95CI.LB, 1.07*max(y, y.post), y.95CI.LB, 1.13*max(y, y.post), lwd = 2, col = "#DCA559")
     segments(y.95CI.UB, 1.07*max(y, y.post), y.95CI.UB, 1.13*max(y, y.post), lwd = 2, col = "#DCA559")
-    text(paste0("95% CI = (", round(y.95CI.LB, 3), ", ", round(y.95CI.UB, 3), ")"), x = if (rv$H1hyp != "H1.smaller0") y.95CI.UB else y.95CI.LB, y = 1.1*max(y, y.post), cex = 1.2, font=1, pos = if (rv$H1hyp != "H1.smaller0") 4 else 2, offset = .5)
+    # text(paste0("95% CI = (", round(y.95CI.LB, 3), ", ", round(y.95CI.UB, 3), ")"), x = if (rv$H1hyp != "H1.smaller0") y.95CI.UB else y.95CI.LB, y = 1.1*max(y, y.post), cex = 1.2, font=1, pos = if (rv$H1hyp != "H1.smaller0") 4 else 2, offset = .5)
+    text(paste0("95% CI = (", round(y.95CI.LB, 3), ", ", round(y.95CI.UB, 3), ")"), x = mean(c(y.95CI.LB, y.95CI.UB)), y = 1.16*max(y, y.post), cex = 1.2, font=1)
     y.95CI.LB.ind <- which.min(abs(x.supp - y.95CI.LB))
     y.95CI.UB.ind <- which.min(abs(x.supp - y.95CI.UB))
     polygon(c(x.supp[y.95CI.LB.ind:y.95CI.UB.ind], rev(x.supp[y.95CI.LB.ind:y.95CI.UB.ind])), 
