@@ -287,7 +287,7 @@ output$introduction2a <- renderUI({
     br(), 
     "Choose the mean, standard deviation, and sample size for each group.", 
     br(), br(), 
-    "Below is the outcome from running a frequentist two-sided independent samples $t$-test.", 
+    "Below is the outcome from running a frequentist independent samples $t$-test.", 
     br(), 
     "You can also manipulate the test's significance level and see how that affects the test's decision."
   )
