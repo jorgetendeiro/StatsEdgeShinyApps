@@ -1038,27 +1038,32 @@ server <- function(input, output, session) {
   
   # Change prior prob of H1 when that of H0 changes:
   observeEvent(input$priorprob0,  {
-    updateSliderInput(session = session, 
-                      inputId = "priorprob1", 
-                      value   = 100 - input$priorprob0)
+    delay(500, 
+          updateSliderInput(session = session, 
+                            inputId = "priorprob1", 
+                            value   = 100 - input$priorprob0)
+    )
   })
   # Change prior prob of H0 when that of H1 changes:
   observeEvent(input$priorprob1,  {
-    updateSliderInput(session = session, 
-                      inputId = "priorprob0", 
-                      value   = 100 - input$priorprob1)
+    delay(500, 
+          updateSliderInput(session = session, 
+                            inputId = "priorprob0", 
+                            value   = 100 - input$priorprob1))
   })
   # Change prior prob of H1 when that of H0 changes (tab4):
   observeEvent(input$priorprob0.tab4,  {
-    updateSliderInput(session = session, 
-                      inputId = "priorprob1.tab4", 
-                      value   = 100 - input$priorprob0.tab4)
+    delay(500, 
+          updateSliderInput(session = session, 
+                            inputId = "priorprob1.tab4", 
+                            value   = 100 - input$priorprob0.tab4))
   })
   # Change prior prob of H1 when that of H0 changes (tab4):
   observeEvent(input$priorprob1.tab4,  {
-    updateSliderInput(session = session, 
-                      inputId = "priorprob0.tab4", 
-                      value   = 100 - input$priorprob1.tab4)
+    delay(500, 
+          updateSliderInput(session = session, 
+                            inputId = "priorprob0.tab4", 
+                            value   = 100 - input$priorprob1.tab4))
   })
   
   # Hyperlinks to tabs:
