@@ -69,7 +69,7 @@ questions.1 <- quiz(
     try_again           = "Please try again.", 
     correct             = "Yes!", 
     allow_retry         = TRUE, 
-    random_answer_order	= TRUE
+    random_answer_order	= FALSE
   ), 
   
   # Posterior odds II:
@@ -78,8 +78,8 @@ questions.1 <- quiz(
       HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\"Assume that, a priori, both $\\mathcal{H}_0$ and $\\mathcal{H}_1$ are equally likely. Then, from $BF_{10} = 2$ we can conclude that $\\mathcal{H}_1$ is twice as probable as $\\mathcal{H}_0$, given the observed data.\'\'"), 
       br(), br(), 
       "Is this correct?"),
-    answer("True.", correct = TRUE),
     answer("False."), 
+    answer("True.", correct = TRUE),
     post_message = paste0(
       "In effect, the interpretation in the quote concerns the posterior odds, $\\frac{p(\\mathcal{H}_1|D)}{p(\\mathcal{H}_0|D)}$.", 
       br(), br(), 
@@ -90,7 +90,7 @@ questions.1 <- quiz(
     try_again           = "Please try again.", 
     correct             = "Yes!", 
     allow_retry         = TRUE, 
-    random_answer_order	= TRUE
+    random_answer_order	= FALSE
   ), 
   
   # Posterior odds III:
@@ -111,7 +111,7 @@ questions.1 <- quiz(
     try_again           = "Please try again.",
     correct             = "Yes!",
     allow_retry         = TRUE,
-    random_answer_order	= TRUE
+    random_answer_order	= FALSE
   ), 
   
   # Posterior odds IV: evidence vs belief
@@ -179,7 +179,7 @@ questions.2 <- quiz(
   
   # Prior under H0:
   question(
-    paste0("A prior distribution for parameter $\\mu_D$ under $\\mathcal{H}_0$ must be chosen, as there are many possible priors available."),
+    paste0("A prior distribution for parameter $\\mu_D$ under $\\mathcal{H}_0:\\mu_D=0$ must be chosen, as there are many possible priors available."),
     answer("False.", correct = TRUE),
     answer("True."), 
     post_message = paste0(
@@ -191,18 +191,18 @@ questions.2 <- quiz(
     try_again           = "Please try again.", 
     correct             = "Yes!", 
     allow_retry         = TRUE, 
-    random_answer_order	= TRUE
+    random_answer_order	= FALSE
   ), 
   
   # Prior under H1:
   question(
-    paste0("A prior distribution for parameter $\\mu_D$ under $\\mathcal{H}_1$ must be chosen, as there are many possible priors available."),
+    paste0("A prior distribution for parameter $\\mu_D$ under $\\mathcal{H}_1:\\mu_D\not=0$ must be chosen, as there are many possible priors available."),
     answer("False."),
     answer("True.", correct = TRUE), 
     post_message = paste0(
       "Bayesian hypothesis testing requires that, under any hypothesis, each parameter value has an associated a priori probability.", 
       br(), 
-      "In the case of hypothesis $\\mathcal{H}_1$, there are many values to consider (namely, all $\\mu_D$ values different from 0).", 
+      "In the case of hypothesis $\\mathcal{H}_1:\\mu_D\not=0$, there are many values to consider (namely, all $\\mu_D$ values different from 0).", 
       br(), br(), 
       "On the left menu, we offer three families of distributions (Cauchy, Normal, $t$-Student).", 
       br(), 
@@ -211,7 +211,7 @@ questions.2 <- quiz(
     try_again           = "Please try again.", 
     correct             = "Yes!", 
     allow_retry         = TRUE, 
-    random_answer_order	= TRUE
+    random_answer_order	= FALSE
   ), 
   
   # Need to report priors used:
@@ -307,7 +307,7 @@ questions.3 <- quiz(
     try_again           = "Please try again.", 
     correct             = "Yes!", 
     allow_retry         = TRUE, 
-    random_answer_order	= TRUE
+    random_answer_order	= FALSE
   ), 
   
   # Relative assessment II:
@@ -316,8 +316,8 @@ questions.3 <- quiz(
       HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\"From $BF_{01} = 7$ we can conclude that the evidence supports $\\mathcal{H}_0$ over $\\mathcal{H}_1$.\'\'"), 
       br(), br(), 
       "Is this correct?"),
-    answer("True.", correct = TRUE),
     answer("False."), 
+    answer("True.", correct = TRUE),
     post_message = paste0(
       "The quote correctly associates the Bayes factor to the evidence in the data.", 
       br(), 
@@ -329,7 +329,7 @@ questions.3 <- quiz(
     try_again           = "Please try again.", 
     correct             = "Yes!", 
     allow_retry         = TRUE, 
-    random_answer_order	= TRUE
+    random_answer_order	= FALSE
   )
 )
 
@@ -376,7 +376,7 @@ questions.4 <- quiz(
     try_again           = "Please try again.", 
     correct             = "Yes!", 
     allow_retry         = TRUE, 
-    random_answer_order	= TRUE
+    random_answer_order	= FALSE
   ), 
   
   # Relative assessment:
@@ -385,8 +385,8 @@ questions.4 <- quiz(
       HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\"From $BF_{10} = 322$ we can not conclude that there is a mean group difference.\'\'"), 
       br(), br(), 
       "Is this correct?"),
-    answer("True.", correct = TRUE),
     answer("False."), 
+    answer("True.", correct = TRUE),
     post_message = paste0(
       "The Bayes factor pertains to the relative probability of the observed data under either hypothesis.", 
       br(), 
@@ -412,7 +412,7 @@ questions.4 <- quiz(
     try_again           = "Please try again.", 
     correct             = "Yes!", 
     allow_retry         = TRUE, 
-    random_answer_order	= TRUE
+    random_answer_order	= FALSE
   )
 )
 
@@ -456,7 +456,7 @@ questions.5 <- quiz(
     random_answer_order	= TRUE
   ), 
   
-  # BF not ES 1:
+  # BF not ES 2:
   question(
     paste0(
       "Assume that the sample mean and the sample standard deviation of both groups are fixed, such that the two means are equal.", 
@@ -520,7 +520,7 @@ questions.6 <- quiz(
     try_again           = "Please try again.", 
     correct             = "Yes!", 
     allow_retry         = TRUE, 
-    random_answer_order	= TRUE
+    random_answer_order	= FALSE
   ), 
   
   # absence of evidence != evidence of absence 2:
@@ -529,8 +529,8 @@ questions.6 <- quiz(
       HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), em("\"The Bayes factor is $BF_{01} = 1.3$, a value very close to the reference value of 1. We therefore infer that the observed data are about equally likely under either $\\mathcal{H}_0$ or $\\mathcal{H}_1$.\'\'"), 
       br(), br(), 
       "Is this correct?"),
-    answer("True.", correct = TRUE),
     answer("False."), 
+    answer("True.", correct = TRUE),
     post_message = paste0(
       "The test result is rather ", em("inconclusive"), " since the Bayes factor is about 1.", br(), "This means that the data are about equally likely under either hypothesis, so indeed the quote is correct.", 
       br(), 
@@ -546,7 +546,7 @@ questions.6 <- quiz(
     try_again           = "Please try again.", 
     correct             = "Yes!", 
     allow_retry         = TRUE, 
-    random_answer_order	= TRUE
+    random_answer_order	= FALSE
   )
 )
 
