@@ -363,7 +363,7 @@ output$BFplot3 <- renderPlot({
     mtext("Density", 2, 3, cex = 1.2)
     mtext(expression("Effect size " * delta), 1, 2.5, cex = 1.2)
     abline(v = cohen.d(), lwd = 2, lty = 4, col = "gray")
-    text(paste0("d = ", round(cohen.d(), 3)), x = cohen.d(), y = ceiling(1.2*max(y, y.post)), cex = 1.2, font=1, pos = if (rv$H1hyp != "H1.smaller0") 4 else 2)
+    text(paste0("Observed d = ", round(cohen.d(), 3)), x = cohen.d(), y = ceiling(1.2*max(y, y.post)), cex = 1.2, font=1, pos = if (rv$H1hyp != "H1.smaller0") 4 else 2)
     segments(y.95CI.LB, 1.10*max(y, y.post), y.95CI.UB, 1.10*max(y, y.post), lwd = 2, col = "#DCA559")
     segments(y.95CI.LB, 1.07*max(y, y.post), y.95CI.LB, 1.13*max(y, y.post), lwd = 2, col = "#DCA559")
     segments(y.95CI.UB, 1.07*max(y, y.post), y.95CI.UB, 1.13*max(y, y.post), lwd = 2, col = "#DCA559")
