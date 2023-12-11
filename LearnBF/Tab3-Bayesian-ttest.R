@@ -191,8 +191,9 @@ output$BFint1 <- renderUI({
   outtext <- paste0(
     HTML("&nbsp;&nbsp;&nbsp;"), em("$BF_{", substr(rv$BF10.01, 3, 4), "}=", round(BF(), 2), "$: The observed data are $", round(BF(), 2), "$ times more likely in case $\\mathcal{H}_{", substr(rv$BF10.01, 3, 3), "}$", " is true than if ", "$\\mathcal{H}_{", substr(rv$BF10.01, 4, 4), "}$", " is true."), 
     br(), br(), 
-    "The pie chart below gives a visual idea of the relative likelihood of the <font color=\"#DCA559\">data</font> under either hypothesis.", 
-    br(), br(), 
+    # "The pie chart below gives a visual idea of the relative likelihood of the <font color=\"#DCA559\">data</font> under either hypothesis.", 
+    "Observe that this interpretation is about the relative likelihood of the <font color=\"#DCA559\">data</font> under either hypothesis.", 
+    br(), 
     "This should ", strong("not"), " be interpreted as the relative posterior probability of the <font color=\"#DCA559\">hypotheses</font> $\\mathcal{H}_0$ and $\\mathcal{H}_1$!", 
     br(), 
     "See ", actionLink("intro.tab4b", "Keep in mind", style = "font-weight: bold;"), ", section 1."
@@ -244,40 +245,40 @@ output$BFint3 <- renderUI({
   )
 })
 
-output$BFplot1 <- renderPlot({
-  th.circle    <- seq(0, 2*pi, length.out = 1024)
-  x.circle     <- cos(th.circle)
-  y.circle     <- sin(th.circle)
-  BF.angles    <- c(BF(), 1) / (BF() + 1) * (2*pi)
-  lines.angles <- c((pi - BF.angles[1])/2, pi - (pi - BF.angles[1])/2)
-  
-  par(mar = c(0, 0, 0, 0))
-  plot(NULL, xlim = c(-1, 1), ylim = c(-1.2, 1.2), ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", asp = 1)
-  polygon(c(0, cos(seq(lines.angles[1], lines.angles[2], length.out = 1024)), 0), 
-          c(0, sin(seq(lines.angles[1], lines.angles[2], length.out = 1024)), 0), 
-          col = if (rv$BF10.01 == "BF10") "#005E3C1A" else "#DCA5591A", border = NA)
-  points(cos(seq(lines.angles[1], lines.angles[2], length.out = 1024)), sin(seq(lines.angles[1], lines.angles[2], length.out = 1024)), 
-         xlim = c(-1, 1), ylim = c(-1.2, 1.2), type = "l", lwd = 1.5, 
-         ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", asp = 1, 
-         col = if (rv$BF10.01 == "BF10") "#005E3C" else "#DCA559")
-  polygon(c(0, cos(seq(lines.angles[2], 2*pi+lines.angles[1], length.out = 1024)), 0),
-          c(0, sin(seq(lines.angles[2], 2*pi+lines.angles[1], length.out = 1024)), 0),
-          col = if (rv$BF10.01 == "BF10") "#DCA5591A" else "#005E3C1A", border = NA)
-  points(cos(seq(lines.angles[2], 2*pi+lines.angles[1], length.out = 1024)), sin(seq(lines.angles[2], 2*pi+lines.angles[1], length.out = 1024)), 
-         xlim = c(-1, 1), ylim = c(-1.2, 1.2), type = "l", lwd = 1.5, 
-         ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", asp = 1, 
-         col = if (rv$BF10.01 == "BF10") "#DCA559" else "#005E3C")
-  segments(c(0, 0), c(0, 0), cos(lines.angles), sin(lines.angles), lwd = 1.5, col = if (rv$BF10.01 == "BF10") "#005E3C" else "#DCA559")
-  if (rv$BF10.01 == "BF10") 
-  {
-    text(0, 1.2,  expression("P( D | " * H[1] * " )"), cex = 1.5, col = "#005E3C", font=2)
-    text(0, -1.2, expression("P( D | " * H[0] * " )"), cex = 1.5, col = "#DCA559", font=2)
-  } else 
-  {
-    text(0, 1.2,  expression("P( D | " * H[0] * " )"), cex = 1.5, col = "#DCA559", font=2)
-    text(0, -1.2, expression("P( D | " * H[1] * " )"), cex = 1.5, col = "#005E3C", font=2)
-  } 
-})
+# output$BFplot1 <- renderPlot({
+#   th.circle    <- seq(0, 2*pi, length.out = 1024)
+#   x.circle     <- cos(th.circle)
+#   y.circle     <- sin(th.circle)
+#   BF.angles    <- c(BF(), 1) / (BF() + 1) * (2*pi)
+#   lines.angles <- c((pi - BF.angles[1])/2, pi - (pi - BF.angles[1])/2)
+#   
+#   par(mar = c(0, 0, 0, 0))
+#   plot(NULL, xlim = c(-1, 1), ylim = c(-1.2, 1.2), ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", asp = 1)
+#   polygon(c(0, cos(seq(lines.angles[1], lines.angles[2], length.out = 1024)), 0), 
+#           c(0, sin(seq(lines.angles[1], lines.angles[2], length.out = 1024)), 0), 
+#           col = if (rv$BF10.01 == "BF10") "#005E3C1A" else "#DCA5591A", border = NA)
+#   points(cos(seq(lines.angles[1], lines.angles[2], length.out = 1024)), sin(seq(lines.angles[1], lines.angles[2], length.out = 1024)), 
+#          xlim = c(-1, 1), ylim = c(-1.2, 1.2), type = "l", lwd = 1.5, 
+#          ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", asp = 1, 
+#          col = if (rv$BF10.01 == "BF10") "#005E3C" else "#DCA559")
+#   polygon(c(0, cos(seq(lines.angles[2], 2*pi+lines.angles[1], length.out = 1024)), 0),
+#           c(0, sin(seq(lines.angles[2], 2*pi+lines.angles[1], length.out = 1024)), 0),
+#           col = if (rv$BF10.01 == "BF10") "#DCA5591A" else "#005E3C1A", border = NA)
+#   points(cos(seq(lines.angles[2], 2*pi+lines.angles[1], length.out = 1024)), sin(seq(lines.angles[2], 2*pi+lines.angles[1], length.out = 1024)), 
+#          xlim = c(-1, 1), ylim = c(-1.2, 1.2), type = "l", lwd = 1.5, 
+#          ylab = "", xlab = "", xaxt = "n", yaxt = "n", bty = "n", asp = 1, 
+#          col = if (rv$BF10.01 == "BF10") "#DCA559" else "#005E3C")
+#   segments(c(0, 0), c(0, 0), cos(lines.angles), sin(lines.angles), lwd = 1.5, col = if (rv$BF10.01 == "BF10") "#005E3C" else "#DCA559")
+#   if (rv$BF10.01 == "BF10") 
+#   {
+#     text(0, 1.2,  expression("P( D | " * H[1] * " )"), cex = 1.5, col = "#005E3C", font=2)
+#     text(0, -1.2, expression("P( D | " * H[0] * " )"), cex = 1.5, col = "#DCA559", font=2)
+#   } else 
+#   {
+#     text(0, 1.2,  expression("P( D | " * H[0] * " )"), cex = 1.5, col = "#DCA559", font=2)
+#     text(0, -1.2, expression("P( D | " * H[1] * " )"), cex = 1.5, col = "#005E3C", font=2)
+#   } 
+# })
 
 output$BFplot2 <- renderPlot({
   layout(matrix(c(1, 1, 1, 2, 2, 2, 3, 3, 3), 1, 9, byrow = TRUE))

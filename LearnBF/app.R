@@ -645,17 +645,17 @@ ui <- fluidPage(
                  br(), br(),
                  h4("Bayes factor ", HTML("&#8212;"), " Interpretation 1"),
                  withMathJax(uiOutput("BFint1")),
-                 fluidRow(align = 'center',
-                          column(3),
-                          column(3, align = 'center', plotOutput("BFplot1")),
-                          column(3, align = 'center', tags$style(HTML('
-                                            .verticalcenter {
-                                            display: table-cell;
-                                            height: 400px;
-                                            vertical-align: middle;
-                                            }')),
-                                 tags$div(class = "verticalcenter", uiOutput("BF.formula1"))),
-                          column(3)),
+                 # fluidRow(align = 'center',
+                 #          column(3),
+                 #          column(3, align = 'center', plotOutput("BFplot1")),
+                 #          column(3, align = 'center', tags$style(HTML('
+                 #                            .verticalcenter {
+                 #                            display: table-cell;
+                 #                            height: 400px;
+                 #                            vertical-align: middle;
+                 #                            }')),
+                 #                 tags$div(class = "verticalcenter", uiOutput("BF.formula1"))),
+                 #          column(3)),
                  br(), br(),
                  h4("Bayes factor ", HTML("&#8212;"), " Interpretation 2"),
                  withMathJax(uiOutput("BFint2")),

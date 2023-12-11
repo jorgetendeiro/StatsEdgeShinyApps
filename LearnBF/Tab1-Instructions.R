@@ -50,7 +50,7 @@ output$instructions <- renderUI({
     HTML(renderMarkdown(text = paste0(tagList("", a("Tsz Keung Wong", href="https://www.linkedin.com/in/tsz-keung-wong-a93738161/", target="_blank")), "<br>Tilburg University, Ph.D candidate<br>Collaborator, developer.") )), 
     br(), 
     h4(tags$i(class = "fa-solid fa-code"), "App"), 
-    "Version: 0.1.4.<br>Source code available at ", a("GitHub", href="https://github.com/jorgetendeiro/StatsEdgeShinyApps", target="_blank"), ".", 
+    "Version: 0.1.5.<br>Source code available at ", a("GitHub", href="https://github.com/jorgetendeiro/StatsEdgeShinyApps", target="_blank"), ".", 
     br(), br(), 
     h4("References"), 
     div(style = "color: gray;", 
