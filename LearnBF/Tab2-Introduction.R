@@ -524,9 +524,13 @@ output$introduction5a <- renderUI({
     br(), 
     "Different prior distributions ultimately instantiate different hypotheses (even if the set of parameter values being tested remains the same!), and this will lead to different Bayes factor values.", 
     br(), br(), 
-    "For this reason, it does not suffice to simply say something like \"$\\mathcal{H}_1$ is the hypothesis that $\\delta\\not=0$\".", 
+    "Furthermore, users must avoid choosing very ", em("wide"), " (or ", em("non-informative"), ", ", em("improper"), ", ", em("diffuse"), ") priors for the parameter(s) being tested.", 
     br(), 
-    "We must further specify, and report, all prior distributions that we used.",
+    "The reason is that, in such cases, the Bayes factor will invariably penalize the model at hand and provide unreasonably large support for $\\mathcal{H}_0$, ", em("regardless of the observed data"), ". ", 
+    br(), br(), 
+    "For these reasons, it does not suffice to simply say something like \"$\\mathcal{H}_1$ is the hypothesis that $\\delta\\not=0$\".", 
+    br(), 
+    "We must further specify, and report, all prior distributions that we used, and priors need to be carefully chosen.",
     br(), br(), 
     h4("Default priors"), 
     "Choosing a prior distribution for each parameter is not trivial. As explained above, we may take different things into account when choosing a prior.",
@@ -630,7 +634,15 @@ output$introduction5d <- renderUI({
     br(), br(), 
     "$p(D|\\mathcal{H}_i)$ is actually a <font color=\"#DCA559\"><b>weighted average</b></font> of $p(D|\\theta_i,\\mathcal{H}_i)$, which is related to the probability of the observed data at each combination of parameter values, $\\theta_i$.", 
     br(), 
-    "The weights are determined by $p(\\theta_i|\\mathcal{H}_i)$, the prior distribution for the parameters."
+    "The weights are determined by $p(\\theta_i|\\mathcal{H}_i)$, the prior distribution for the parameters.", 
+    br(), br(), 
+    "Incidentally, the equation above helps understanding why we should not use improper or even extremely wide priors for the parameter(s) being tested, when computing marginal likelihoods.", 
+    br(), 
+    "Too wide priors will lower the weights that the prior provides for reasonable values of the parameter, while increasing the weights for unreasonable (very small or very large) parameter values.", 
+    br(), 
+    "The observed data will not accord with such a prior allocation of relative credibility of the parameter values, and this will lead towards artificially lowering the marginal likelihood.", 
+    br(), 
+    "It is therefore very important to use priors that allocate most of its credibility to reasonable parameter values."
   )
   
   tagList(HTML(outtext), 

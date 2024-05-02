@@ -196,13 +196,13 @@ questions.2 <- quiz(
   
   # Prior under H1:
   question(
-    paste0("A prior distribution for parameter $\\mu_D$ under $\\mathcal{H}_1:\\mu_D\not=0$ must be chosen, as there are many possible priors available."),
+    paste0("A prior distribution for parameter $\\mu_D$ under $\\mathcal{H}_1:\\mu_D\\not=0$ must be chosen, as there are many possible priors available."),
     answer("False."),
     answer("True.", correct = TRUE), 
     post_message = paste0(
       "Bayesian hypothesis testing requires that, under any hypothesis, each parameter value has an associated a priori probability.", 
       br(), 
-      "In the case of hypothesis $\\mathcal{H}_1:\\mu_D\not=0$, there are many values to consider (namely, all $\\mu_D$ values different from 0).", 
+      "In the case of hypothesis $\\mathcal{H}_1:\\mu_D\\not=0$, there are many values to consider (namely, all $\\mu_D$ values different from 0).", 
       br(), br(), 
       "On the left menu, we offer three families of distributions (Cauchy, Normal, $t$-Student).", 
       br(), 
